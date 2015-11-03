@@ -42,9 +42,10 @@
   },
   "jest": {
     "scriptPreprocessor": "./preprocessor.js",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/build/"
+    "setupTestFrameworkScriptFile": "./jest-setup.js",
+    "testPathDirs": [
+      "src/",
+      "tools/"
     ],
     "unmockedModulePathPatterns": [
       "fbjs",
@@ -54,9 +55,10 @@
   "scripts": {
     "lint": "eslint src tools",
     "test": "eslint src && jest",
-    "clean": "babel-node --eval \"require('./tools/clean')().catch(err => console.log(err.stack))\"",
-    "build": "babel-node --eval \"require('./tools/build')().catch(err => console.log(err.stack))\"",
-    "start": "babel-node --eval \"require('./tools/start')().catch(err => console.log(err.stack))\"",
-    "deploy": "babel-node --eval \"require('./tools/deploy')().catch(err => console.log(err.stack))\""
+    "watch": "eslint src && jest --watch",
+    "clean": "babel-node tools/run clean",
+    "build": "babel-node tools/run build",
+    "start": "babel-node tools/run start",
+    "deploy": "babel-node tools/run deploy"
   }
 }

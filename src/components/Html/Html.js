@@ -8,7 +8,7 @@ import React, { PropTypes } from 'react';
 import GoogleAnalytics from '../GoogleAnalytics';
 import config from '../../config';
 
-function Html({ title, description, body, debug }) {
+function Html({ title, description, body }) {
   return (
     <html className="no-js" lang="">
       <head>

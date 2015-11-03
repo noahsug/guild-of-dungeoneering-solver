@@ -1,21 +1,18 @@
-// jest.dontMock('../routes-loader');
+jest.autoMockOff();
 
-describe('sum', function() {
-  it('adds 1 + 2 to equal 3', function() {
-    var sum = (a, b) => a + b;
-    expect(sum(1, 2)).toBe(4);
+describe('routes-loader', () => {
+  pit('Should load a list of routes', () => {
+    return new Promise((resolve) => {
+      var ctx = {
+        cacheable: () => {},
+        async: () => (err, result) => resolve({err, result})
+      };
+      require('../routes-loader').call(ctx, 'const routes = {};');
+    }).then(({err, result}) => {
+      expect(err).toBe(null);
+      ['/404', '/500', '/'].forEach((page) => {
+        expect(result).toContain(`'${page}'`);
+      });
+    });
   });
 });
-
-/*describe('routes-loader', () => {
-  it('Should load a list of routes', function(done) {
-    this.cacheable = () => {};
-    this.async = () => (err, result) => {
-      expect(err).to.be.null;
-      expect(result).to.not.to.be.empty.and.have.all.keys('/', '/404', '/500');
-      done();
-    };
-
-    require('../tools/lib/routes-loader').call(this, 'const routes = {};');
-  });
-});*/
