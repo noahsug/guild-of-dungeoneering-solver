@@ -1,13 +1,13 @@
-/**
- * React Static Boilerplate
- * https://github.com/koistya/react-static-boilerplate
- * Copyright (c) Konstantin Tarkus (@koistya) | MIT license
- */
+// jest.dontMock('../routes-loader');
 
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
+describe('sum', function() {
+  it('adds 1 + 2 to equal 3', function() {
+    var sum = (a, b) => a + b;
+    expect(sum(1, 2)).toBe(4);
+  });
+});
 
-describe('routes-loader', () => {
+/*describe('routes-loader', () => {
   it('Should load a list of routes', function(done) {
     this.cacheable = () => {};
     this.async = () => (err, result) => {
@@ -18,4 +18,4 @@ describe('routes-loader', () => {
 
     require('../tools/lib/routes-loader').call(this, 'const routes = {};');
   });
-});
+});*/

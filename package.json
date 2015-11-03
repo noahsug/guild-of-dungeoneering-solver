@@ -7,7 +7,6 @@
     "babel-loader": "^5.3.2",
     "babel-plugin-react-transform": "^1.1.1",
     "browser-sync": "^2.9.11",
-    "chai": "^3.4.0",
     "css-loader": "^0.21.0",
     "del": "^2.0.2",
     "eslint": "^1.7.3",
@@ -19,9 +18,9 @@
     "glob": "^5.0.15",
     "history": "^1.12.6",
     "hygienist-middleware": "^0.1.0",
+    "jest-cli": "^0.7.0",
     "lodash.merge": "^3.3.2",
     "mkdirp": "^0.5.1",
-    "mocha": "^2.3.3",
     "ncp": "^2.0.0",
     "node-libs-browser": "^0.5.3",
     "postcss": "^5.0.10",
@@ -41,9 +40,20 @@
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1"
   },
+  "jest": {
+    "scriptPreprocessor": "./preprocessor.js",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/"
+    ],
+    "unmockedModulePathPatterns": [
+      "fbjs",
+      "react"
+    ]
+  },
   "scripts": {
-    "lint": "eslint src tools test",
-    "test": "npm run lint && mocha --compilers js:babel/register",
+    "lint": "eslint src tools",
+    "test": "eslint src && jest",
     "clean": "babel-node --eval \"require('./tools/clean')().catch(err => console.log(err.stack))\"",
     "build": "babel-node --eval \"require('./tools/build')().catch(err => console.log(err.stack))\"",
     "start": "babel-node --eval \"require('./tools/start')().catch(err => console.log(err.stack))\"",
