@@ -12,5 +12,5 @@ import cp from './lib/copy';
  * output (build) folder.
  */
 export default task(async function copy() {
-  await cp('static', 'build');
+  await cp('src/static', 'build');
 });

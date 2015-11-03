@@ -24,11 +24,7 @@ const AUTOPREFIXER_BROWSERS = [
 const JS_LOADER = {
   test: /\.jsx?$/,
   include: [
-    path.resolve(__dirname, '../components'),
-    path.resolve(__dirname, '../core'),
-    path.resolve(__dirname, '../pages'),
-    path.resolve(__dirname, '../app.js'),
-    path.resolve(__dirname, '../config.js'),
+    path.resolve(__dirname, '../src'),
   ],
   loader: 'babel-loader',
 };
@@ -96,7 +92,7 @@ const config = {
 const appConfig = merge({}, config, {
   entry: [
     ...(WATCH ? ['webpack-hot-middleware/client'] : []),
-    './app.js',
+    './src/app.js',
   ],
   output: {
     filename: 'app.js',
@@ -153,7 +149,7 @@ const appConfig = merge({}, config, {
 
 // Configuration for server-side pre-rendering bundle
 const pagesConfig = merge({}, config, {
-  entry: './app.js',
+  entry: './src/app.js',
   output: {
     filename: 'app.node.js',
     libraryTarget: 'commonjs2',
