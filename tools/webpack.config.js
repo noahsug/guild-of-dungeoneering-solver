@@ -10,7 +10,7 @@ import merge from 'lodash.merge';
 
 const DEBUG = !process.argv.includes('release');
 const VERBOSE = process.argv.includes('verbose');
-const WATCH = global.watch;
+const WATCH = global.WATCH === undefined ? false : global.WATCH;
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',

@@ -12,8 +12,6 @@ import Html from '../src/components/Html';
 import task from './lib/task';
 import fs from './lib/fs';
 
-const DEBUG = !process.argv.includes('release');
-
 function getPages() {
   return new Promise((resolve, reject) => {
     glob('**/*.js', { cwd: join(__dirname, '../src/pages') }, (err, files) => {

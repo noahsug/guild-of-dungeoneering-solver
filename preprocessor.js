@@ -10,6 +10,7 @@
 'use strict';
 
 var babel = require('babel-core');
+var regenerator = require('regenerator');
 
 module.exports = {
   process: function(src, filename) {
@@ -19,7 +20,8 @@ module.exports = {
     }
     // Ignore all files within node_modules
     if (filename.indexOf('node_modules') === -1) {
-      return babel.transform(src, {filename: filename}).code;
+      src = regenerator.compile(src, {includeRuntime: true}).code;
+      return babel.transform(src, {filename, retainLines: true}).code;
     }
     return src;
   }

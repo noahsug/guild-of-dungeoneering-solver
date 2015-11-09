@@ -1,11 +1,11 @@
 jest.autoMockOff();
 
 describe('routes-loader', () => {
-  pit('Should load a list of routes', () => {
+  pit('should load a list of routes', () => {
     return new Promise((resolve) => {
-      var ctx = {
+      const ctx = {
         cacheable: () => {},
-        async: () => (err, result) => resolve({err, result})
+        async: () => (err, result) => resolve({err, result}),
       };
       require('../routes-loader').call(ctx, 'const routes = {};');
     }).then(({err, result}) => {
