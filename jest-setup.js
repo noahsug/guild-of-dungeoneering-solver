@@ -5,10 +5,15 @@ jasmine.getEnv().beforeEach(function() {
     toContainKeys: function toContainKeys(keys) {
       var diff = _.difference(keys, Object.keys(this.actual));
       if (diff.length) {
-        this.message = 'Expected object to contain key(s): ' + diff;
         return false;
       }
       return true;
+    },
+
+    toContainKVs: function toContainKVs(kvs) {
+      return _.every(kvs, (v, k) => {
+        return this.actual.hasOwnProperty(k) && this.actual[k] === v;
+      });
     },
   });
 })

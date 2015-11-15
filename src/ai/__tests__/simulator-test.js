@@ -1,7 +1,11 @@
+import _ from '../../utils/common';
+
 jest.dontMock('../simulator');
+jest.dontMock('../game-state');
 
 describe('simulator', () => {
-  const Simulator = require('../simulator');
+  const Simulator = require('../simulator').default;
+  const GameState = require('../game-state').default;
   let sim;
   beforeEach(() => {
     sim = new Simulator();
@@ -20,17 +24,68 @@ describe('simulator', () => {
     };
     const move = 3;  // Play the 4.
     const states = sim.getStates(state, move);
+    expect(states.length).toBe(3);
+    expect(states[0]).toContainKVs({playerHealth: 2, enemyHealth: 1});
+    expect(states[0].playerDeck).toEqual([]);
+    expect(states[0].playerHand).toEqual([4, 1, 2, 3]);
+    expect(states[0].playerDiscard).toEqual([]);
+    expect(states[0].enemyDiscard).toEqual([3]);
+    expect([1, 2, 3]).toContain(states[0].enemyHand[0]);
   });
 
-  xit('gets initial game states', () => {
-    const states = sim.getInitialStates({
-      playerHealth: 5,
+  it('gets initial game states', () => {
+    const states = sim.getInitialStates(GameState.create({
       playerDeck: [1, 2, 3, 4],
-      playerHand: [],
-      enemyHealth: 5,
       enemyDeck: [1, 2, 3, 4],
-      enemyHand: [],
-    });
-    expect({foo: 1, bar: 2}).toContainKeys(['foo']);
+    }));
+    expect(states.length).toBe(4);
+    expect(states[0].playerDeck).toEqual([]);
+    expect(states[0].playerHand).toEqual([1, 2, 3, 4]);
+    expect(states[0].playerDiscard).toEqual([]);
+    expect(states[0].enemyDeck.length).toEqual(3);
+    expect([1, 2, 3, 4]).toContain(states[0].enemyHand[0]);
+    expect(states[0].enemyDiscard).toEqual([]);
+  });
+
+  it('plays a move, randomly choosing the game state', () => {
+    const state = {
+      playerHealth: 5,
+      playerDeck: [],
+      playerHand: [1, 2, 3, 4],
+      playerDiscard: [],
+      enemyHealth: 5,
+      enemyDeck: [1, 2, 3],
+      enemyHand: [4],
+      enemyDiscard: [],
+    };
+    expect(sim.play(state, 3)).toBe(0);
+    expect(state.playerHealth).toEqual(1);
+    expect(state.enemyHealth).toEqual(1);
+    expect(state.playerDeck).toEqual([]);
+    expect(state.playerHand).toEqual([4, 1, 2, 3]);
+    expect(state.playerDiscard).toEqual([]);
+    expect(state.enemyDeck.length).toEqual(2);
+    expect([1, 2, 3]).toContain(state.enemyHand[0]);
+    expect(state.enemyDiscard).toEqual([4]);
+  });
+
+  it('player with better cards will win', () => {
+    const state = {
+      playerHealth: 10,
+      playerDeck: [],
+      playerHand: [4],
+      playerDiscard: [],
+      enemyHealth: 10,
+      enemyDeck: [],
+      enemyHand: [3],
+      enemyDiscard: [],
+    };
+    let result = 0;
+    while (!result) {
+      const moves = sim.getMoves(state);
+      result = sim.play(state, _.sample(moves));
+    }
+    expect(result).toBe(1);
+    expect(state.playerHealth).toBe(1);
   });
 });

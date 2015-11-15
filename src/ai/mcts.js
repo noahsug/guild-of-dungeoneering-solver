@@ -1,62 +1,52 @@
-import _ from 'underscore';
-import NodeFactory from './node-factory';
+import _ from '../utils/common';
 
 export default class Mcts {
-  constructor() {
-    this.selectionStrategy = 5;
-    this.expansionStrategy = 5;
-    this.runUntil = {
-      iteration: 1,
-    };
-
-    this.simulator = 1;
-    this.nodeFactory = new NodeFactory(this.simulator);
+  constructor({selectionStrategy, expansionStrategy, nodeFactory,
+               runUntil = {}} = {}) {
+    this.selectionStrategy = selectionStrategy;
+    this.expansionStrategy = expansionStrategy;
+    this.nodeFactory = nodeFactory;
+    this.runUntil = _.defaults(runUntil, {iteration: Infinity});
   }
 
   solve(initialGameState) {
     const rootNode = this.nodeFactory.createRootNode(initialGameState);
-    for (this.iteration_ = 0; this.iteration_ < this.runUntil.iteration;
-         this.iteration++) {
+    for (let i = 0; i < this.runUntil.iteration; i++) {
       const leaf = this.select_(rootNode);
       if (leaf.result) break;
       const child = this.expand_(leaf);
       const result = this.simulate_(child);
       this.backpropagate_(child, result);
     }
-    return _.max(rootNode.children, (n) => n.wins + n.losses);
+    return rootNode;
   }
 
-  select_(node) {
+  select_(rootNode) {
+    let node = rootNode;
     while (node.children) {
-      node = this.selectionStrategy.selectChild(node.children);
+      if (node.children.length == 1) {
+        node = node.children[0];
+      } else {
+        node = this.selectionStrategy.selectChild(node.children, rootNode);
+      }
     }
     return node;
   }
 
   expand_(node) {
-    this.nodeFactory.createChildren(node);
+    node.children = this.nodeFactory.createChildren(node);
     if (node.children.length == 1) return node.children[0];
     return this.expansionStrategy.selectChild(node.children);
   }
 
   simulate_(node) {
-    let gameState;
-    if (node.type == 'chance') {
-      gameState = node.state;
-    } else {
-      gameState = _.clone(node.gameState.state);
-      this.simulator.play(gameState, node.gameState.move);
-    }
-    let result = this.simulator.getResult(gameState);
-    while (result) {
-      const moves = this.simulator.getMoves(gameState);
-      this.simulator.play(gameState, _.sample(moves));
-      result = this.simulator.getResult(gameState);
-    }
-    return result;
+    if (node.result) return node.result;
+    return this.nodeFactory.playout(node);
   }
 
   backpropagate_(node, result) {
+    if (node.result < 0) node.parent.losses = Infinity;
+    else if (node.result > 0) node.parent.wins = Infinity;
     while (node) {
       result > 0 ? node.wins++ : node.losses++;
       node = node.parent;

@@ -1,9 +1,9 @@
 jest.dontMock('../mcts');
 
 describe('mcts', () => {
-  const Mcts = require('../mcts');
+  const Mcts = require('../mcts').default;
   it('should do stuff', () => {
-    let mcts = new Mcts();
+    const mcts = new Mcts();
     expect(mcts).toBeDefined();
   });
 });

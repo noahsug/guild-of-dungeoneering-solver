@@ -7,13 +7,13 @@
 import glob from 'glob';
 import { join } from 'path';
 
-export default function(source) {
+exports.module = function routesLoader(source) {
   this.cacheable();
   const target = this.target;
   const callback = this.async();
 
   if (target === 'node') {
-    source = source.replace('import \'babel/polyfill\';', ''); // eslint-disable-line no-param-reassign
+    source = source.replace('import \'babel/polyfill\';', '');
   }
 
   glob('**/*.{js,jsx}', { cwd: join(__dirname, '../../src/pages') }, (err, files) => {

@@ -10,18 +10,21 @@
 'use strict';
 
 var babel = require('babel-core');
-var regenerator = require('regenerator');
 
 module.exports = {
   process: function(src, filename) {
     // Ignore files other than .js, .es, .jsx or .es6
-    if (!babel.canCompile(filename)) {
+    if (!babel.util.canCompile(filename)) {
+      console.log('cannot compile', filename);
       return '';
     }
     // Ignore all files within node_modules
     if (filename.indexOf('node_modules') === -1) {
-      src = regenerator.compile(src, {includeRuntime: true}).code;
-      return babel.transform(src, {filename, retainLines: true}).code;
+      src = babel.transform(src, {
+        filename,
+        retainLines: true,
+      }).code;
+      return src;
     }
     return src;
   }
