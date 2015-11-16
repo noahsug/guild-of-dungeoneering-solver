@@ -27,6 +27,10 @@ const JS_LOADER = {
     path.resolve(__dirname, '../src'),
   ],
   loader: 'babel-loader',
+  query: {
+    presets: ['es2015', 'es2016-node5', 'react', 'stage-0'],
+    plugins: ['add-module-exports'],
+  }
 };
 
 
@@ -121,21 +125,22 @@ const appConfig = merge({}, config, {
         query: {
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
-          //plugins: ['react-transform'],
-          //extra: {
-          //  'react-transform': {
-          //    transforms: [
-          //      {
-          //        transform: 'react-transform-hmr',
-          //        imports: ['react'],
-          //        locals: ['module'],
-          //      }, {
-          //        transform: 'react-transform-catch-errors',
-          //        imports: ['react', 'redbox-react'],
-          //      },
-          //    ],
-          //  },
-          //},
+          presets: ['es2015', 'es2016-node5', 'react', 'stage-0'],
+          plugins: ['react-transform', 'add-module-exports'],
+          extra: {
+            'react-transform': {
+              transforms: [
+                {
+                  transform: 'react-transform-hmr',
+                  imports: ['react'],
+                  locals: ['module'],
+                }, {
+                  transform: 'react-transform-catch-errors',
+                  imports: ['react', 'redbox-react'],
+                },
+              ],
+            },
+          },
         },
       }) : JS_LOADER,
       ...config.module.loaders,
@@ -165,6 +170,7 @@ const pagesConfig = merge({}, config, {
   },
   externals: /^[a-z][a-z\.\-\/0-9]*$/i,
   plugins: config.plugins.concat([
+    ...config.plugins,
     new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
   ]),
   module: {

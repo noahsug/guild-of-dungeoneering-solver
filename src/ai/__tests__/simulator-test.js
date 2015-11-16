@@ -4,8 +4,8 @@ jest.dontMock('../simulator');
 jest.dontMock('../game-state');
 
 describe('simulator', () => {
-  const Simulator = require('../simulator').default;
-  const GameState = require('../game-state').default;
+  const Simulator = require('../simulator');
+  const GameState = require('../game-state');
   let sim;
   beforeEach(() => {
     sim = new Simulator();

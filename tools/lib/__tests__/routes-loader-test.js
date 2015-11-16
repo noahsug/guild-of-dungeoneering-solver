@@ -1,7 +1,7 @@
 jest.autoMockOff();
 
 describe('routes-loader', () => {
-  const routesLoader = require('../routes-loader').default;
+  const routesLoader = require('../routes-loader');
   pit('should load a list of routes', () => {
     return new Promise((resolve) => {
       const ctx = {

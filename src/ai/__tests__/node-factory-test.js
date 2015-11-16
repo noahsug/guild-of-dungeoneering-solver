@@ -2,9 +2,9 @@ jest.dontMock('../node-factory');
 jest.dontMock('../node');
 
 describe('node factory', () => {
-  const NodeFactory = require('../node-factory').default;
-  const Node = require('../node').default;
-  const Simulator = require('../simulator').default;
+  const NodeFactory = require('../node-factory');
+  const Node = require('../node');
+  const Simulator = require('../simulator');
   let factory;
   let sim;
   beforeEach(() => {

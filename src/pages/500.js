@@ -7,10 +7,15 @@
 import React, { Component, PropTypes } from 'react';
 
 export default class extends Component {
+  //static propTypes = {
+  //  error: PropTypes.instanceOf(Error),
+  //};
 
-  static propTypes = {
-    error: PropTypes.instanceOf(Error),
-  };
+  static propTypes() {
+    return {
+      error: PropTypes.instanceOf(Error),
+    };
+  }
 
   render() {
     return (
@@ -21,6 +26,15 @@ export default class extends Component {
             this.props.error.message + '\n\n' + this.props.error.stack :
             'A critical error occurred.'
         }</pre>
+      </div>
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>500</h1>
+        <p>The page you're looking for was not found.</p>
       </div>
     );
   }

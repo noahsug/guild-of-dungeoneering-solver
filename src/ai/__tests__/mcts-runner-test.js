@@ -1,7 +1,7 @@
 jest.autoMockOff();
 
 describe('MCTS runner', () => {
-  const MctsRunner = require('../mcts-runner').default;
+  const MctsRunner = require('../mcts-runner');
   it('should complete after 1000 iterations', function() {
     const result = MctsRunner.run([1, 2, 3, 4], [1, 2, 3, 4]);
     expect(result.wins).toBeDefined();

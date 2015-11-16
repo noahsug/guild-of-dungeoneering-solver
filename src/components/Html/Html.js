@@ -33,7 +33,6 @@ Html.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   body: PropTypes.string.isRequired,
-  debug: PropTypes.bool.isRequired,
 };
 
 export default Html;

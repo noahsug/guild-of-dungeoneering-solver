@@ -4,10 +4,11 @@
  * Copyright (c) Konstantin Tarkus (@koistya) | MIT license
  */
 
+import _ from 'underscore';
 import glob from 'glob';
 import { join } from 'path';
 
-exports.module = function routesLoader(source) {
+export default function routesLoader(source) {
   this.cacheable();
   const target = this.target;
   const callback = this.async();
@@ -26,25 +27,26 @@ exports.module = function routesLoader(source) {
 
       if (path === '/index.js' || path === '/index.jsx') {
         path = '/';
-      } else if (path.endsWith('/index.js')) {
-        path = path.substr(0, path.length - 9);
-      } else if (path.endsWith('/index.jsx')) {
-        path = path.substr(0, path.length - 10);
-      } else if (path.endsWith('.js')) {
-        path = path.substr(0, path.length - 3);
-      } else if (path.endsWith('.jsx')) {
-        path = path.substr(0, path.length - 4);
       }
+      _.some(['/index.js', '/index.jsx', '.js', '.jsx'], suffix => {
+        if (path.endsWith(suffix)) {
+          path = path.slice(0, -suffix.length);
+          return true;
+        }
+        return false;
+      });
 
       if (target === 'node' || path === '/404' || path === '/500') {
-        return `  '${path}': () => require('./pages/${file}'),`;
+        return `  '${path}': function() {return require('./pages/${file}');},`;
       }
 
-      return `  '${path}': () => new Promise(resolve => require(['./pages/${file}'], resolve)),`;
+      return `  '${path}': function() {return new Promise(` +
+          `resolve => require(['./pages/${file}'], resolve));},`;
     });
 
     if (lines.length) {
-      return callback(null, source.replace(' routes = {', ' routes = {\n' + lines.join('')));
+      return callback(null, source.replace(' routes = {',
+                                           ' routes = {\n' + lines.join('')));
     }
 
     return callback(new Error('Cannot find any routes.'));
