@@ -27,10 +27,6 @@ const JS_LOADER = {
     path.resolve(__dirname, '../src'),
   ],
   loader: 'babel-loader',
-  query: {
-    presets: ['es2015', 'es2016-node5', 'react', 'stage-0'],
-    plugins: ['add-module-exports'],
-  }
 };
 
 
@@ -125,8 +121,7 @@ const appConfig = merge({}, config, {
         query: {
           // Wraps all React components into arbitrary transforms
           // https://github.com/gaearon/babel-plugin-react-transform
-          presets: ['es2015', 'es2016-node5', 'react', 'stage-0'],
-          plugins: ['react-transform', 'add-module-exports'],
+          plugins: ['react-transform'],
           extra: {
             'react-transform': {
               transforms: [

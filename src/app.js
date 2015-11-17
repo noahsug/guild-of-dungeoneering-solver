@@ -4,7 +4,7 @@
  * Copyright (c) Konstantin Tarkus (@koistya) | MIT license
  */
 
-//import 'babel/polyfill';
+import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
@@ -22,10 +22,12 @@ const route = async (path, callback) => {
 function run() {
   const container = document.getElementById('app');
   Location.listen(location => {
-    route(location.pathname, async (component) => ReactDOM.render(component, container, () => {
-      // Track the page view event via Google Analytics
-      window.ga('send', 'pageview');
-    }));
+    // TODO: Webpack isn't replacing require([./about], resolve) in routes with
+    // webpack_require.
+    //route(location.pathname, async (component) => ReactDOM.render(component, container, () => {
+    //  // Track the page view event via Google Analytics
+    //  window.ga('send', 'pageview');
+    //}));
   });
 }
 

@@ -5,7 +5,7 @@
  */
 
 export default {
-  title: 'React Static Boilerplate',
-  description: 'Static website generator for React.js web applications.',
+  title: 'Guild of Dungeoneering Solver',
+  description: 'Solver for the Guild of Dungeoneering card game.',
   googleAnalyticsId: 'UA-XXXXX-X',
 };

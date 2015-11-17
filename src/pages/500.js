@@ -6,16 +6,11 @@
 
 import React, { Component, PropTypes } from 'react';
 
-export default class extends Component {
-  //static propTypes = {
-  //  error: PropTypes.instanceOf(Error),
-  //};
+class SystemError extends Component {
 
-  static propTypes() {
-    return {
-      error: PropTypes.instanceOf(Error),
-    };
-  }
+  static propTypes = {
+    error: PropTypes.instanceOf(Error),
+  };
 
   render() {
     return (
@@ -38,5 +33,6 @@ export default class extends Component {
       </div>
     );
   }
-
 }
+
+export default SystemError;

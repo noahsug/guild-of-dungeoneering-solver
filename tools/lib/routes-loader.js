@@ -27,14 +27,15 @@ export default function routesLoader(source) {
 
       if (path === '/index.js' || path === '/index.jsx') {
         path = '/';
+      } else {
+        _.some(['/index.js', '/index.jsx', '.js', '.jsx'], suffix => {
+          if (path.endsWith(suffix)) {
+            path = path.slice(0, -suffix.length);
+            return true;
+          }
+          return false;
+        });
       }
-      _.some(['/index.js', '/index.jsx', '.js', '.jsx'], suffix => {
-        if (path.endsWith(suffix)) {
-          path = path.slice(0, -suffix.length);
-          return true;
-        }
-        return false;
-      });
 
       if (target === 'node' || path === '/404' || path === '/500') {
         return `  '${path}': function() {return require('./pages/${file}');},`;
