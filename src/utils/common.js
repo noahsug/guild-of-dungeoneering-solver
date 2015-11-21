@@ -1,10 +1,26 @@
 import _ from 'underscore';
 
 _.mixin({
+  sum: (array, iteratee) => {
+    if (!iteratee) iteratee = _.identity;
+    return array.reduce((p, c) => p + iteratee(c), 0);
+  },
+
+  avg: (array, iteratee) => {
+    return _.sum(array, iteratee) / array.length;
+  },
+
+  decimals: (value, numDecimals) => {
+    if (numDecimals < 0) throw 'Invalid number of decimals: ' + numDecimals;
+    const magnitude = Math.pow(10, numDecimals);
+    return Math.round(value * magnitude) / magnitude;
+  },
+
   capitalize: (string) => {
     return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
   },
 
+  // Removes the first instance of an element.
   // [1, 2, 1], 1 => [2, 1]
   remove: (array, ...values) => {
     const toRemove = {};

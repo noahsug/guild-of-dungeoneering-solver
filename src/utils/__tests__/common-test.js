@@ -35,3 +35,26 @@ describe('combinate', () => {
     expect(Array.from(combinator)).toEqual([[1, 2], [1, 3], [2, 3]]);
   });
 });
+
+describe('sum', () => {
+  it('sums an array of values', () => {
+    expect(_.sum([1, 2, 3, 4])).toEqual(10);
+  });
+});
+
+describe('avg', () => {
+  it('computes the average over an array of values', () => {
+    expect(_.avg([1, 2, 3, 4])).toEqual(10 / 4);
+  });
+
+  it('can be passed an iteratee', () => {
+    const iteratee = (v) => v * 2;
+    expect(_.avg([1, 2, 3, 4], iteratee)).toEqual(20 / 4);
+  });
+});
+
+describe('decimals', () => {
+  it('sets the number of decimals', () => {
+    expect(_.decimals(Math.PI, 2)).toEqual(3.14);
+  });
+});

@@ -29,14 +29,18 @@ export default class NodeFactory {
 
   createChildrenInternal_(parent, values, type) {
     return values.map((v) => {
-      const state = type == 'chance' ? v : parent.gameState;
-      const gameState = type == 'chance' ? state : {state, move: v};
-      const child = new Node(gameState, type);
-      const result = this.simulator.getResult(state);
-      if (result) child.result = result;
-      child.parent = parent;
-      return child;
+      return this.createNode(v, {type, parent});
     });
+  }
+
+  createNode(value, {type = 'chance', parent = null}) {
+    const state = type == 'chance' ? value : parent.gameState;
+    const gameState = type == 'chance' ? state : {state, move: value};
+    const node = new Node(gameState, type);
+    const result = this.simulator.getResult(state);
+    if (result) node.result = result;
+    node.parent = parent;
+    return node;
   }
 
   playout(node) {

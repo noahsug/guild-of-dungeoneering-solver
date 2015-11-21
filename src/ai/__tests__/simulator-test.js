@@ -1,7 +1,6 @@
 import _ from '../../utils/common';
 
-jest.dontMock('../simulator');
-jest.dontMock('../game-state');
+jest.autoMockOff();
 
 describe('simulator', () => {
   const Simulator = require('../simulator');
@@ -25,7 +24,7 @@ describe('simulator', () => {
     const move = 3;  // Play the 4.
     const states = sim.getStates(state, move);
     expect(states.length).toBe(3);
-    expect(states[0]).toContainKVs({playerHealth: 2, enemyHealth: 1});
+    expect(states[0]).toContainKVs({playerHealth: 5, enemyHealth: 1});
     expect(states[0].playerDeck).toEqual([]);
     expect(states[0].playerHand).toEqual([4, 1, 2, 3]);
     expect(states[0].playerDiscard).toEqual([]);
@@ -73,19 +72,21 @@ describe('simulator', () => {
     const state = {
       playerHealth: 10,
       playerDeck: [],
-      playerHand: [4],
+      playerHand: [1, 2, 3],
       playerDiscard: [],
       enemyHealth: 10,
       enemyDeck: [],
-      enemyHand: [3],
+      enemyHand: [0, 1],
       enemyDiscard: [],
     };
     let result = 0;
-    while (!result) {
+    let i = 0;
+    for (i = 0; i < 100 && !result; i++) {
       const moves = sim.getMoves(state);
       result = sim.play(state, _.sample(moves));
     }
+    expect(i).toBeLessThan(100);
     expect(result).toBe(1);
-    expect(state.playerHealth).toBe(1);
+    expect(state.enemyHealth).toBeLessThan(1);
   });
 });

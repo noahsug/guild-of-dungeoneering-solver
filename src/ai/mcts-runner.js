@@ -7,14 +7,17 @@ import Mcts from './mcts';
 
 export default class MctsRunner {
   static run(playerDeck, enemyDeck) {
+    const playerHealth = 8;
+    const enemyHealth = 8;
     const simulator = new Simulator();
     const nodeFactory = new NodeFactory(simulator);
     const mcts = new Mcts({
       selectionStrategy: new SelectionStrategy(),
       expansionStrategy: new ExpansionStrategy(nodeFactory),
       nodeFactory: nodeFactory,
-      runUntil: {iteration: 1000},
+      runUntil: {iteration: 50, hitBottom: 100},
     });
-    return mcts.solve(GameState.create({playerDeck, enemyDeck}));
+    return mcts.solveNewGame(GameState.create(
+        {playerDeck, enemyDeck, playerHealth, enemyHealth}));
   }
 }

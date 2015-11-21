@@ -12,9 +12,7 @@ export default class SelectionStrategy {
 
       const uct = this.uct_(
           child.wins, child.losses, rootNode.wins, rootNode.losses);
-      //console.log('UCT:', child.wins, child.losses,
-      //            rootNode.wins + rootNode.losses,
-      //            uct);
+      //child.selection = uct;
       return uct + randomness;
     });
   }

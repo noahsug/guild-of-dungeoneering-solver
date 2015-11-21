@@ -6,14 +6,27 @@ export default class Mcts {
     this.selectionStrategy = selectionStrategy;
     this.expansionStrategy = expansionStrategy;
     this.nodeFactory = nodeFactory;
-    this.runUntil = _.defaults(runUntil, {iteration: Infinity});
+    this.runUntil = _.defaults(runUntil,
+        {iteration: Infinity, hitBottom: 1});
   }
 
-  solve(initialGameState) {
-    const rootNode = this.nodeFactory.createRootNode(initialGameState);
+  solveNewGame(initialGameState) {
+    return this.solve(initialGameState, {shouldInitialize: true});
+  }
+
+  solve(initialGameState, {shouldInitialize = false}) {
+    let hitBottom = this.runUntil.hitBottom;
+    const rootNode = shouldInitialize ?
+        this.nodeFactory.createRootNode(initialGameState) :
+        this.nodeFactory.createNode(initialGameState);
     for (let i = 0; i < this.runUntil.iteration; i++) {
       const leaf = this.select_(rootNode);
-      if (leaf.result) break;
+      if (leaf.result) {
+        leaf.end = true;
+        hitBottom--;
+        if (hitBottom <= 0) break;
+        else continue;
+      }
       const child = this.expand_(leaf);
       const result = this.simulate_(child);
       this.backpropagate_(child, result);

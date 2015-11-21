@@ -39,6 +39,11 @@ html, body {
 /**
  * TODO: Move these d3 styles into appropriate place.
  */
+svg {
+  margin-left: -100px;
+  margin-top: -50px;
+}
+
 .node {
   circle {
     fill: #fff;

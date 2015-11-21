@@ -1,8 +1,15 @@
 import _ from '../utils/common';
+import CardResolver from './card-resolver';
+import GameStateAccessor from './game-state-accessor';
 
 export default class Simulator {
+  constructor() {
+    this.cardResolver_ = new CardResolver();
+    this.access_ = new GameStateAccessor();
+  }
+
   getInitialStates(initialState) {
-    const handIterator = _.combinate(_.unique(initialState.playerDeck), 4);
+    const handIterator = _.combinate(initialState.playerDeck, 4);
     const playerHands = Array.from(handIterator);
     const enemyDraws = _.unique(initialState.enemyDeck);
     const states = [];
@@ -22,8 +29,8 @@ export default class Simulator {
     return _.range(state.playerHand.length);
   }
 
-  play(state, moveIndex) {
-    const nextState = _.sample(this.getStates(state, moveIndex));
+  play(state, move) {
+    const nextState = _.sample(this.getStates(state, move));
     this.copyStateInto(state, nextState);
     return this.getResult(state);
   }
@@ -45,28 +52,29 @@ export default class Simulator {
     return clone;
   }
 
-  getStates(state, moveIndex) {
+  getStates(state, move) {
     const nextState = this.cloneState(state);
-    this.resolve_(nextState,
-                  state.playerHand[moveIndex],
-                  state.enemyHand[0]);
+    this.cardResolver_.resolve(nextState,
+                               state.playerHand[move],
+                               state.enemyHand[0]);
 
     // Shortcut: If the game is over, don't generate states.
     if (this.getResult(nextState)) {
       return [nextState];
     }
 
-    const playerDraws = this.discardAndGetDraws_(nextState.playerDeck,
-                                                 nextState.playerHand,
-                                                 nextState.playerDiscard,
-                                                 moveIndex);
-    const enemyDraws = this.discardAndGetDraws_(nextState.enemyDeck,
-                                                nextState.enemyHand,
-                                                nextState.enemyDiscard,
-                                                0);
+    this.discardAndPrepDraw_(nextState.playerDeck,
+                             nextState.playerHand,
+                             nextState.playerDiscard,
+                             move);
+    this.discardAndPrepDraw_(nextState.enemyDeck,
+                             nextState.enemyHand,
+                             nextState.enemyDiscard,
+                             0);
 
     const states = [];
-    const combinator = _.arrayCombinate(playerDraws, enemyDraws);
+    const combinator = _.arrayCombinate(_.range(nextState.playerDeck.length),
+                                        _.range(nextState.enemyDeck.length));
     for (const [playerDraw, enemyDraw] of combinator) {
       const state = this.cloneState(nextState);
       this.draw_(state.playerDeck, state.playerHand, playerDraw);
@@ -76,24 +84,18 @@ export default class Simulator {
     return states;
   }
 
-  discardAndGetDraws_(deck, hand, discard, moveIndex) {
-    discard.push(hand[moveIndex]);
-    hand.splice(moveIndex, 1);
+  discardAndPrepDraw_(deck, hand, discard, move) {
+    discard.push(hand[move]);
+    hand.splice(move, 1);
     if (deck.length == 0) {
       deck.push(...discard);
       discard.length = 0;
     }
-    return _.range(deck.length);
   }
 
-  draw_(deck, hand, moveIndex) {
-    const [move] = deck.splice(moveIndex, 1);
-    hand.unshift(move);
-  }
-
-  resolve_(state, playerMove, enemyMove) {
-    state.playerHealth -= enemyMove;
-    state.enemyHealth -= playerMove;
+  draw_(deck, hand, index) {
+    const [card] = deck.splice(index, 1);
+    hand.unshift(card);
   }
 
   getResult(state) {

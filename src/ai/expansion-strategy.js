@@ -1,7 +1,7 @@
 import _ from '../utils/common';
 
 export default class ExpansionStrategy {
-  constructor(nodeFactory, playouts = 50) {
+  constructor(nodeFactory, playouts = 0) {
     this.playouts = playouts;
     this.nodeFactory = nodeFactory;
   }
@@ -11,7 +11,9 @@ export default class ExpansionStrategy {
       return _.sample(children);
     }
     const results = children.map((node) => {
-      return {result: this.runPlayouts_(node), node};
+      const result = this.runPlayouts_(node);
+      //node.expansion = result;
+      return {result, node};
     });
     const selection = _.max(results, _.iteratee('result')).node;
 
