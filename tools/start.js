@@ -10,7 +10,7 @@ import hygienistMiddleware from 'hygienist-middleware';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
-global.watch = true;
+global.WATCH = true;
 const webpackConfig = require('./webpack.config')[0];
 const bundler = webpack(webpackConfig);
 

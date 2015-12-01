@@ -8,9 +8,10 @@ import path from 'path';
 import webpack from 'webpack';
 import merge from 'lodash.merge';
 
-const DEBUG = !process.argv.includes('release');
-const VERBOSE = process.argv.includes('verbose');
-const WATCH = global.WATCH === undefined ? false : global.WATCH;
+const DEBUG = !process.argv.includes('--release');
+const VERBOSE = process.argv.includes('--verbose');
+const WATCH = global.WATCH;
+
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -60,9 +61,6 @@ const config = {
   module: {
     loaders: [
       {
-        test: /[\\\/]app\.js$/,
-        loader: path.join(__dirname, './lib/routes-loader.js'),
-      }, {
         test: /\.json$/,
         loader: 'json-loader',
       }, {
@@ -117,27 +115,7 @@ const appConfig = merge({}, config, {
   ],
   module: {
     loaders: [
-      WATCH ? Object.assign({}, JS_LOADER, {
-        query: {
-          // Wraps all React components into arbitrary transforms
-          // https://github.com/gaearon/babel-plugin-react-transform
-          plugins: ['react-transform'],
-          extra: {
-            'react-transform': {
-              transforms: [
-                {
-                  transform: 'react-transform-hmr',
-                  imports: ['react'],
-                  locals: ['module'],
-                }, {
-                  transform: 'react-transform-catch-errors',
-                  imports: ['react', 'redbox-react'],
-                },
-              ],
-            },
-          },
-        },
-      }) : JS_LOADER,
+      JS_LOADER,
       ...config.module.loaders,
       {
         test: /\.scss$/,
@@ -147,37 +125,4 @@ const appConfig = merge({}, config, {
   },
 });
 
-// Configuration for server-side pre-rendering bundle
-const pagesConfig = merge({}, config, {
-  entry: './src/app.js',
-  output: {
-    filename: 'app.node.js',
-    libraryTarget: 'commonjs2',
-  },
-  target: 'node',
-  node: {
-    console: false,
-    global: false,
-    process: false,
-    Buffer: false,
-    __filename: false,
-    __dirname: false,
-  },
-  externals: /^[a-z][a-z\.\-\/0-9]*$/i,
-  plugins: config.plugins.concat([
-    ...config.plugins,
-    new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
-  ]),
-  module: {
-    loaders: [
-      JS_LOADER,
-      ...config.module.loaders,
-      {
-        test: /\.scss$/,
-        loaders: ['css-loader', 'postcss-loader'],
-      },
-    ],
-  },
-});
-
-export default [appConfig, pagesConfig];
+export default [appConfig];
