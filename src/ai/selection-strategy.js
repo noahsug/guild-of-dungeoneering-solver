@@ -2,14 +2,32 @@ import _ from '../utils/common';
 
 export default class SelectionStrategy {
   selectChild(children, rootNode) {
-    return _.max(children, (child) => {
-      const randomness = Math.random() / 100;
-      const numSims = child.wins + child.losses;
-      if (children[0].type == 'chance') {
-        if (numSims == 0) return 2 + randomness;
-        return 1 / numSims + randomness;
+    const parent = children[0].parent;
+    if (parent.generateChild) {
+      if (1 / Math.pow(parent.childrenWeight, 2) > Math.random()) {
+        return parent.generateChild();
       }
+    }
 
+    if (children[0].type == 'chance') {
+      const child = _.sample(parent.nonuniqueChildren);
+      if (!child.result) return child;
+      // Select a child without a result.
+      parent.nonuniqueChildren = parent.nonuniqueChildren.filter(child => {
+        return !child.result;
+      });
+      if (parent.nonuniqueChildren.length == 0) {
+        if (parent.generateChild) return parent.generateChild();
+        throw new Error('Expected > 0 children');
+      }
+      return _.sample(parent.nonuniqueChildren);
+    }
+
+    return _.max(children, (child) => {
+      if (child.bestResult <= parent.worstResult || child.result) {
+        return -Infinity;
+      }
+      const randomness = Math.random() / 100;
       const uct = this.uct_(
           child.wins, child.losses, rootNode.wins, rootNode.losses);
       //child.selection = uct;

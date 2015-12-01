@@ -1,5 +1,6 @@
 import _ from '../utils/common';
 import CardResolver from './card-resolver';
+import GameState from './game-state';
 import GameStateAccessor from './game-state-accessor';
 
 export default class Simulator {
@@ -8,29 +9,61 @@ export default class Simulator {
     this.access_ = new GameStateAccessor();
   }
 
-  getInitialStates(initialState) {
-    const handIterator = _.combinate(initialState.playerDeck, 4);
-    const playerHands = Array.from(handIterator);
-    const enemyDraws = _.unique(initialState.enemyDeck);
-    const states = [];
-    const combinator = _.arrayCombinate(playerHands, enemyDraws);
-    for (const [playerHand, enemyDraw] of combinator) {
-      const state = this.cloneState(initialState);
-      state.playerHand = playerHand;
-      state.playerDeck = _.remove(state.playerDeck, ...playerHand);
-      state.enemyHand = [enemyDraw];
-      state.enemyDeck = _.remove(state.enemyDeck, enemyDraw);
-      states.push(state);
-    }
-    return states;
+  getInitialStateGenerator(initialState) {
+    const generator = function*() {
+      const cache = {};
+      const handIterator = _.combinate(_.shuffle(initialState.playerDeck), 4);
+      for (const playerHand of handIterator) {
+        const enemyDeck = _.shuffle(initialState.enemyDeck);
+        for (let i = 0; i < enemyDeck.length; i++) {
+          const enemyDraw = enemyDeck[i];
+          const id = playerHand.reduce((p, c) => {
+            return p + Math.pow(5, c);
+          }, Math.pow(5, 10) * enemyDraw);
+
+          // DEBUGGING
+          const debugState = this.cloneState(initialState);
+          debugState.playerHand = playerHand;
+          debugState.playerDeck = _.remove(
+              debugState.playerDeck, ...playerHand);
+          debugState.enemyHand = [enemyDraw];
+          debugState.enemyDeck = _.remove(debugState.enemyDeck, enemyDraw);
+          debugState.id = id;
+          _.forEach(cache, (cachedState, cachedId) => {
+            if (this.stateEquals(debugState, cachedState) != id === cachedId) {
+              debugState.parent = null;
+              cachedState.parent = null;
+              throw new Error(`State cache failed - state: ${id} ${debugState} `
+                              `cached: ${cachedId} ${cachedState}`);
+            }
+          });
+
+          // TODO: Combine with getStateGenerator() logic.
+          if (!cache[id]) {
+            const state = this.cloneState(initialState);
+            state.playerHand = playerHand;
+            state.playerDeck = _.remove(state.playerDeck, ...playerHand);
+            state.enemyHand = [enemyDraw];
+            state.enemyDeck = _.remove(state.enemyDeck, enemyDraw);
+            state.id = id;
+            cache[id] = state;
+          }
+          yield cache[id];
+        }
+      }
+    }.call(this);
+    generator.length =
+        _.binomialCoefficient(initialState.playerDeck.length, 4) *
+        initialState.enemyDeck.length;
+    return generator;
   }
 
   getMoves(state) {
-    return _.range(state.playerHand.length);
+    return _.unique(state.playerHand);
   }
 
   play(state, move) {
-    const nextState = _.sample(this.getStates(state, move));
+    const nextState = this.getStateGenerator(state, move).next().value;
     this.copyStateInto(state, nextState);
     return this.getResult(state);
   }
@@ -52,16 +85,25 @@ export default class Simulator {
     return clone;
   }
 
-  getStates(state, move) {
+  stateEquals(state1, state2) {
+    return state1.playerHealth === state2.playerHealth &&
+        _.valuesEqual(state1.playerDeck = state2.playerDeck) &&
+        _.valuesEqual(state1.playerHand = state2.playerHand) &&
+        _.valuesEqual(state1.playerDiscard = state2.playerDiscard) &&
+        state1.enemyHealth === state2.enemyHealth &&
+        _.valuesEqual(state1.enemyDeck = state2.enemyDeck) &&
+        _.valuesEqual(state1.enemyHand = state2.enemyHand) &&
+        _.valuesEqual(state1.enemyDiscard = state2.enemyDiscard);
+  }
+
+  getStateGenerator(state, move) {
     const nextState = this.cloneState(state);
-    this.cardResolver_.resolve(nextState,
-                               state.playerHand[move],
-                               state.enemyHand[0]);
+    const result = this.cardResolver_.resolve(nextState,
+                                              move,
+                                              state.enemyHand[0]);
 
     // Shortcut: If the game is over, don't generate states.
-    if (this.getResult(nextState)) {
-      return [nextState];
-    }
+    if (result) return _.iterator(nextState);
 
     this.discardAndPrepDraw_(nextState.playerDeck,
                              nextState.playerHand,
@@ -70,23 +112,50 @@ export default class Simulator {
     this.discardAndPrepDraw_(nextState.enemyDeck,
                              nextState.enemyHand,
                              nextState.enemyDiscard,
-                             0);
+                             state.enemyHand[0]);
 
-    const states = [];
-    const combinator = _.arrayCombinate(_.range(nextState.playerDeck.length),
-                                        _.range(nextState.enemyDeck.length));
-    for (const [playerDraw, enemyDraw] of combinator) {
-      const state = this.cloneState(nextState);
-      this.draw_(state.playerDeck, state.playerHand, playerDraw);
-      this.draw_(state.enemyDeck, state.enemyHand, enemyDraw);
-      states.push(state);
-    }
-    return states;
+    const generator = function*() {
+      const cache = {};
+      nextState.playerDeck = _.shuffle(nextState.playerDeck);
+      for (let playerDraw = 0; playerDraw < nextState.playerDeck.length;
+           playerDraw++) {
+        nextState.enemyDeck = _.shuffle(nextState.enemyDeck);
+        for (let enemyDraw = 0; enemyDraw < nextState.enemyDeck.length;
+           enemyDraw++) {
+          const id = nextState.playerDeck[playerDraw] +
+              nextState.enemyDeck[enemyDraw] * 31;
+
+          // DEBUGGING
+          const debugState = this.cloneState(nextState);
+          this.draw_(debugState.playerDeck, debugState.playerHand, playerDraw);
+          this.draw_(debugState.enemyDeck, debugState.enemyHand, enemyDraw);
+          _.forEach(cache, (cachedState, cachedId) => {
+            if (this.stateEquals(debugState, cachedState) != id === cachedId) {
+              debugState.parent = null;
+              cachedState.parent = null;
+              throw new Error(`State cache failed - state: ${id} ${debugState} `
+                              `cached: ${cachedId} ${cachedState}`);
+            }
+          });
+
+          if (!cache[id]) {
+            const state = this.cloneState(nextState);
+            this.draw_(state.playerDeck, state.playerHand, playerDraw);
+            this.draw_(state.enemyDeck, state.enemyHand, enemyDraw);
+            state.id = id;
+            cache[id] = state;
+          }
+          yield cache[id];
+        }
+      }
+    }.call(this);
+    generator.length = nextState.playerDeck.length * nextState.enemyDeck.length;
+    return generator;
   }
 
   discardAndPrepDraw_(deck, hand, discard, move) {
-    discard.push(hand[move]);
-    hand.splice(move, 1);
+    discard.push(move);
+    hand.splice(hand.indexOf(move), 1);
     if (deck.length == 0) {
       deck.push(...discard);
       discard.length = 0;
@@ -99,8 +168,6 @@ export default class Simulator {
   }
 
   getResult(state) {
-    if (state.playerHealth <= 0) return -1;
-    if (state.enemyHealth <= 0) return 1;
-    return 0;
+    return this.cardResolver_.getResult(state);
   }
 }

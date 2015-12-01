@@ -1,9 +1,18 @@
-jest.autoMockOff();
+jest.dontMock('../game-state');
+jest.dontMock('../simulator');
+jest.dontMock('../node');
+jest.dontMock('../game-state-accessor');
+jest.dontMock('../node-factory');
+jest.dontMock('../mcts');
+jest.dontMock('../mcts-runner');
+jest.dontMock('../expansion-strategy');
+jest.dontMock('../selection-strategy');
 
 describe('MCTS runner', () => {
   const MctsRunner = require('../mcts-runner');
-  it('should complete after 1000 iterations', function() {
-    const result = MctsRunner.run([1, 2, 3, 4], [1, 2, 3, 4]);
+  it('should complete after 100 iterations', function() {
+    const result = MctsRunner.run([1, 2, 3, 4], [1, 2, 3, 4],
+                                  {iteration: 100});
     expect(result.wins).toBeDefined();
     expect(result.losses).toBeDefined();
 

@@ -1,4 +1,4 @@
-import gameData from './game_data.js';
+import gameData from './game-data.js';
 import _ from '../../utils/common.js';
 
 export default class Card {
@@ -18,7 +18,7 @@ export default class Card {
   validateAttrs_(attrs) {
     attrs.forEach(a => {
       if (!gameData.CARD_ATTRS[a]) {
-        throw 'Bad card attr: ' + a + ' in ' + this.desc;
+        throw new Error('Bad card attr: ' + a + ' in ' + this.desc);
       }
     });
   }

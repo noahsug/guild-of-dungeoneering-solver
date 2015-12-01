@@ -58,3 +58,18 @@ describe('decimals', () => {
     expect(_.decimals(Math.PI, 2)).toEqual(3.14);
   });
 });
+
+describe('iterator', () => {
+  it('iterates over the given values ', () => {
+    const i = _.iterator(1, 2, 3);
+    expect(i.next().value).toBe(1);
+    expect(i.next().value).toBe(2);
+    expect(i.next().value).toBe(3);
+    expect(i.next().done).toBe(true);
+  });
+
+  it('provides a length', () => {
+    const i = _.iterator(1, 2, 3);
+    expect(i.length).toBe(3);
+  });
+});

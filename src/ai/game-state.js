@@ -1,14 +1,16 @@
+import _ from '../utils/common';
+
 export default class GameState {
-  static create({playerDeck, playerHealth = 5, enemyDeck, enemyHealth = 5}) {
-    return {
-      playerHealth: playerHealth,
-      playerDeck: playerDeck.slice(),
+  static create(state) {
+    return _.defaults(state, {
+      playerHealth: 5,
+      playerDeck: [],
       playerHand: [],
       playerDiscard: [],
-      enemyHealth: enemyHealth,
-      enemyDeck: enemyDeck.slice(),
+      enemyHealth: 5,
+      enemyDeck: [],
       enemyHand: [],
       enemyDiscard: [],
-    };
+    });
   }
 }
