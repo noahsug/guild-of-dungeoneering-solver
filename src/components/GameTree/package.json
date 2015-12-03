@@ -1,0 +1,6 @@
+{
+  "name": "GameTree",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./GameTree.js"
+}

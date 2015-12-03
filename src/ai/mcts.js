@@ -66,7 +66,8 @@ export default class Mcts {
 
   simulate_(node) {
     if (node.result) return node.result;
-    return this.nodeFactory.playout(node);
+    return node.gameState.state.playerHealth > node.gameState.state.enemyHealth;
+    //return this.nodeFactory.playout(node);
   }
 
   backpropagate_(node, result) {
@@ -161,7 +162,6 @@ export default class Mcts {
 
     if (_.floatEquals(node.bestResult, node.worstResult, 0.001)) {
       node.result = (node.bestResult + node.worstResult) / 2;
-      //console.log('  Got result:', node.result);
       return true;
     }
     //console.log('  New B/W:', node.bestResult + '/' + node.worstResult);

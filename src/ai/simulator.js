@@ -21,23 +21,6 @@ export default class Simulator {
             return p + Math.pow(5, c);
           }, Math.pow(5, 10) * enemyDraw);
 
-          // DEBUGGING
-          const debugState = this.cloneState(initialState);
-          debugState.playerHand = playerHand;
-          debugState.playerDeck = _.remove(
-              debugState.playerDeck, ...playerHand);
-          debugState.enemyHand = [enemyDraw];
-          debugState.enemyDeck = _.remove(debugState.enemyDeck, enemyDraw);
-          debugState.id = id;
-          _.forEach(cache, (cachedState, cachedId) => {
-            if (this.stateEquals(debugState, cachedState) != id === cachedId) {
-              debugState.parent = null;
-              cachedState.parent = null;
-              throw new Error(`State cache failed - state: ${id} ${debugState} `
-                              `cached: ${cachedId} ${cachedState}`);
-            }
-          });
-
           // TODO: Combine with getStateGenerator() logic.
           if (!cache[id]) {
             const state = this.cloneState(initialState);
@@ -124,19 +107,6 @@ export default class Simulator {
            enemyDraw++) {
           const id = nextState.playerDeck[playerDraw] +
               nextState.enemyDeck[enemyDraw] * 31;
-
-          // DEBUGGING
-          const debugState = this.cloneState(nextState);
-          this.draw_(debugState.playerDeck, debugState.playerHand, playerDraw);
-          this.draw_(debugState.enemyDeck, debugState.enemyHand, enemyDraw);
-          _.forEach(cache, (cachedState, cachedId) => {
-            if (this.stateEquals(debugState, cachedState) != id === cachedId) {
-              debugState.parent = null;
-              cachedState.parent = null;
-              throw new Error(`State cache failed - state: ${id} ${debugState} `
-                              `cached: ${cachedId} ${cachedState}`);
-            }
-          });
 
           if (!cache[id]) {
             const state = this.cloneState(nextState);

@@ -89,7 +89,7 @@ const config = {
 // Configuration for the client-side bundle
 const appConfig = merge({}, config, {
   entry: [
-    ...(WATCH ? ['webpack-hot-middleware/client'] : []),
+    ...(WATCH ? ['webpack-hot-middleware/client?reload=true'] : []),
     './src/app.js',
   ],
   output: {
