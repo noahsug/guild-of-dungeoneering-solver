@@ -8,7 +8,7 @@ export default task(async function watchTest() {
     shell.exec('npm test');
   }
   const watcher = await watch(
-      ['tools/**/*.js', 'src/**/*.js', 'jest-setup.js']);
+      ['src/**/*.js', 'jest-setup.js']);
   watcher.on('changed', test);
   test();
 });

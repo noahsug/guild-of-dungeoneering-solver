@@ -1,0 +1,32 @@
+.GameplayView {
+  label {
+    width: 75px;
+    font-weight: bold;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+  }
+
+  .player-title {
+    font-size: 115%;
+  }
+
+  .card {
+    margin-right: 15px;
+  }
+
+  .card.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .player {
+    margin-bottom: 20px;
+  }
+
+  button {
+    margin-top: 10px;
+    font-size: 115%;
+    cursor: pointer;
+  }
+}

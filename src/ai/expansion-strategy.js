@@ -1,4 +1,7 @@
 import _ from '../utils/common';
+import GameStateAccessor from './game-state-accessor';
+import Card from './card';
+import Node from './node';
 
 export default class ExpansionStrategy {
   constructor(nodeFactory, playouts = 0) {
@@ -7,15 +10,23 @@ export default class ExpansionStrategy {
   }
 
   selectChild(children) {
-    if (children[0].type == 'chance') {
+    if (children[0].type == Node.Type.CHANCE) {
       return _.sample(children);
     }
-    const results = children.map((node) => {
-      const result = this.runPlayouts_(node);
-      //node.expansion = result;
-      return {result, node};
+    return _.max(children, (c) => {
+      const state = this.nodeFactory.playOnce(c);
+      const [player, enemy] = GameStateAccessor.access(state);
+      const hpDiff = player.health - enemy.health;
+      return hpDiff * 10000 - enemy.health + player.hand.length * 100 ||
+          Math.random();
     });
-    const selection = _.max(results, _.iteratee('result')).node;
+
+    //const results = children.map((node) => {
+    //  const result = this.runPlayouts_(node);
+    //  //node.expansion = result;
+    //  return {result, node};
+    //});
+    //const selection = _.max(results, _.iteratee('result')).node;
 
     //function printNode(r) {
     //  const n = r.node;
@@ -29,7 +40,7 @@ export default class ExpansionStrategy {
     //console.log('\nOUT OF\n', results.map(printNode).join('  |  '),
     //            '\nselected: ', children.indexOf(selection));
 
-    return selection;
+    //return selection;
   }
 
   runPlayouts_(node) {

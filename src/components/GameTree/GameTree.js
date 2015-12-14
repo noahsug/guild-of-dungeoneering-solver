@@ -14,6 +14,12 @@ export default class App {
     this.rootNode_ = node;
   }
 
+  render() {
+    _.assert(this.rootNode_);
+    const data = this.getTreeData_(this.rootNode_);
+    this.createTree_(data);
+  }
+
   getTreeData_(rootNode) {
     function grow(node) {
       return {
@@ -25,20 +31,18 @@ export default class App {
   }
 
   createTree_(root) {
-    let dy = 60;
+    const dy = 60;
     let i = 0;
-    let duration = 250;
-    let rectW = 60;
-    let rectH = 20;
+    const duration = 250;
+    const rectW = 60;
+    const rectH = 20;
 
-    let tree = d3.layout.tree().nodeSize([70, 40]);
-    let diagonal = d3.svg.diagonal()
-          .projection(function (d) {
-            return [d.x + rectW / 2, d.y + rectH / 2];
-          });
+    const tree = d3.layout.tree().nodeSize([70, 40]);
+    const diagonal = d3.svg.diagonal()
+        .projection(d => [d.x + rectW / 2, d.y + rectH / 2]);
 
-    let svg = d3.select('.GameTree').append('svg')
-    let container = svg.append('g');
+    const svg = d3.select('.GameTree').append('svg');
+    const container = svg.append('g');
 
     function collapseAfterDepth(node, depth) {
       if (!node.children) return;
@@ -57,24 +61,24 @@ export default class App {
 
     function update(source) {
       // Compute the new tree layout.
-      let nodes = tree.nodes(root).reverse(),
-          links = tree.links(nodes);
+      const nodes = tree.nodes(root).reverse();
+      const links = tree.links(nodes);
 
       // Normalize for fixed-depth.
-      nodes.forEach(function (d) {
+      nodes.forEach(d => {
         d.y = d.depth * dy;
       });
 
       // Update the nodes…
-      let node = container.selectAll('g.node')
-            .data(nodes, function (d) {
+      const node = container.selectAll('g.node')
+            .data(nodes, d => {
               return d.id || (d.id = ++i);
             });
 
       // Enter any new nodes at the parent's previous position.
-      let nodeEnter = node.enter().append('g')
+      const nodeEnter = node.enter().append('g')
             .attr('class', 'node')
-            .attr('transform', function (d) {
+            .attr('transform', d => {
               return 'translate(' + source.x0 + ',' + source.y0 + ')';
             })
             .on('click', click)
@@ -85,7 +89,7 @@ export default class App {
         .attr('height', rectH)
         .attr('stroke', 'black')
         .attr('stroke-width', 1)
-        .style('fill', function (d) {
+        .style('fill', d => {
           return d._children && d._children.length ? 'lightsteelblue' : '#fff';
         });
 
@@ -94,14 +98,14 @@ export default class App {
         .attr('y', rectH / 2)
         .attr('dy', '.35em')
         .attr('text-anchor', 'middle')
-        .text(function (d) {
+        .text(d => {
           return d.name;
         });
 
       // Transition nodes to their new position.
-      let nodeUpdate = node.transition()
+      const nodeUpdate = node.transition()
             .duration(duration)
-            .attr('transform', function (d) {
+            .attr('transform', d => {
               return 'translate(' + d.x + ',' + d.y + ')';
             });
 
@@ -110,7 +114,7 @@ export default class App {
         .attr('height', rectH)
         .attr('stroke', 'black')
         .attr('stroke-width', 1)
-        .style('fill', function (d) {
+        .style('fill', d => {
           return d._children && d._children.length ? 'lightsteelblue' : '#fff';
         });
 
@@ -118,9 +122,9 @@ export default class App {
         .style('fill-opacity', 1);
 
       // Transition exiting nodes to the parent's new position.
-      let nodeExit = node.exit().transition()
+      const nodeExit = node.exit().transition()
             .duration(duration)
-            .attr('transform', function (d) {
+            .attr('transform', d => {
               return 'translate(' + source.x + ',' + source.y + ')';
             })
             .remove();
@@ -134,8 +138,8 @@ export default class App {
       nodeExit.select('text');
 
       // Update the links…
-      let link = container.selectAll('path.link')
-            .data(links, function (d) {
+      const link = container.selectAll('path.link')
+            .data(links, d => {
               return d.target.id;
             });
 
@@ -144,14 +148,14 @@ export default class App {
         .attr('class', 'link')
         .attr('x', rectW / 2)
         .attr('y', rectH / 2)
-        .attr('d', function (d) {
-          let o = {
+        .attr('d', d => {
+          const o = {
             x: source.x0,
-            y: source.y0
+            y: source.y0,
           };
           return diagonal({
             source: o,
-            target: o
+            target: o,
           });
         });
 
@@ -163,20 +167,20 @@ export default class App {
       // Transition exiting nodes to the parent's new position.
       link.exit().transition()
         .duration(duration)
-        .attr('d', function (d) {
-          let o = {
+        .attr('d', d => {
+          const o = {
             x: source.x,
-            y: source.y
+            y: source.y,
           };
           return diagonal({
             source: o,
-            target: o
+            target: o,
           });
         })
         .remove();
 
       // Stash the old positions for transition.
-      nodes.forEach(function (d) {
+      nodes.forEach(d => {
         d.x0 = d.x;
         d.y0 = d.y;
       });
@@ -211,7 +215,7 @@ export default class App {
         }
         if (children) children.forEach((c) => toggleAll(c, collapse));
       }
-      toggleAll(d, !!d.children)
+      toggleAll(d, !!d.children);
       update(d);
     }
 
@@ -224,11 +228,5 @@ export default class App {
                        'translate(' + (-bbox.x + 1) + ',' + 1 + ')');
       }, duration);
     }
-  }
-
-  render() {
-    _.assert(this.rootNode_);
-    const data = this.getTreeData_(this.rootNode_);
-    this.createTree_(data);
   }
 }

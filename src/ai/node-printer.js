@@ -1,18 +1,23 @@
 import _ from '../utils/common';
+import Card from './card';
+import Node from './node';
 
 export default class NodePrinter {
   static simple(node) {
     const msg = [];
-    if (node.type == 'chance') {
-      msg.push('E' + node.gameState.state.enemyHand[0]);
-    } else if (node.type == 'player') {
-      msg.push('P' + node.gameState.move);
+    if (node.type == Node.Type.CHANCE) {
+      msg.push('e' + Card.list[node.gameState.state.enemyHand[0]].desc);
+    } else if (node.type == Node.Type.PLAYER) {
+      msg.push('p' + Card.list[node.gameState.move].desc);
     } else {
       msg.push('S');
     }
 
-    msg.push(`${i(node.wins)}/${i(node.losses)}`);
-    function i(n) { return n == Infinity ? '@' : n; }
+    msg.push(node.gameState.state.playerHealth -
+             node.gameState.state.enemyHealth);
+
+    //msg.push(`${i(node.wins)}/${i(node.losses)}`);
+    //function i(n) { return n == Infinity ? '@' : n; }
 
     //if (node.selection) msg.push('S' + Math.round(node.selection * 100) / 100);
 
@@ -24,14 +29,14 @@ export default class NodePrinter {
 
     //if (node.weight) msg.push('W' + node.weight);
 
-    if (node.bestResult) {
+    if (node.bestResult && !node.result) {
       msg.push(_.decimals(node.bestResult, 2) + '/' +
                _.decimals(node.worstResult, 2));
     }
 
-    if (node.result) msg.push('R');
+    if (node.result) msg.push(_.decimals(node.bestResult, 2));
 
-    if (node.end) msg.push('END');
+    //if (node.end) msg.push('END');
 
     return msg.join(' ');
   }

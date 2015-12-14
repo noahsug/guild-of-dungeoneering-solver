@@ -1,4 +1,5 @@
 import _ from '../utils/common';
+import Node from './node';
 
 export default class Mcts {
   constructor({selectionStrategy, expansionStrategy, nodeFactory,
@@ -6,38 +7,29 @@ export default class Mcts {
     this.selectionStrategy = selectionStrategy;
     this.expansionStrategy = expansionStrategy;
     this.nodeFactory = nodeFactory;
-    this.runUntil = _.defaults(runUntil,
-        {iteration: Infinity, hitBottom: 1});
+    this.runUntil = _.defaults(runUntil, {iteration: Infinity});
   }
 
-  solveNewGame(initialGameState) {
-    return this.solve(initialGameState, {shouldInitialize: true});
-  }
-
-  solve(initialGameState, {shouldInitialize = false}) {
+  setState(initialGameState, {newGame = false}) {
     this.iteration = this.runUntil.iteration;
-    this.hitBottom = this.runUntil.hitBottom;
-    this.rootNode = shouldInitialize ?
+    this.done = false;
+    this.rootNode = newGame ?
         this.nodeFactory.createRootNode(initialGameState) :
         this.nodeFactory.createNode(initialGameState);
-    let done = false;
-    while (!done) done = this.next();
-    return this.rootNode;
+    return this;
+  }
+
+  solve() {
+    while (!this.done) this.next();
   }
 
   next() {
     const leaf = this.select_(this.rootNode);
-    if (leaf.result) return this.shouldStopOnResult_();
+    if (leaf.result) _.fail();
     const child = this.expand_(leaf);
     const result = this.simulate_(child);
     this.backpropagate_(child, result);
-    if (this.rootNode.result) return true;
-    return this.shouldStopOnIteration_();
-  }
-
-  shouldStopOnResult_() {
-    this.hitBottom--;
-    return this.hitBottom <= 0;
+    this.done = this.rootNode.result || this.shouldStopOnIteration_();
   }
 
   shouldStopOnIteration_() {
@@ -84,19 +76,7 @@ export default class Mcts {
   }
 
   updateBestWorst_(node) {
-    //if (!node.id) {
-    //  this.id = (this.id || 0) + 1;
-    //  node.id = this.id;
-    //}
-    //console.log('UPDATE:', node.id,
-    //            'children:', (node.children || []).length,
-    //            'generating:', !!node.generateChild,
-    //            'weight:', node.weight,
-    //    node.type == 'player' ? 'P' + node.gameState.move :
-    //    node.type == 'chance' ? 'E' + node.gameState.state.enemyHand[0] :
-    //    'ROOT',
-    //    node.result, node.bestResult + '/' + node.worstResult);
-
+    //this.debugNode_(node);
     if (node.result) {
       node.bestResult = node.result;
       node.worstResult = node.result;
@@ -106,18 +86,12 @@ export default class Mcts {
     const prevBestResult = node.bestResult || 1;
     const prevWorstResult = node.worstResult || -1;
 
-    if (node.children[0].type == 'chance') {
+    if (node.children[0].type == Node.Type.CHANCE) {
       let weight = 0;
       let bestResults = 0;
       let worstResults = 0;
       let expectedResults = 0;
       node.children.forEach(child => {
-        //if (!child.id) {
-        //  this.id = (this.id || 0) + 1;
-        //  child.id = this.id;
-        //}
-        //console.log('    C', child.id, child.weight, '-', child.result,
-        //            child.bestResult + '/' + child.worstResult);
         if (!child.bestResult) return;
         weight += child.weight;
         bestResults += child.bestResult == -1 ? 0 : child.bestResult *
@@ -126,26 +100,17 @@ export default class Mcts {
             child.weight;
         expectedResults += child.expectedResult == -1 ? 0 :
             child.expectedResult * child.weight;
-        //console.log('     ', weight, bestResults + '/' + worstResults);
       });
       const missingWeight = node.totalChildrenWeight - weight;
       node.bestResult =
           (missingWeight + bestResults) / node.totalChildrenWeight || -1;
       node.worstResult = worstResults / node.totalChildrenWeight || -1;
       node.expectedResult = expectedResults / weight || -1;
-      //console.log('    total', node.totalChildrenWeight,
-      //            'missing', missingWeight,
-      //            node.bestResult + '/' + node.worstResult);
     }
 
-    else if (node.children[0].type == 'player') {
+    else if (node.children[0].type == Node.Type.PLAYER) {
       node.expectedResult = node.bestResult = node.worstResult = -1;
       node.children.forEach(child => {
-        //if (!child.id) {
-        //  this.id = (this.id || 0) + 1;
-        //  child.id = this.id;
-        //}
-
         if (child.expectedResult > node.expectedResult) {
           node.expectedResult = child.expectedResult;
         }
@@ -155,17 +120,38 @@ export default class Mcts {
         if ((child.worstResult || -1) > node.worstResult) {
           node.worstResult = child.worstResult || -1;
         }
-        //console.log('    P', child.id, '-', child.result,
-        //            child.bestResult + '/' + child.worstResult);
       });
     }
 
-    if (_.floatEquals(node.bestResult, node.worstResult, 0.001)) {
+    const epsilon = Number.EPSILON;
+    if (_.floatEquals(node.bestResult, node.worstResult, epsilon)) {
       node.result = (node.bestResult + node.worstResult) / 2;
       return true;
     }
-    //console.log('  New B/W:', node.bestResult + '/' + node.worstResult);
-    return !_.floatEquals(node.bestResult, prevBestResult, 0.001) ||
-        !_.floatEquals(node.worstResult, prevWorstResult, 0.001);
+    return !_.floatEquals(node.bestResult, prevBestResult, epsilon) ||
+        !_.floatEquals(node.worstResult, prevWorstResult, epsilon);
+  }
+
+  debugNode_(node) {
+    console.log('UPDATE:', node.uid,
+                'children:', (node.children || []).length,
+                'generating:', !!node.generateChild,
+                'weight:', node.weight,
+        node.type == Node.Type.PLAYER ? 'P' + node.gameState.move :
+        node.type == Node.Type.CHANCE ? 'E' +
+            node.gameState.state.enemyHand[0] :
+        'ROOT',
+        node.result, node.bestResult + '/' + node.worstResult);
+    if (node.result) return;
+
+    node.children.forEach(child => {
+      if (node.children[0].type == Node.Type.CHANCE) {
+        console.log('    C', child.uid, child.weight, '-', child.result,
+                    child.bestResult + '/' + child.worstResult);
+      } else {
+        console.log('    P', child.uid, '-', child.result,
+                    child.bestResult + '/' + child.worstResult);
+      }
+    });
   }
 }

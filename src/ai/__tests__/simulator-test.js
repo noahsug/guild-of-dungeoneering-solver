@@ -1,19 +1,18 @@
 import _ from '../../utils/common';
 
-jest.dontMock('../game-state');
 jest.dontMock('../simulator');
 jest.dontMock('../game-state-accessor');
 
 describe('simulator', () => {
   const Simulator = require('../simulator');
-  const GameState = require('../game-state');
+  const GameStateAccessor = require('../game-state-accessor');
   let sim;
   beforeEach(() => {
     sim = new Simulator();
   });
 
   it('gets the next states', () => {
-    const state = GameState.create({
+    const state = GameStateAccessor.create({
       playerDeck: [],
       playerHealth: 5,
       playerHand: [1, 2, 3, 4],
@@ -32,20 +31,20 @@ describe('simulator', () => {
   });
 
   it('provides a unique ID for each state', () => {
-    const state = GameState.create({
-      playerDeck: [],
+    const state = GameStateAccessor.create({
       playerHealth: 5,
-      playerHand: [1],
+      playerHand: [4],
+      playerDiscard: [1, 1, 2, 2, 3],
       enemyHealth: 5,
       enemyDeck: [1, 1, 1, 2],
       enemyHand: [2],
     });
-    const states = Array.from(sim.getStateGenerator(state, 1));
-    expect(_.size(_.groupBy(states, 'id'))).toBe(2);
+    const states = Array.from(sim.getStateGenerator(state, 4));
+    expect(_.size(_.groupBy(states, 'id'))).toBe(8);
   });
 
   it('gets initial game states', () => {
-    const state = GameState.create({
+    const state = GameStateAccessor.create({
       playerDeck: [1, 2, 3, 4],
       enemyDeck: [1, 1, 3, 4],
     });
@@ -60,7 +59,7 @@ describe('simulator', () => {
   });
 
   it('plays a move, randomly choosing the game state', () => {
-    const state = GameState.create({
+    const state = GameStateAccessor.create({
       playerHealth: 5,
       playerHand: [1, 2, 3, 4],
       enemyHealth: 5,
@@ -78,8 +77,8 @@ describe('simulator', () => {
     expect(state.enemyDiscard).toEqual([4]);
   });
 
-  it('player with better cards will win', () => {
-    const state = GameState.create({
+  it('ensures player with better cards will win', () => {
+    const state = GameStateAccessor.create({
       playerHealth: 10,
       playerHand: [1, 2, 3],
       enemyHealth: 10,
@@ -94,5 +93,25 @@ describe('simulator', () => {
     expect(i).toBeLessThan(100);
     expect(result).toBe(1);
     expect(state.enemyHealth).toBeLessThan(1);
+  });
+
+  it('handles player discards', () => {
+    const CardResolver = require('../card-resolver');
+    const resolver = new CardResolver();
+    resolver.resolve.mockImpl((state) => {
+      state.playerDiscardEffect = 2;
+      return false;
+    });
+    sim.cardResolver_ = resolver;
+    const state = GameStateAccessor.create({
+      playerHand: [1, 2, 3, 4],
+      enemyHand: [0],
+    });
+
+    const generator = sim.getStateGenerator(state, 1);
+    expect(generator.length).toBe(9);
+    const states = Array.from(sim.getStateGenerator(state, 1));
+    expect(states.length).toBe(generator.length);
+    expect(states[0].playerHand.length).toBe(2);
   });
 });

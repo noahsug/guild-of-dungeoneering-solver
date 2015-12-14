@@ -1,44 +1,58 @@
 import _ from '../utils/common';
 import CardResolver from './card-resolver';
-import GameState from './game-state';
 import GameStateAccessor from './game-state-accessor';
 
 export default class Simulator {
   constructor() {
     this.cardResolver_ = new CardResolver();
-    this.access_ = new GameStateAccessor();
   }
 
   getInitialStateGenerator(initialState) {
+    const accessor = new GameStateAccessor().setState(initialState);
+    const {player, enemy} = accessor;
     const generator = function*() {
       const cache = {};
-      const handIterator = _.combinate(_.shuffle(initialState.playerDeck), 4);
+      const cardIds = {};
+      const handIterator = _.combinate(_.shuffle(player.deck), 4);
       for (const playerHand of handIterator) {
-        const enemyDeck = _.shuffle(initialState.enemyDeck);
+        const enemyDeck = _.shuffle(enemy.deck);
         for (let i = 0; i < enemyDeck.length; i++) {
           const enemyDraw = enemyDeck[i];
-          const id = playerHand.reduce((p, c) => {
-            return p + Math.pow(5, c);
-          }, Math.pow(5, 10) * enemyDraw);
+          const id = this.getInitialStateId_(playerHand, enemyDraw, cardIds);
 
           // TODO: Combine with getStateGenerator() logic.
           if (!cache[id]) {
             const state = this.cloneState(initialState);
-            state.playerHand = playerHand;
-            state.playerDeck = _.remove(state.playerDeck, ...playerHand);
-            state.enemyHand = [enemyDraw];
-            state.enemyDeck = _.remove(state.enemyDeck, enemyDraw);
+            accessor.setState(state);
+            player.hand = playerHand;
+            player.deck = _.remove(player.deck, ...playerHand);
+            enemy.hand = [enemyDraw];
+            enemy.deck = _.remove(enemy.deck, enemyDraw);
             state.id = id;
             cache[id] = state;
+            accessor.setState(initialState);
           }
           yield cache[id];
         }
       }
     }.call(this);
     generator.length =
-        _.binomialCoefficient(initialState.playerDeck.length, 4) *
-        initialState.enemyDeck.length;
+        _.binomialCoefficient(player.deck.length, 4) * enemy.deck.length;
     return generator;
+  }
+
+  getInitialStateId_(playerHand, enemyDraw, cardIds) {
+    if (cardIds.nextId == undefined) cardIds.nextId = 0;
+    const id = playerHand.reduce((p, c) => {
+      if (!cardIds[c]) {
+        cardIds[c] = cardIds.nextId;
+        cardIds.nextId++;
+      }
+      c = cardIds[c];
+      return p + Math.pow(5, c);
+    }, Math.pow(5, 21) * enemyDraw);
+    _.assert(cardIds.nextId <= 21);
+    return id;
   }
 
   getMoves(state) {
@@ -47,25 +61,12 @@ export default class Simulator {
 
   play(state, move) {
     const nextState = this.getStateGenerator(state, move).next().value;
-    this.copyStateInto(state, nextState);
+    GameStateAccessor.copyInto(state, nextState);
     return this.getResult(state);
   }
 
-  copyStateInto(dest, source) {
-    dest.playerHealth = source.playerHealth;
-    dest.playerDeck = source.playerDeck.slice();
-    dest.playerHand = source.playerHand.slice();
-    dest.playerDiscard = source.playerDiscard.slice();
-    dest.enemyHealth = source.enemyHealth;
-    dest.enemyDeck = source.enemyDeck.slice();
-    dest.enemyHand = source.enemyHand.slice();
-    dest.enemyDiscard = source.enemyDiscard.slice();
-  }
-
   cloneState(state) {
-    const clone = {};
-    this.copyStateInto(clone, state);
-    return clone;
+    return GameStateAccessor.clone(state);
   }
 
   stateEquals(state1, state2) {
@@ -80,64 +81,78 @@ export default class Simulator {
   }
 
   getStateGenerator(state, move) {
-    const nextState = this.cloneState(state);
-    const result = this.cardResolver_.resolve(nextState,
-                                              move,
-                                              state.enemyHand[0]);
+    state = this.cloneState(state);
+    const accessor = new GameStateAccessor().setState(state);
+    const {player, enemy} = accessor;
+    const gameOver = this.cardResolver_.resolve(state, move, enemy.hand[0]);
 
     // Shortcut: If the game is over, don't generate states.
-    if (result) return _.iterator(nextState);
+    if (gameOver) return _.iterator(state);
 
-    this.discardAndPrepDraw_(nextState.playerDeck,
-                             nextState.playerHand,
-                             nextState.playerDiscard,
-                             move);
-    this.discardAndPrepDraw_(nextState.enemyDeck,
-                             nextState.enemyHand,
-                             nextState.enemyDiscard,
-                             state.enemyHand[0]);
+    player.discard(player.hand.indexOf(move));
+    enemy.discard(0);
+
+    const numDiscards = Math.min(player.discardEffect, player.hand.length);
+    const numPlayerDraws =
+        player.deck.length || player.discardPile.length + numDiscards;
+    const numEnemyDraws = enemy.deck.length || enemy.discardPile.length;
 
     const generator = function*() {
       const cache = {};
-      nextState.playerDeck = _.shuffle(nextState.playerDeck);
-      for (let playerDraw = 0; playerDraw < nextState.playerDeck.length;
-           playerDraw++) {
-        nextState.enemyDeck = _.shuffle(nextState.enemyDeck);
-        for (let enemyDraw = 0; enemyDraw < nextState.enemyDeck.length;
-           enemyDraw++) {
-          const id = nextState.playerDeck[playerDraw] +
-              nextState.enemyDeck[enemyDraw] * 31;
-
-          if (!cache[id]) {
-            const state = this.cloneState(nextState);
-            this.draw_(state.playerDeck, state.playerHand, playerDraw);
-            this.draw_(state.enemyDeck, state.enemyHand, enemyDraw);
-            state.id = id;
-            cache[id] = state;
+      const discardIterator = this.getDiscardIterator_(accessor);
+      for (const discards of discardIterator) {
+        const playerDraws = _.shuffle(_.range(numPlayerDraws));
+        for (let pi = 0; pi < playerDraws.length; pi++) {
+          const playerDraw = playerDraws[pi];
+          const enemyDraws = _.shuffle(_.range(numEnemyDraws));
+          for (let ei = 0; ei < enemyDraws.length; ei++) {
+            const enemyDraw = enemyDraws[ei];
+            yield this.createNextState_(
+                accessor, cache, playerDraw, discards, enemyDraw);
           }
-          yield cache[id];
         }
       }
     }.call(this);
-    generator.length = nextState.playerDeck.length * nextState.enemyDeck.length;
+    generator.length = numPlayerDraws * numEnemyDraws *
+        _.binomialCoefficient(player.hand.length, player.discardEffect);
     return generator;
   }
 
-  discardAndPrepDraw_(deck, hand, discard, move) {
-    discard.push(move);
-    hand.splice(hand.indexOf(move), 1);
-    if (deck.length == 0) {
-      deck.push(...discard);
-      discard.length = 0;
+  getDiscardIterator_(accessor) {
+    const [player, enemy] = accessor.access();
+    if (player.discardEffect && player.discardEffect < player.hand.length) {
+      const possibleDiscards = _.shuffle(_.range(player.hand.length));
+      return _.combinate(possibleDiscards, player.discardEffect);
     }
+    const numDiscards = Math.min(player.discardEffect, player.hand.length);
+    return _.iterator(_.range(numDiscards));
   }
 
-  draw_(deck, hand, index) {
-    const [card] = deck.splice(index, 1);
-    hand.unshift(card);
+  createNextState_(accessor, cache, playerDraw, playerDiscards, enemyDraw) {
+    const [player, enemy] = accessor.access();
+    const prevState = accessor.state;
+    const nextState = accessor.clone();
+    accessor.setState(nextState);
+
+    let id = 0;
+    let discarded = 0;
+    playerDiscards.forEach(i => {
+      id += player.discard(i - discarded) + 1;
+      discarded++;
+    });
+    id += player.draw(playerDraw) * 31;
+    id += enemy.draw(enemyDraw) * 31 * 31;
+
+    accessor.setState(prevState);
+
+    if (!cache[id]) {
+      nextState.id = id;
+      cache[id] = nextState;
+    }
+    return cache[id];
   }
 
   getResult(state) {
-    return this.cardResolver_.getResult(state);
+    return GameStateAccessor.instance.setState(state).result;
   }
 }

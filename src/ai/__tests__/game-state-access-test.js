@@ -2,25 +2,58 @@ jest.dontMock('../game-state-accessor');
 
 describe('game state accessor', () => {
   const GameStateAccessor = require('../game-state-accessor');
-  const access = new GameStateAccessor();
+  const accessor = new GameStateAccessor();
 
-  it('can make the player draw a card', () => {
+  it('can access deck, hand and discardPile', () => {
+    const state = {
+      playerDeck: [1, 2, 3],
+      enemyHand: [4, 5],
+      playerDiscard: [8],
+    };
+    const {player, enemy} = accessor.setState(state);
+    expect(player.deck).toEqual(state.playerDeck);
+    expect(enemy.hand).toEqual(state.enemyHand);
+    expect(player.discardPile).toEqual(state.playerDiscard);
+  });
+
+  it('can draw a card', () => {
     const state = {
       playerDeck: [1, 2, 3],
       playerHand: [4, 5],
     };
-    access.asPlayer(state).draw(0);
+    const {player} = accessor.setState(state);
+    player.draw(0);
     expect(state.playerDeck).toEqual([2, 3]);
     expect(state.playerHand).toEqual([1, 4, 5]);
   });
 
-  it('can make the enemy draw a card', () => {
+  it('can discard a card', () => {
     const state = {
-      enemyDeck: [5],
-      enemyHand: [],
+      playerHand: [4, 5],
+      playerDiscard: [],
     };
-    access.asEnemy(state).draw(0);
-    expect(state.enemyDeck).toEqual([]);
-    expect(state.enemyHand).toEqual([5]);
+    const {player} = accessor.setState(state);
+    player.discard(0);
+    expect(state.playerHand).toEqual([5]);
+    expect(state.playerDiscard).toEqual([4]);
+  });
+
+  it('can draw discard pile if deck is empty', () => {
+    const state = {
+      playerDeck: [1],
+      playerHand: [],
+      playerDiscard: [2, 3],
+    };
+    const {player} = accessor.setState(state);
+    player.prepDraw();
+    expect(state.playerDeck).toEqual([1]);
+    expect(state.playerHand).toEqual([]);
+    expect(state.playerDiscard).toEqual([2, 3]);
+
+    player.draw(0);
+    player.draw(0);
+    expect(state.playerDeck).toEqual([3]);
+    expect(state.playerHand).toEqual([2, 1]);
+    expect(state.playerDiscard).toEqual([]);
   });
 });

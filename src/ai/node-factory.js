@@ -8,29 +8,29 @@ export default class NodeFactory {
   }
 
   createRootNode(gameState) {
-    return new Node({state: gameState}, 'root');
+    return this.createNode(gameState, {type: Node.Type.ROOT});
   }
 
   createChildren(node) {
-    if (node.type == 'player') {
+    if (node.type == Node.Type.PLAYER) {
       const generator = this.simulator.getStateGenerator(
           node.gameState.state, node.gameState.move);
       this.setChildGenerator_(node, generator);
       node.generateChild();
     }
 
-    else if (node.type == 'root') {
+    else if (node.type == Node.Type.ROOT) {
       const generator = this.simulator.getInitialStateGenerator(
           node.gameState.state);
       this.setChildGenerator_(node, generator);
       node.generateChild();
     }
 
-    else if (node.type == 'chance') {
+    else if (node.type == Node.Type.CHANCE) {
       // Simulator is responsible for removing duplicates.
       const moves = this.simulator.getMoves(node.gameState.state);
       node.children = moves.map(move => {
-        return this.createNode(move, {type: 'player', parent: node});
+        return this.createNode(move, {type: Node.Type.PLAYER, parent: node});
       });
     }
 
@@ -41,7 +41,7 @@ export default class NodeFactory {
   // no more children to generate.
   setChildGenerator_(node, generator) {
     const cache = {};
-    const options = {type: 'chance', parent: node};
+    const options = {type: Node.Type.CHANCE, parent: node};
     const getUniqueChild = () => {
       const next = generator.next();
       if (next.done) return null;
@@ -70,7 +70,10 @@ export default class NodeFactory {
         node.nonuniqueChildren = [child];
       }
       nextChild = getUniqueChild();
-      if (!nextChild) node.generateChild = null;
+      if (!nextChild) {
+        node.generateChild = null;
+        _.assert(node.childrenWeight == node.totalChildrenWeight);
+      }
       return child;
     };
 
@@ -79,29 +82,46 @@ export default class NodeFactory {
   }
 
   // Value is either the card played or the next game state.
-  createNode(value, {type = 'chance', parent = null}) {
-    let node;
-    if (type == 'chance') {
-      node = new Node({state: value}, type);
+  createNode(value, {type = Node.Type.CHANCE, parent = null}) {
+    let gameState;
+    if (type == Node.Type.CHANCE || type == Node.Type.ROOT) {
+      gameState = {state: value};
     } else {
-      node = new Node({state: parent.gameState.state, move: value}, type);
+      gameState = {state: parent.gameState.state, move: value};
     }
-    const result = this.simulator.getResult(node.gameState.state);
-    if (result) node.result = result;
-    node.parent = parent;
-    return node;
+    const result = this.simulator.getResult(gameState.state);
+    return {
+      type,
+      parent,
+      gameState,
+      //uid: _.uid(),
+      result,
+      wins: 0,
+      losses: 0,
+    };
   }
 
   playout(node) {
+    let state = this.simulator.cloneState(node.gameState.state);
+    if (node.type == Node.Type.PLAYER) {
+      state = this.simulator.play(state, node.gameState.move);
+    }
+    while (!state.result) {
+      const moves = this.simulator.getMoves(state);
+      state = this.simulator.play(state, _.sample(moves));
+    }
+    return state.result;
+  }
+
+  playOnce(node) {
     let result;
     const state = this.simulator.cloneState(node.gameState.state);
-    if (node.type == 'player') {
-      result = this.simulator.play(state, node.gameState.move);
-    }
-    while (!result) {
+    if (node.type == Node.Type.PLAYER) {
+      this.simulator.play(state, node.gameState.move);
+    } else {
       const moves = this.simulator.getMoves(state);
-      result = this.simulator.play(state, _.sample(moves));
+      this.simulator.play(state, _.sample(moves));
     }
-    return result;
+    return state;
   }
 }

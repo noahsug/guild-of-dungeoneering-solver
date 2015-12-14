@@ -1,11 +1,10 @@
 export default class Node {
-  constructor(gameState, type = '', result = 0) {
-    this.gameState = gameState;
-    this.type = type;
-    this.result = result;
-
-    this.parent = null;
-    this.children = null;
-    this.losses = this.wins = 0;
+  static Type = {
+    // Starting node, acts as entry point only.
+    ROOT: 0,
+    // Has a random chance of being selected.
+    CHANCE: 1,
+    // Selected by player.
+    PLAYER: 2,
   }
 }
