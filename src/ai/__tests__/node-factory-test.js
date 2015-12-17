@@ -3,7 +3,7 @@ import Node from '../node';
 
 jest.dontMock('../node-factory');
 
-describe('node factory', () => {
+xdescribe('node factory', () => {
   const NodeFactory = require('../node-factory');
   const Simulator = require('../simulator');
   let factory;
