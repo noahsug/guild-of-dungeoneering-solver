@@ -44,12 +44,11 @@ export default class Expectimax {
     this.iteration--;
     //console.log(this.node_.type, this.node_.state, '-',
     //            'W:', this.node_.winRate,
-    //            'P:', this.node_.pruneCutoff,
     //            'R:', this.node_.result);
   }
 
   cacheResult_() {
-    if (this.node_.type == Node.Type.CHANCE && this.node_.result != -Infinity) {
+    if (this.node_.type == Node.Type.CHANCE) {
       this.cache_.cacheResult(this.node_);
     }
   }
@@ -65,8 +64,6 @@ export default class Expectimax {
     this.updateParentWinRate_();
     if (parent.index == parent.children.length) {
       parent.result = parent.winRate || -1;
-    } else if (parent.winRate < parent.pruneCutoff) {
-      //parent.result = -Infinity;
     }
   }
 
@@ -101,16 +98,5 @@ export default class Expectimax {
 
     node.index = 0;
     node.winRate = node.type == Node.Type.CHANCE ? 0 : 1;
-    node.pruneCutoff = this.getPruneCutoff_(node);
-  }
-
-  getPruneCutoff_(node) {
-    if (!node.parent) return 0;
-    if (node.type == Node.Type.CHANCE) {
-      const req = node.parent.winRate - node.parent.pruneCutoff;
-      const max = 1 / node.parent.children.length;
-      return req < max ? (max - req) / max : 0;
-    }
-    return Math.max(node.parent.winRate, node.parent.pruneCutoff);
   }
 }

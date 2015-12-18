@@ -96,45 +96,6 @@ describe('expectimax', () => {
     expect(expectimax.rootNode.result).toBe(1);
   });
 
-  it('does alpha beta pruning', () => {
-    const tree = [[
-      [1, -1],
-      [
-        -1,
-        [[-1, -1, 1]],
-        1,
-      ],
-    ]];
-    expectimax.setState(tree, {newGame: true});
-    expectimax.next();  // 0
-    expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 0 (result = 1)
-    expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 1 (result = -1)
-    expectimax.next();  // 0 -> 0 (result = 0.5)
-    expectimax.next();  // 0
-    expectimax.next();  // 0 -> 1
-    expectimax.next();  // 0 -> 1 -> 0 (result = -1)
-    expectimax.next();  // 0 -> 1
-    expectimax.next();  // 0 -> 1 -> 1
-    expectimax.next();  // 0 -> 1 -> 1 -> 0
-    expectimax.next();  // 0 -> 1 -> 1 -> 0 -> 0 (result = -1)
-    expectimax.next();  // 0 -> 1 -> 1 -> 0
-    expectimax.next();  // 0 -> 1 -> 1 -> 0 -> 1 (result = -1)
-    expectimax.next();  // 0 -> 1 -> 1 -> 0 (result = -Infinity)
-    expect(expectimax.node_.result).toBe(-Infinity);
-
-    expectimax.next();  // 0 -> 1 -> 1 (result = -1)
-    expect(expectimax.node_.state).toNotBe(1);
-
-    expectimax.next();  // 0 -> 1 (result = -Infinity)
-    expect(expectimax.node_.result).toBe(-Infinity);
-
-    expectimax.next();  // 0
-    expect(expectimax.node_.state).toNotBe(1);
-    expect(expectimax.node_.result).toBe(0.5);
-  });
-
   it('caches state results', () => {
     const tree = [
       [-1, 1],
