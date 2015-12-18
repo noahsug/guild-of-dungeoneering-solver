@@ -1,24 +1,22 @@
 import GameStateAccessor from './game-state-accessor';
-import ExpansionStrategy from './expansion-strategy';
-import SelectionStrategy from './selection-strategy';
 import NodeFactory from './node-factory';
 import Simulator from './simulator';
-import Mcts from './mcts';
+import Expectimax from './expectimax';
 import Card from './card';
 import gameData from './game-data';
 
-export default class MctsRunner {
-  static run(player, enemy, runOptions) {
+export default class GodSolverFactory {
+  create(player, enemy, runOptions) {
     player = gameData.players[player];
     enemy = gameData.players[enemy];
     const initialState = this.getInitialState_(player, enemy);
-    return MctsRunner.runCustom(initialState, runOptions);
+    return this.createCustom(initialState, runOptions);
   }
 
-  static getInitialState_(player, enemy) {
+  getInitialState_(player, enemy) {
     const state = {
-      playerDeck: MctsRunner.getDeck(player.sets),
-      enemyDeck: MctsRunner.getDeck(enemy.sets),
+      playerDeck: this.getDeck_(player.sets),
+      enemyDeck: this.getDeck_(enemy.sets),
       playerHealth: player.health,
       enemyHealth: enemy.health,
     };
@@ -27,7 +25,7 @@ export default class MctsRunner {
     return GameStateAccessor.create(state);
   }
 
-  static getTraits_(name, player) {
+  getTraits_(name, player) {
     const traits = {};
     (player.traits || []).forEach((trait) => {
       traits[name + trait] = true;
@@ -35,20 +33,17 @@ export default class MctsRunner {
     return traits;
   }
 
-  static getDeck(sets) {
+  getDeck_(sets) {
     let deck = [];
     sets.forEach(set => deck = deck.concat(Card.getSet(set)));
     return deck;
   }
 
-  static runCustom(gameState, {iteration = 5000}) {
+  createCustom(gameState, {iteration = 5000}) {
     const simulator = new Simulator();
     const nodeFactory = new NodeFactory(simulator);
-    return new Mcts({
-      selectionStrategy: new SelectionStrategy(),
-      expansionStrategy: new ExpansionStrategy(nodeFactory),
-      nodeFactory: nodeFactory,
-      runUntil: {iteration},
-    }).setState(gameState, {newGame: true});
+    const expectimax = new Expectimax({nodeFactory, runUntil: {iteration}});
+    expectimax.setState(gameState, {newGame: true});
+    return expectimax;
   }
 }

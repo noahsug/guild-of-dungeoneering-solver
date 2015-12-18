@@ -134,4 +134,33 @@ describe('expectimax', () => {
     expect(expectimax.node_.state).toNotBe(1);
     expect(expectimax.node_.result).toBe(0.5);
   });
+
+  it('caches state results', () => {
+    const tree = [
+      [-1, 1],
+      [1],
+    ];
+
+    // Cache tree[0]
+    let cachedResult;
+    expectimax.cache_.cacheResult.mockImpl((n) => {
+      if (n.state == tree[0]) cachedResult = n.result;
+    });
+    expectimax.cache_.getResult.mockImpl((n) => {
+      if (n.state == tree[1]) return cachedResult;
+      return 0;
+    });
+
+    expectimax.setState(tree, {newGame: true});
+    expectimax.next();  // 0
+    expectimax.next();  // 0 -> 0 (result = -1)
+    expectimax.next();  // 0
+    expectimax.next();  // 0 -> 1 (result = 1)
+    expectimax.next();  // 0 (result = 1)
+    expectimax.next();  //
+    expectimax.next();  // 1 (cached result = 1)
+    expect(expectimax.node_.result).toEqual(1);
+    expectimax.next();  // (result = 1)
+    expect(expectimax.node_.state).toEqual(tree);
+  });
 });

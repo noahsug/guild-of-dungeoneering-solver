@@ -133,6 +133,14 @@ _.mixin({
   fail: () => {
     throw new Error('Assertion failed');
   },
+
+  count: (list, predicate) => {
+    let count = 0;
+    list.forEach((item) => {
+      if (predicate(item)) count++;
+    });
+    return count;
+  },
 });
 
 let uid = 0;

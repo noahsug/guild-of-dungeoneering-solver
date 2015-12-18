@@ -38,6 +38,17 @@ describe('game state accessor', () => {
     expect(state.playerDiscard).toEqual([4]);
   });
 
+  it('can discard multiple cards', () => {
+    const state = {
+      playerHand: [1, 2, 3, 4],
+      playerDiscard: [],
+    };
+    const {player} = accessor.setState(state);
+    player.discardAll([0, 2]);
+    expect(state.playerHand).toEqual([2, 4]);
+    expect(state.playerDiscard).toEqual([1, 3]);
+  });
+
   it('can draw discard pile if deck is empty', () => {
     const state = {
       playerDeck: [1],

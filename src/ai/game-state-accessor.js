@@ -143,6 +143,16 @@ class Accessor {
     return this.hand.splice(index, 1)[0];
   }
 
+  discardAll(indexes) {
+    this.hand = this.hand.filter((c, i) => {
+      if (indexes.indexOf(i) >= 0) {
+        this.discardPile.push(this.hand[i]);
+        return false;
+      }
+      return true;
+    });
+  }
+
   get discardEffect() {
     return this.state[this.key_.discardEffect] || 0;
   }

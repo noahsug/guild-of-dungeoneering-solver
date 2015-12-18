@@ -30,19 +30,6 @@ describe('simulator', () => {
     expect([1, 2, 4]).toContain(states[0].enemyHand[0]);
   });
 
-  it('provides a unique ID for each state', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      playerHand: [4],
-      playerDiscard: [1, 1, 2, 2, 3],
-      enemyHealth: 5,
-      enemyDeck: [1, 1, 1, 2],
-      enemyHand: [2],
-    });
-    const states = Array.from(sim.getStateGenerator(state, 4));
-    expect(_.size(_.groupBy(states, 'id'))).toBe(8);
-  });
-
   it('gets initial game states', () => {
     const state = GameStateAccessor.create({
       playerDeck: [1, 2, 3, 4],
@@ -108,10 +95,8 @@ describe('simulator', () => {
       enemyHand: [0],
     });
 
-    const generator = sim.getStateGenerator(state, 1);
-    expect(generator.length).toBe(9);
     const states = Array.from(sim.getStateGenerator(state, 1));
-    expect(states.length).toBe(generator.length);
+    expect(states.length).toBe(9);
     expect(states[0].playerHand.length).toBe(2);
   });
 });

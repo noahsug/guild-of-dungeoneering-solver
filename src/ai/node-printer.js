@@ -13,7 +13,7 @@ export default class NodePrinter {
       msg.push('S');
     }
 
-    msg.push(node.gameState.state.playerHealth -
+    msg.push(node.gameState.state.playerHealth + '/' +
              node.gameState.state.enemyHealth);
 
     //msg.push(`${i(node.wins)}/${i(node.losses)}`);
@@ -29,12 +29,11 @@ export default class NodePrinter {
 
     //if (node.weight) msg.push('W' + node.weight);
 
-    if (node.bestResult && !node.result) {
-      msg.push(_.decimals(node.bestResult, 2) + '/' +
-               _.decimals(node.worstResult, 2));
+    if (node.result) {
+      msg.push(_.decimals(node.result, 2) + 'R');
+    } else if (node.winRate) {
+      msg.push(_.decimals(node.winRate, 2));
     }
-
-    if (node.result) msg.push(_.decimals(node.bestResult, 2));
 
     //if (node.end) msg.push('END');
 
