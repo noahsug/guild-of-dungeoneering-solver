@@ -35,7 +35,7 @@ export default class Expectimax {
     if (this.node_.result) {
       this.cacheResult_();
       this.updateParentResult_();
-      delete this.node_.children;
+      this.cleanUpMemory_();
       this.node_ = this.node_.parent;
     } else {
       this.node_ = this.selectChildNode_();
@@ -55,7 +55,6 @@ export default class Expectimax {
 
   updateParentResult_() {
     const parent = this.node_.parent;
-    if (!parent) return;
     if (this.node_.type == Node.Type.PLAYER && this.node_.result == 1) {
       parent.result = 1;
       return;
@@ -81,6 +80,12 @@ export default class Expectimax {
     }
   }
 
+  cleanUpMemory_() {
+    if (this.node_.parent.parent && this.node_.parent.parent.parent) {
+      delete this.node_.children;
+    }
+  }
+
   selectChildNode_() {
     if (!this.node_.children) this.nodeFactory.createChildren(this.node_);
     const child = this.node_.children[this.node_.index];
@@ -93,10 +98,20 @@ export default class Expectimax {
     if (node.result) return;
     if (node.type == Node.Type.CHANCE) {
       node.result = this.cache_.getResult(node);
+      if (node.result) {  // cached
+        this.maybeDisplayChildren_(node);
+        return;
+      }
     }
-    if (node.result) return;
 
     node.index = 0;
     node.winRate = node.type == Node.Type.CHANCE ? 0 : 1;
+  }
+
+  maybeDisplayChildren_(node) {
+    if (!node.parent.parent ||
+        !node.parent.parent.parent) {
+      this.nodeFactory.createChildren(node);
+    }
   }
 }

@@ -124,4 +124,31 @@ describe('expectimax', () => {
     expectimax.next();  // (result = 1)
     expect(expectimax.node_.state).toEqual(tree);
   });
+
+  it('gets the correct win rate', () => {
+    const tree = [
+      [
+        [
+          [-1, -1, 1, 1, 1],
+          -1,
+          [-1, 1, -1],
+          -1,
+        ],
+        [-1, -1],
+        -1,
+        [-1, [-1, 1]],
+        -1,
+      ],
+      [-1, -1],
+      -1,
+      [-1, [-1, 1]],
+      -1,
+    ];
+    expectimax.setState(tree, {newGame: true});
+    for (let i = 0; i < 100; i++) {
+      expectimax.next();
+      if (expectimax.done) break;
+    }
+    expect(expectimax.rootNode.result).toBe(0.2);
+  });
 });

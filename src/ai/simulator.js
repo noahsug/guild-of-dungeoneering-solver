@@ -14,9 +14,9 @@ export default class Simulator {
     const accessor = new GameStateAccessor().setState(initialState);
     const {player, enemy} = accessor;
 
-    const handIterator = _.combinate(_.shuffle(player.deck), 4);
+    const handIterator = _.combinate(player.deck, 4);
     for (const playerHand of handIterator) {
-      const enemyDeck = _.shuffle(enemy.deck);
+      const enemyDeck = enemy.deck;
       for (let i = 0; i < enemyDeck.length; i++) {
         const enemyDraw = enemyDeck[i];
         const state = this.cloneState(initialState);
@@ -67,12 +67,8 @@ export default class Simulator {
 
     const discardIterator = this.getDiscardIterator_(accessor);
     for (const discards of discardIterator) {
-      const playerDraws = _.shuffle(_.range(numPlayerDraws));
-      for (let pi = 0; pi < playerDraws.length; pi++) {
-        const playerDraw = playerDraws[pi];
-        const enemyDraws = _.shuffle(_.range(numEnemyDraws));
-        for (let ei = 0; ei < enemyDraws.length; ei++) {
-          const enemyDraw = enemyDraws[ei];
+      for (let playerDraw = 0; playerDraw < numPlayerDraws; playerDraw++) {
+        for (let enemyDraw = 0; enemyDraw < numEnemyDraws; enemyDraw++) {
           yield this.getNextState_(accessor, playerDraw, discards, enemyDraw);
         }
       }
@@ -82,7 +78,7 @@ export default class Simulator {
   getDiscardIterator_(accessor) {
     const {player, enemy} = accessor;
     if (player.discardEffect && player.discardEffect < player.hand.length) {
-      const possibleDiscards = _.shuffle(_.range(player.hand.length));
+      const possibleDiscards = _.range(player.hand.length);
       return _.combinate(possibleDiscards, player.discardEffect);
     }
     const numDiscards = Math.min(player.discardEffect, player.hand.length);
