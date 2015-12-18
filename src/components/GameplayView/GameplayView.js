@@ -1,6 +1,7 @@
 import './GameplayView.scss';
 import NodePrinter from '../../ai/node-printer';
 import Card from '../../ai/card';
+import Node from '../../ai/node';
 import GameStateAccessor from '../../ai/game-state-accessor';
 import _ from '../../utils/common';
 import d3 from 'd3';
@@ -16,17 +17,22 @@ export default class App {
     this.rootNode_ = node;
   }
 
-  nextNode_(move) {
-    if (this.node_.children && this.node_.children.length) {
-      this.node_ = _.min(this.node_.children, (c) => c.expectedResult || 0);
-    }
-  }
-
   render() {
     _.assert(this.rootNode_);
     this.node_ = this.rootNode_;
-    this.nextNode_();
-    this.renderState_();
+    this.renderChanceStates_();
+  }
+
+  renderChanceStates_() {
+    this.root.innerHTML = '';
+    const {player, enemy} =
+        new GameStateAccessor().setState(this.node_.gameState.state);
+
+    this.root.appendChild(this.renderPlayer_(player, 'player'));
+    this.root.appendChild(this.renderPlayer_(enemy, 'enemy'));
+    this.root.appendChild(this.renderChanceOptions_());
+
+    this.root.appendChild(this.renderResetBtn_());
   }
 
   renderState_() {
@@ -36,16 +42,12 @@ export default class App {
 
     this.root.appendChild(this.renderPlayer_(player, 'player'));
     this.root.appendChild(this.renderPlayer_(enemy, 'enemy'));
-
-    const reset = document.createElement('button');
-    reset.innerText = 'reset';
-    reset.onclick = () => this.render();
-    this.root.appendChild(reset);
+    this.root.appendChild(this.renderResetBtn_());
   }
 
   renderPlayer_(player, name) {
     const container = document.createElement('div');
-    container.classList.add(name);
+    container.classList.add('info-block');
 
     const title = document.createElement('div');
     title.classList.add('player-title');
@@ -63,37 +65,71 @@ export default class App {
 
     container.appendChild(this.renderRow_('health', healthText));
     container.appendChild(this.renderRow_('deck', player.deck.length));
-    container.appendChild(this.renderHand_(player, name));
+    container.appendChild(this.renderRow_('hand',
+                                          this.renderHand_(player, name)));
     container.appendChild(
         this.renderRow_('discard', player.discardPile.length));
     return container;
   }
 
-  onClick_(c) {
-    this.node_ = c;
-    this.nextNode_();
-    this.renderState_();
+  renderChanceOptions_() {
+    const container = document.createElement('div');
+    container.classList.add('info-block', 'random-states');
+    const visited = {};
+    const children = _.sortBy(this.node_.children, (c) => {
+      if (c.result) return 10000 + c.result;
+      return c.winRate;
+    });
+    children.forEach((c) => {
+      if (visited[c.__id]) return;
+      visited[c.__id] = true;
+      const {player, enemy} =
+          new GameStateAccessor().setState(c.gameState.state);
+      const option = document.createElement('div');
+      option.classList.add('option', 'clickable');
+
+      option.appendChild(this.renderHand_(player));
+      option.appendChild(this.renderHand_(enemy));
+
+      const results = document.createElement('span');
+      option.appendChild(results);
+      if (c.result) {
+        results.innerText += ` (${c.result}!)`;
+      } else if (c.winRate) {
+        results.innerText += ` (${c.winRate})`;
+      }
+
+      container.appendChild(option);
+      option.onclick = () => this.onClick_(c);
+    });
+    return container;
   }
 
   renderHand_(player, type) {
     const container = document.createElement('span');
-    player.hand.forEach((c) => {
+    container.classList.add('hand');
+    player.hand.forEach((c, i) => {
       const card = document.createElement('span');
-      card.classList.add('card');
+      card.classList.add('option');
       card.innerText = Card.list[c].desc;
       const node = this.getNode_(c);
       if (type == 'player' && node) {
         if (node.result) {
           card.innerText += ` (${node.result}!)`;
-        } else if (node.expectedResult) {
-          card.innerText += ` (${node.expectedResult})`;
+        } else if (node.winRate) {
+          card.innerText += ` (${node.winRate})`;
         }
         card.onclick = () => this.onClick_(node);
         card.classList.add('clickable');
       }
+      if (type == 'player') {
+        if (this.node_.gameState.move == c) {
+          card.classList.add('selected');
+        }
+      }
       container.appendChild(card);
     });
-    return this.renderRow_('hand', container);
+    return container;
   }
 
   getNode_(move) {
@@ -113,5 +149,32 @@ export default class App {
     }
     container.appendChild(content);
     return container;
+  }
+
+  renderResetBtn_() {
+    const reset = document.createElement('button');
+    reset.innerText = 'reset';
+    reset.onclick = () => this.render();
+    return reset;
+  }
+
+  onClick_(c) {
+    this.node_ = c;
+    if (this.node_.cached) this.node_ = this.node_.cached;
+    if (c.type == Node.Type.PLAYER) {
+      this.renderChanceStates_();
+    } else {
+      this.renderState_();
+    }
+  }
+
+  nextNode_(move) {
+    if (this.node_.children && this.node_.children.length) {
+      this.node_ = _.min(this.node_.children, (c) => {
+        const result = c.result || c.winRate || 0;
+        return result + Math.random() / 1000;
+      });
+    }
+    if (this.node_.cached) this.node_ = this.node_.cached;
   }
 }

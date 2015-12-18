@@ -53,6 +53,18 @@ export default class CardResolver {
     heal += dmg && attackCard.healIfDmg;
     attacker.health += heal;
 
-    defender.discardEffect += dmg && attackCard.discardIfDmg;
+    if (dmg) {
+      attacker.stealEffect += attackCard.stealIfDmg;
+      attacker.concealEffect += attackCard.concealIfDmg;
+      defender.discardEffect += attackCard.discardIfDmg;
+      defender.physicalRoundEffect += attackCard.physicalRoundIfDmg;
+      defender.magicRoundEffect += attackCard.magicRoundIfDmg;
+    }
+
+    attacker.drawEffect += attackCard.draw;
+    attacker.stealEffect += attackCard.steal;
+    attacker.concealEffect += attackCard.conceal;
+    attacker.physicalNextEffect += attackCard.physicalNext;
+    attacker.magicNextEffect += attackCard.magicNext;
   }
 }

@@ -65,16 +65,16 @@ describe('card resolver', () => {
       enemyHealth: 5,
     });
     const [player, enemy] = GameStateAccessor.access(state);
-    resolver.resolve(state, Card.create('P/HI'), Card.create('B'));
+    resolver.resolve(state, Card.create('P/HID'), Card.create('B'));
     expect(player.health).toBe(5);
     expect(enemy.health).toBe(5);
-    resolver.resolve(state, Card.create('P/HI'), Card.create('BM'));
+    resolver.resolve(state, Card.create('P/HID'), Card.create('BM'));
     expect(player.health).toBe(6);
     expect(enemy.health).toBe(4);
     resolver.resolve(state, Card.create('H/H/H'), Card.create('BM/B/BP'));
     expect(player.health).toBe(9);
     expect(enemy.health).toBe(4);
-    resolver.resolve(state, Card.create('HP/P/M'), Card.create('BM'));
+    resolver.resolve(state, Card.create('HPD/P/M'), Card.create('BM'));
     expect(player.health).toBe(10);
     expect(enemy.health).toBe(3);
   });
@@ -90,15 +90,33 @@ describe('card resolver', () => {
     expect(enemy.health).toBe(5);
   });
 
-  it('resolves discard', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      enemyHealth: 5,
-    });
+  it('resolves effects', () => {
+    const state = GameStateAccessor.create({});
     const [player, enemy] = GameStateAccessor.access(state);
-    resolver.resolve(state, Card.create('P/DI'), Card.create('BP'));
-    expect(enemy.discardEffect).toBe(0);
-    resolver.resolve(state, Card.create('P/DI'), Card.create('BM'));
-    expect(enemy.discardEffect).toBe(1);
+    resolver.resolve(state, Card.create('D/C/S/MN/PN/Co'), Card.create('BP'));
+    const playerEffects = ['steal', 'conceal', 'draw', 'physicalNext',
+                           'magicNext'];
+    playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(1));
+  });
+
+  it('resolves duplicate effects', () => {
+    const state = GameStateAccessor.create({});
+    const [player, enemy] = GameStateAccessor.access(state);
+    resolver.resolve(state, Card.create('D/D/D'), Card.create('BP'));
+    expect(player.drawEffect).toBe(3);
+  });
+
+  it('resolves if damage effects', () => {
+    const state = GameStateAccessor.create({});
+    const [player, enemy] = GameStateAccessor.access(state);
+    const card = Card.create('P/Di/PRID/MRID/SID/CoID');
+    const playerEffects = ['steal', 'conceal'];
+    const enemyEffects = ['discard', 'physicalRound', 'magicRound'];
+    resolver.resolve(state, card, Card.create('BP'));
+    playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(0));
+    enemyEffects.forEach((e) => expect(enemy[e + 'Effect']).toBe(0));
+    resolver.resolve(state, card, Card.create('BM'));
+    playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(1));
+    enemyEffects.forEach((e) => expect(enemy[e + 'Effect']).toBe(1));
   });
 });

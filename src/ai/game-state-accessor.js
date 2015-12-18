@@ -6,15 +6,19 @@ export default class GameStateAccessor {
     this.enemy = new Accessor('enemy');
   }
 
+  setState(state) {
+    this.state = this.player.state = this.enemy.state = state;
+    return this;
+  }
+
   get result() {
     if (this.player.dead) return -1;
     if (this.enemy.dead) return 1;
     return 0;
   }
 
-  setState(state) {
-    this.state = this.player.state = this.enemy.state = state;
-    return this;
+  get initialGameState() {
+    return this.player.hand.length == 0;
   }
 
   access() {
@@ -59,6 +63,10 @@ export default class GameStateAccessor {
     return this.instance.setState(state).access();
   }
 
+  static isInitialGameState(state) {
+    return this.instance.setState(state).initialGameState;
+  }
+
   static create(state) {
     return _.defaults(state, {
       playerHealth: 5,
@@ -81,6 +89,14 @@ class Accessor {
       discardPile: key + 'Discard',
       health: key + 'Health',
       discardEffect: key + 'DiscardEffect',
+      drawEffect: key + 'DrawEffect',
+      cycleEffect: key + 'CycleEffect',
+      stealEffect: key + 'StealEffect',
+      concealEffect: key + 'ConcealEffect',
+      magicNextEffect: key + 'MagicNextEffect',
+      physicalNextEffect: key + 'PhysicalNextEffect',
+      magicRoundEffect: key + 'MagicRoundEffect',
+      physicalRoundEffect: key + 'PhysicalRoundEffect',
       frail: key + 'Frail',
       mundane: key + 'Mundane',
     };
@@ -156,9 +172,64 @@ class Accessor {
   get discardEffect() {
     return this.state[this.key_.discardEffect] || 0;
   }
-
   set discardEffect(v) {
     this.state[this.key_.discardEffect] = v;
+  }
+
+  get drawEffect() {
+    return this.state[this.key_.drawEffect] || 0;
+  }
+  set drawEffect(v) {
+    this.state[this.key_.drawEffect] = v;
+  }
+
+  get cycleEffect() {
+    return this.state[this.key_.cycleEffect] || 0;
+  }
+  set cycleEffect(v) {
+    this.state[this.key_.cycleEffect] = v;
+  }
+
+  get stealEffect() {
+    return this.state[this.key_.stealEffect] || 0;
+  }
+  set stealEffect(v) {
+    this.state[this.key_.stealEffect] = v;
+  }
+
+  get concealEffect() {
+    return this.state[this.key_.concealEffect] || 0;
+  }
+  set concealEffect(v) {
+    this.state[this.key_.concealEffect] = v;
+  }
+
+  get magicNextEffect() {
+    return this.state[this.key_.magicNextEffect] || 0;
+  }
+  set magicNextEffect(v) {
+    this.state[this.key_.magicNextEffect] = v;
+  }
+
+  get physicalNextEffect() {
+    return this.state[this.key_.physicalNextEffect] || 0;
+  }
+  set physicalNextEffect(v) {
+    this.state[this.key_.physicalNextEffect] = v;
+  }
+
+  get magicRoundEffect() {
+    return this.state[this.key_.magicRoundEffect] || 0;
+  }
+  set magicRoundEffect(v) {
+    this.state[this.key_.magicRoundEffect] = v;
+  }
+
+  get physicalRoundEffect() {
+    return this.state[this.key_.physicalRoundEffect] || 0;
+  }
+  set physicalRoundEffect(v) {
+    this.state[this.key_.physicalRoundEffect] = v;
   }
 
   get frail() { return this.state[this.key_.frail] || 0; }

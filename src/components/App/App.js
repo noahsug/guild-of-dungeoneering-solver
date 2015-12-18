@@ -12,8 +12,9 @@ export default class App {
     root.classList.add('App');
     window.addEventListener('keydown', this.onKeyDown_.bind(this), false);
 
-    this.player = 'Chump';
-    this.enemy = 'Gray Ooze';
+    this.player = {type: 'Chump', sets: [], traits: [], items: ['Straightjacket']};
+    this.enemy = {type: 'Snake'};
+    this.iterations = 5000000;
   }
 
   onKeyDown_(e) {
@@ -26,11 +27,10 @@ export default class App {
   }
 
   render() {
-    const iterations = 500000;
     const solver = new GodSolverFactory().create(
-        this.player, this.enemy, {iteration: iterations});
+        this.player, this.enemy, {iteration: this.iterations});
     const start = Date.now();
-    this.increment_(solver, start, iterations);
+    this.increment_(solver, start);
   }
 
   mockRandom_() {
@@ -44,20 +44,20 @@ export default class App {
     };
   }
 
-  increment_(solver, start, iterations) {
+  increment_(solver, start) {
     const time = Date.now() - start;
     if (solver.done) {
-      this.renderResult_(solver, time, iterations);
+      this.renderResult_(solver, time);
     } else {
-      this.renderIncrementalResult_(solver, time, iterations);
+      this.renderIncrementalResult_(solver, time);
       for (let i = 0; i < 10000 && !solver.done; i++) {
         solver.next();
       }
-      setTimeout(this.increment_.bind(this, solver, start, iterations), 30);
+      setTimeout(this.increment_.bind(this, solver, start), 30);
     }
   }
 
-  renderIncrementalResult_(solver, time, iterations) {
+  renderIncrementalResult_(solver, time) {
     this.root.innerHTML = '';
     const rootNode = solver.rootNode;
     const title = document.createElement('h1');
@@ -67,14 +67,14 @@ export default class App {
     const subTitle = document.createElement('h3');
     this.root.appendChild(subTitle);
     this.addStat_(subTitle, 'done',
-                  `${this.percent_(1 - solver.iteration / iterations)}%`);
-    this.addStat_(subTitle, 'iteration', iterations - solver.iteration);
+                  `${this.percent_(1 - solver.iteration / this.iterations)}%`);
+    this.addStat_(subTitle, 'iteration', this.iterations - solver.iteration);
     this.addStat_(subTitle, 'time', time + 'ms');
     this.addStat_(subTitle, 'win rate',
                   `${this.percent_(rootNode.winRate)}%`);
   }
 
-  renderResult_(solver, time, iterations) {
+  renderResult_(solver, time) {
     this.root.innerHTML = '';
     const rootNode = solver.rootNode;
     const title = document.createElement('h1');
@@ -84,7 +84,8 @@ export default class App {
     const subTitle = document.createElement('h3');
     this.root.appendChild(subTitle);
     const counts = this.countNodes_(rootNode);
-    this.addStat_(subTitle, 'iteration', `${iterations - solver.iteration}`);
+    this.addStat_(
+        subTitle, 'iteration', `${this.iterations - solver.iteration}`);
     this.addStat_(subTitle, 'time', `${time}ms`);
     this.addStat_(subTitle, 'win rate',
                   `${this.percent_(rootNode.winRate)}%`);
@@ -96,11 +97,11 @@ export default class App {
       this.addStat_(subTitle, 'to solve', this.printTime_(time / solved));
     }
 
-    //const gameplayElement = document.createElement('div');
-    //this.root.appendChild(gameplayElement);
-    //const gameplayView = new GameplayView(gameplayElement);
-    //gameplayView.rootNode = rootNode;
-    //gameplayView.render();
+    const gameplayElement = document.createElement('div');
+    this.root.appendChild(gameplayElement);
+    const gameplayView = new GameplayView(gameplayElement);
+    gameplayView.rootNode = rootNode;
+    gameplayView.render();
 
     const gameTreeElement = document.createElement('div');
     this.root.appendChild(gameTreeElement);
@@ -110,17 +111,19 @@ export default class App {
   }
 
   printMatchup_(rootNode) {
-    return this.player + ' ' +
+    return this.player.type + ' - ' +
+        this.player.items.join(', ') + ' ' +
+        this.player.traits.join(', ') + ' ' +
         rootNode.gameState.state.playerHealth + ' hp ' +
         this.printCards_(rootNode.gameState.state.playerDeck) +
         ' vs ' +
-        this.enemy + ' ' +
+        this.enemy.type + ' - ' +
         rootNode.gameState.state.enemyHealth + ' hp ' +
         this.printCards_(rootNode.gameState.state.enemyDeck);
   }
 
   printCards_(cards) {
-    return cards.map(c => Card.list[c].desc);
+    return cards.map(c => Card.list[c].desc).join(', ');
   }
 
   countNodes_(rootNode) {

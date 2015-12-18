@@ -1,11 +1,13 @@
-import _ from '../../utils/common';
 import Node from '../node';
+import _ from '../../utils/common';
 
+jest.dontMock('../game-state-accessor');
 jest.dontMock('../node-factory');
 
 describe('node factory', () => {
   const NodeFactory = require('../node-factory');
   const Simulator = require('../simulator');
+  const GameStateAccessor = require('../game-state-accessor');
   let factory;
   let sim;
   beforeEach(() => {
@@ -14,7 +16,8 @@ describe('node factory', () => {
   });
 
   it('creates a root node', () => {
-    const rootNode = factory.createRootNode({});
+    const state = GameStateAccessor.create({});
+    const rootNode = factory.createRootNode(state);
     expect(rootNode.type).toBe(Node.Type.ROOT);
   });
 

@@ -4,7 +4,21 @@
     "Goblin": 99.95,
     "Giant Bat": 100,
     "Nasty Rat": 100,
-    "Scary Spider":
-    "Gray Ooze": 10.58,
+    "Scary Spider": 100,
+    "Gray Ooze": 41.76,
+
+    "Mimic": 8.73,
+    "Rat Man": 53.15,
+    "Snake": 0.53,
+
+    // Traits
+    "+1HP": {
+      "Gray Ooze": 96.65,
+    }
+
+    // Sets
+    "Growth I": {
+      "Gray Ooze": 100,
+    }
   }
 }

@@ -34,18 +34,18 @@ describe('expectimax', () => {
   });
 
   it('begins on the root node', () => {
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expect(expectimax.node_.state).toEqual(tree);
   });
 
   it('selects a child of the root node on next()', () => {
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expect(expectimax.node_.state).toEqual(tree[0]);
   });
 
   it('performs a depth first search', () => {
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
     expectimax.next();  // 0 -> 0 -> 0 (has reuslt!)
@@ -54,7 +54,7 @@ describe('expectimax', () => {
   });
 
   it('takes the expected value', () => {
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
     expectimax.next();  // 0 -> 0 -> 0 (result = 1)
@@ -65,7 +65,7 @@ describe('expectimax', () => {
   });
 
   it('stops checking other player moves if a winner has been found', () => {
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
     expectimax.next();  // 0 -> 0 -> 0 (result = 1)
@@ -82,7 +82,7 @@ describe('expectimax', () => {
   });
 
   it('solves the tree', () => {
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
     expectimax.next();  // 0 -> 0 -> 0 (result = 1)
@@ -112,7 +112,7 @@ describe('expectimax', () => {
       return 0;
     });
 
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0 (result = -1)
     expectimax.next();  // 0
@@ -144,7 +144,7 @@ describe('expectimax', () => {
       [-1, [-1, 1]],
       -1,
     ];
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     for (let i = 0; i < 100; i++) {
       expectimax.next();
       if (expectimax.done) break;

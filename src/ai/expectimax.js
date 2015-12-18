@@ -9,10 +9,8 @@ export default class Expectimax {
     this.runUntil = _.defaults(runUntil, {iteration: Infinity});
   }
 
-  setState(initialGameState, {newGame = false}) {
-    this.rootNode = newGame ?
-        this.nodeFactory.createRootNode(initialGameState) :
-        this.nodeFactory.createNode(initialGameState);
+  setState(gameState) {
+    this.rootNode = this.nodeFactory.createRootNode(gameState);
     this.reset();
     return this;
   }
@@ -81,9 +79,9 @@ export default class Expectimax {
   }
 
   cleanUpMemory_() {
-    if (this.node_.parent.parent && this.node_.parent.parent.parent) {
-      delete this.node_.children;
-    }
+    //if (this.node_.parent.parent && this.node_.parent.parent.parent) {
+    //  delete this.node_.children;
+    //}
   }
 
   selectChildNode_() {
@@ -109,6 +107,7 @@ export default class Expectimax {
   }
 
   maybeDisplayChildren_(node) {
+    node.cached = this.cache_.getCachedNode(node);
     if (!node.parent.parent ||
         !node.parent.parent.parent) {
       this.nodeFactory.createChildren(node);

@@ -4,6 +4,7 @@ import _ from '../utils/common';
 export default class GameStateCache {
   constructor() {
     this.cache_ = [];
+    this.nodeCache_ = [];
     this.playerCardCache_ = {list: [], index: 0};
     this.enemyCardCache_ = {list: [], index: 0};
     this.idGenerationCache_ = {};
@@ -12,10 +13,17 @@ export default class GameStateCache {
 
   cacheResult(node) {
     this.cache_[this.getId_(node)] = node.result;
+    if (!this.nodeCache_[this.getId_(node)]) {
+      this.nodeCache_[this.getId_(node)] = node;
+    }
   }
 
   getResult(node) {
     return this.cache_[this.getId_(node)];
+  }
+
+  getCachedNode(node) {
+    return this.nodeCache_[this.getId_(node)];
   }
 
   getId_(node) {

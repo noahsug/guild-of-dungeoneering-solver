@@ -11,16 +11,21 @@
     font-size: 115%;
   }
 
-  .card {
+  .option {
     margin-right: 15px;
   }
 
-  .card.clickable {
+  .option.clickable {
     cursor: pointer;
     text-decoration: underline;
   }
 
-  .player {
+  .option.selected {
+    font-weight: bold;
+    font-size: 110%;
+  }
+
+  .info-block {
     margin-bottom: 20px;
   }
 
@@ -28,5 +33,20 @@
     margin-top: 10px;
     font-size: 115%;
     cursor: pointer;
+  }
+
+  .random-states {
+    .hand {
+      display: inline-block;
+      min-width: 100px;
+    }
+
+    .option {
+      margin-right: 3px;
+    }
+
+    > .option {
+      margin: 10px;
+    }
   }
 }

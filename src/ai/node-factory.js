@@ -1,5 +1,6 @@
-import _ from '../utils/common';
 import Node from './node';
+import GameStateAccessor from './game-state-accessor';
+import _ from '../utils/common';
 
 export default class NodeFactory {
   constructor(simulator) {
@@ -8,7 +9,9 @@ export default class NodeFactory {
   }
 
   createRootNode(gameState) {
-    return this.createNode(gameState, Node.Type.ROOT);
+    const type = GameStateAccessor.isInitialGameState(gameState) ?
+        Node.Type.ROOT : Node.Type.CHANCE;
+    return this.createNode(gameState, type);
   }
 
   createChildren(node) {
