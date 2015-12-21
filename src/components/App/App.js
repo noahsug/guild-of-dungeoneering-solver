@@ -69,7 +69,7 @@ export default class App {
     this.addStat_(subTitle, 'done',
                   `${this.percent_(1 - solver.iteration / this.iterations)}%`);
     this.addStat_(subTitle, 'iteration', this.iterations - solver.iteration);
-    this.addStat_(subTitle, 'time', time + 'ms');
+    this.addStat_(subTitle, 'time', `${_.decimals(time / 1000, 1)}s`);
     this.addStat_(subTitle, 'win rate',
                   `${this.percent_(rootNode.winRate)}%`);
   }
@@ -86,7 +86,7 @@ export default class App {
     const counts = this.countNodes_(rootNode);
     this.addStat_(
         subTitle, 'iteration', `${this.iterations - solver.iteration}`);
-    this.addStat_(subTitle, 'time', `${time}ms`);
+    this.addStat_(subTitle, 'time', `${_.decimals(time / 1000, 1)}s`);
     this.addStat_(subTitle, 'win rate',
                   `${this.percent_(rootNode.winRate)}%`);
     if (!rootNode.result) {

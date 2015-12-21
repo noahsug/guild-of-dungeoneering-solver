@@ -60,7 +60,8 @@ export default class Simulator {
     player.discard(player.hand.indexOf(move));
     enemy.discard(0);
 
-    const numDiscards = Math.min(player.discardEffect, player.hand.length);
+    const numDiscards = Math.min(player.discardEffect,
+                                 player.hand.length + player.drawEffect);
     const numPlayerDraws =
         player.deck.length || player.discardPile.length + numDiscards;
     const numEnemyDraws = enemy.deck.length || enemy.discardPile.length;
@@ -91,7 +92,7 @@ export default class Simulator {
     const nextState = accessor.clone();
     accessor.setState(nextState);
 
-    player.discardAll(playerDiscards);
+    player.discardMultiple(playerDiscards);
     player.draw(playerDraw);
     enemy.draw(enemyDraw);
 

@@ -159,7 +159,7 @@ class Accessor {
     return this.hand.splice(index, 1)[0];
   }
 
-  discardAll(indexes) {
+  discardMultiple(indexes) {
     this.hand = this.hand.filter((c, i) => {
       if (indexes.indexOf(i) >= 0) {
         this.discardPile.push(this.hand[i]);
@@ -167,6 +167,20 @@ class Accessor {
       }
       return true;
     });
+  }
+
+  stealFrom(enemy, index) {
+    const card = enemy.hand.splice(index, 1)[index];
+    this.deck.push(card);
+    return card;
+  }
+
+  putInPlay(index) {
+    return this.hand.splice(index, 1)[0];
+  }
+
+  removeFromPlay(card) {
+    this.discardPile.push(card);
   }
 
   get discardEffect() {

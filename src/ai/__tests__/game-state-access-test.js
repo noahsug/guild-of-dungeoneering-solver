@@ -44,7 +44,7 @@ describe('game state accessor', () => {
       playerDiscard: [],
     };
     const {player} = accessor.setState(state);
-    player.discardAll([0, 2]);
+    player.discardMultiple([0, 2]);
     expect(state.playerHand).toEqual([2, 4]);
     expect(state.playerDiscard).toEqual([1, 3]);
   });

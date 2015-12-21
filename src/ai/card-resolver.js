@@ -28,29 +28,48 @@ export default class CardResolver {
       this.attack_(this.enemy_, this.player_, enemyCard, playerCard);
       this.attack_(this.player_, this.enemy_, playerCard, enemyCard);
     }
+
+    this.handlePerRoundDmg_(this.player_);
+    this.handlePerRoundDmg_(this.enemy_);
+
     return this.accessor_.result;
   }
 
   attack_(attacker, defender, attackCard, defenseCard) {
-    let dmg = 0;
-    if (attackCard.unblockable) {
-      dmg += attackCard.physical + attackCard.magic;
-    } else {
-      let physical = attackCard.physical;
-      if (physical && defender.frail) physical++;
-      dmg += Math.max(0, physical - defenseCard.blockPhysical);
+    if (attackCard.healthSix) {
+      attacker.health = 6;
+    }
 
-      let magic = attackCard.magic;
-      if (magic && defender.mundane) magic++;
-      dmg += Math.max(0, magic - defenseCard.blockMagic);
-      dmg -= Math.min(defenseCard.block, dmg);
+    let dmg = 0;
+    let blocked = 0;
+    if (attackCard.unblockable) {
+      dmg = attackCard.physical + attackCard.magic;
+    } else {
+      let physical = this.buffPhysical_(
+          attackCard.physical, attacker, defender);
+      let blockPhysical = defenseCard.blockPhysical;
+      if (defenseCard.blockPhysicalAll) blockPhysical = Infinity;
+      if (attackCard.physicalVsUnblockable && defenseCard.unblockable) {
+        physical += attackCard.physicalVsUnblockable;
+      }
+      blocked += Math.min(physical, blockPhysical);
+
+      const magic = this.buffMagic_(attackCard.magic, attacker, defender);
+      let blockMagic = defenseCard.blockMagic;
+      if (defenseCard.blockMagicAll) blockMagic = Infinity;
+      blocked += Math.min(magic, blockMagic);
+
+      let block = defenseCard.block;
+      if (defenseCard.blockAll) block = Infinity;
+      blocked += Math.min(physical + magic - blocked, block);
+      dmg = physical + magic - blocked;
     }
     defender.health -= dmg;
 
     let heal = 0;
     heal += attackCard.heal - attackCard.selfDmg;
-    heal += dmg * attackCard.healPerDmg;
     heal += dmg && attackCard.healIfDmg;
+    heal += dmg * attackCard.healPerDmg;
     attacker.health += heal;
 
     if (dmg) {
@@ -61,10 +80,47 @@ export default class CardResolver {
       defender.magicRoundEffect += attackCard.magicRoundIfDmg;
     }
 
+    if (blocked) {
+      defender.stealEffect += blocked * defenseCard.stealPerBlock;
+      defender.health += blocked * defenseCard.healPerBlock;
+    }
+
     attacker.drawEffect += attackCard.draw;
     attacker.stealEffect += attackCard.steal;
     attacker.concealEffect += attackCard.conceal;
     attacker.physicalNextEffect += attackCard.physicalNext;
     attacker.magicNextEffect += attackCard.magicNext;
+    defender.cycleEffect += attackCard.cycle;
+  }
+
+  buffMagic_(magic, attacker, defender) {
+    if (magic) {
+      if (defender.mundane) magic++;
+      magic += attacker.magicNextEffect;
+      attacker.magicNextEffect = 0;
+    }
+    return magic;
+  }
+
+  buffPhysical_(physical, attacker, defender) {
+    if (physical) {
+      if (defender.frail) physical++;
+      physical += attacker.physicalNextEffect;
+      attacker.physicalNextEffect = 0;
+    }
+    return physical;
+  }
+
+  handlePerRoundDmg_(player) {
+    if (player.physicalRoundEffect) {
+      let physical = player.physicalRoundEffect;
+      if (player.frail) physical++;
+      player.health -= physical;
+    }
+    if (player.magicRoundEffect) {
+      let magic = player.magicRoundEffect;
+      if (player.mundane) magic++;
+      player.health -= magic;
+    }
   }
 }

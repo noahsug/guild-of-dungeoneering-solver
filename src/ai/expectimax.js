@@ -3,9 +3,10 @@ import Node from './node';
 import _ from '../utils/common';
 
 export default class Expectimax {
-  constructor({nodeFactory, runUntil = {}} = {}) {
+  constructor({nodeFactory, runUntil = {}, debug = false} = {}) {
     this.nodeFactory = nodeFactory;
-    this.cache_ = new GameStateCache();
+    this.debug = debug;
+    this.cache_ = new GameStateCache({debug});
     this.runUntil = _.defaults(runUntil, {iteration: Infinity});
   }
 
@@ -79,9 +80,10 @@ export default class Expectimax {
   }
 
   cleanUpMemory_() {
-    //if (this.node_.parent.parent && this.node_.parent.parent.parent) {
-    //  delete this.node_.children;
-    //}
+    if (!this.debug &&
+        (this.node_.parent.parent && this.node_.parent.parent.parent)) {
+      delete this.node_.children;
+    }
   }
 
   selectChildNode_() {
@@ -107,10 +109,11 @@ export default class Expectimax {
   }
 
   maybeDisplayChildren_(node) {
-    node.cached = this.cache_.getCachedNode(node);
-    if (!node.parent.parent ||
+    if (this.debug ||
+        !node.parent.parent ||
         !node.parent.parent.parent) {
       this.nodeFactory.createChildren(node);
     }
+    if (this.debug) node.cached = this.cache_.getCachedNode(node);
   }
 }

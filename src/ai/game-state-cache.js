@@ -2,18 +2,20 @@ import GameStateAccessor from './game-state-accessor';
 import _ from '../utils/common';
 
 export default class GameStateCache {
-  constructor() {
+  constructor({debug = false} = {}) {
     this.cache_ = [];
     this.nodeCache_ = [];
     this.playerCardCache_ = {list: [], index: 0};
     this.enemyCardCache_ = {list: [], index: 0};
     this.idGenerationCache_ = {};
     this.accessor_ = new GameStateAccessor();
+    this.debug = debug;
   }
 
   cacheResult(node) {
     this.cache_[this.getId_(node)] = node.result;
-    if (!this.nodeCache_[this.getId_(node)]) {
+
+    if (this.debug && !this.nodeCache_[this.getId_(node)]) {
       this.nodeCache_[this.getId_(node)] = node;
     }
   }

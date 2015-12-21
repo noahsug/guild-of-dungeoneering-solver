@@ -11,6 +11,13 @@ describe('simulator', () => {
     sim = new Simulator();
   });
 
+  function resolveAs(fn) {
+    const CardResolver = require('../card-resolver');
+    const resolver = new CardResolver();
+    resolver.resolve.mockImpl(fn);
+    sim.cardResolver_ = resolver;
+  }
+
   it('gets the next states', () => {
     const state = GameStateAccessor.create({
       playerDeck: [],
@@ -83,13 +90,10 @@ describe('simulator', () => {
   });
 
   it('handles player discards', () => {
-    const CardResolver = require('../card-resolver');
-    const resolver = new CardResolver();
-    resolver.resolve.mockImpl((state) => {
+    resolveAs((state) => {
       state.playerDiscardEffect = 2;
       return false;
     });
-    sim.cardResolver_ = resolver;
     const state = GameStateAccessor.create({
       playerHand: [1, 2, 3, 4],
       enemyHand: [0],
@@ -98,5 +102,21 @@ describe('simulator', () => {
     const states = Array.from(sim.getStateGenerator(state, 1));
     expect(states.length).toBe(9);
     expect(states[0].playerHand.length).toBe(2);
+  });
+
+  it('handles player draws', () => {
+    resolveAs((state) => {
+      state.playerDrawEffect = 2;
+      return false;
+    });
+    const state = GameStateAccessor.create({
+      playerDeck: [1, 2, 3, 4],
+      playerHand: [5],
+      enemyHand: [0],
+    });
+
+    const states = Array.from(sim.getStateGenerator(state, 0));
+    expect(states.length).toBe(12);
+    expect(states[0].playerHand.length).toBe(3);
   });
 });

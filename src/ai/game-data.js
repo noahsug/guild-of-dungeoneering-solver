@@ -26,11 +26,11 @@ export default {
     'BMA': 'blockMagicAll',
     'BPA': 'blockPhysicalAll',
     'BA': 'blockAll',
-    'H6': 'healthSix',
-    'PVU': 'physicalVsUnblockable',
     'D': 'draw',
     'Co': 'conceal',
     'CoID': 'concealIfDmg',
+    'H6': 'healthSix',
+    'PVU': 'physicalVsUnblockable',
   },
 
   sets: {
