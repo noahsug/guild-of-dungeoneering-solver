@@ -33,7 +33,7 @@ describe('node factory', () => {
   });
 
   it('creates nodes from a player node', () => {
-    sim.getStateGenerator.mockReturnValueOnce(_.iterator({health: 5}));
+    sim.getStates.mockReturnValueOnce([{health: 5}]);
     const parent = {gameState: {state: {}, move: 1}, type: Node.Type.PLAYER};
     const children = factory.createChildren(parent);
     expect(children.length).toBe(1);

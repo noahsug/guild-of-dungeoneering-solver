@@ -1,5 +1,6 @@
 import CardResolver from './card-resolver';
 import GameStateAccessor from './game-state-accessor';
+import GameStateEnumerator from './game-state-enumerator';
 import _ from '../utils/common';
 
 // Base number of cards player draws at start of game.
@@ -8,99 +9,57 @@ const INITIAL_DRAW = 4;
 export default class Simulator {
   constructor() {
     this.cardResolver_ = new CardResolver();
+    this.stateEnumerator_ = new GameStateEnumerator();
+    this.accessor_ = new GameStateAccessor();
   }
 
-  *getInitialStateGenerator(initialState) {
-    const accessor = new GameStateAccessor().setState(initialState);
-    const {player, enemy} = accessor;
-
-    const handIterator = _.combinate(player.deck, 4);
-    for (const playerHand of handIterator) {
-      const enemyDeck = enemy.deck;
-      for (let i = 0; i < enemyDeck.length; i++) {
-        const enemyDraw = enemyDeck[i];
-        const state = this.cloneState(initialState);
-        accessor.setState(state);
-        player.hand = playerHand;
-        player.deck = _.remove(player.deck, ...playerHand);
-        enemy.hand = [enemyDraw];
-        enemy.deck = _.remove(enemy.deck, enemyDraw);
-        accessor.setState(initialState);
-        yield state;
-      }
-    }
+  getInitialStates(initialState) {
+    this.stateEnumerator_.setState(initialState);
+    this.stateEnumerator_.draw(INITIAL_DRAW, 1);
+    return this.stateEnumerator_.getStates();
   }
 
   getMoves(state) {
     return _.unique(state.playerHand);
   }
 
+  getStates(state, move) {
+    state = this.cloneState(state);
+    this.accessor_.setState(state);
+
+    // TODO: Implement conceal.
+    const gameOver = this.cardResolver_.resolve(
+        state, move, this.accessor_.enemy.hand[0]);
+
+    // Shortcut: If the game is over, don't generate states.
+    if (gameOver) return [state];
+
+    return this.getPossibleStates_(state, move);
+  }
+
+  getPossibleStates_(clonedState, move) {
+    const {player, enemy} = this.accessor_;
+    this.stateEnumerator_.setClonedState(clonedState);
+    this.stateEnumerator_.putInPlay(move);
+    // TODO: Implement steal and clone.
+    this.stateEnumerator_.cycle(player.cycleEffect);
+    this.stateEnumerator_.draw(player.drawEffect);
+    this.stateEnumerator_.discard(player.discardEffect);
+    this.stateEnumerator_.endTurn();
+    return this.stateEnumerator_.getStates();
+  }
+
+  getResult(state) {
+    return GameStateAccessor.instance.setState(state).result;
+  }
+
   play(state, move) {
-    const nextState = this.getStateGenerator(state, move).next().value;
+    const nextState = _.sample(this.getStates(state, move));
     GameStateAccessor.copyInto(state, nextState);
     return this.getResult(state);
   }
 
   cloneState(state) {
     return GameStateAccessor.clone(state);
-  }
-
-  *getStateGenerator(state, move) {
-    state = this.cloneState(state);
-    const accessor = new GameStateAccessor().setState(state);
-    const {player, enemy} = accessor;
-    const gameOver = this.cardResolver_.resolve(state, move, enemy.hand[0]);
-
-    // Shortcut: If the game is over, don't generate states.
-    if (gameOver) {
-      yield state;
-      return;
-    }
-
-    player.discard(player.hand.indexOf(move));
-    enemy.discard(0);
-
-    const numDiscards = Math.min(player.discardEffect,
-                                 player.hand.length + player.drawEffect);
-    const numPlayerDraws =
-        player.deck.length || player.discardPile.length + numDiscards;
-    const numEnemyDraws = enemy.deck.length || enemy.discardPile.length;
-
-    const discardIterator = this.getDiscardIterator_(accessor);
-    for (const discards of discardIterator) {
-      for (let playerDraw = 0; playerDraw < numPlayerDraws; playerDraw++) {
-        for (let enemyDraw = 0; enemyDraw < numEnemyDraws; enemyDraw++) {
-          yield this.getNextState_(accessor, playerDraw, discards, enemyDraw);
-        }
-      }
-    }
-  }
-
-  getDiscardIterator_(accessor) {
-    const {player, enemy} = accessor;
-    if (player.discardEffect && player.discardEffect < player.hand.length) {
-      const possibleDiscards = _.range(player.hand.length);
-      return _.combinate(possibleDiscards, player.discardEffect);
-    }
-    const numDiscards = Math.min(player.discardEffect, player.hand.length);
-    return _.iterator(_.range(numDiscards));
-  }
-
-  getNextState_(accessor, playerDraw, playerDiscards, enemyDraw) {
-    const {player, enemy} = accessor;
-    const prevState = accessor.state;
-    const nextState = accessor.clone();
-    accessor.setState(nextState);
-
-    player.discardMultiple(playerDiscards);
-    player.draw(playerDraw);
-    enemy.draw(enemyDraw);
-
-    accessor.setState(prevState);
-    return nextState;
-  }
-
-  getResult(state) {
-    return GameStateAccessor.instance.setState(state).result;
   }
 }

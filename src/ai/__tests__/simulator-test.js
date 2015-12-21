@@ -2,6 +2,7 @@ import _ from '../../utils/common';
 
 jest.dontMock('../simulator');
 jest.dontMock('../game-state-accessor');
+jest.dontMock('../game-state-enumerator');
 
 describe('simulator', () => {
   const Simulator = require('../simulator');
@@ -27,7 +28,7 @@ describe('simulator', () => {
       enemyDeck: [1, 2, 4],
       enemyHand: [3],
     });
-    const states = Array.from(sim.getStateGenerator(state, 4));
+    const states = sim.getStates(state, 4);
     expect(states.length).toBe(3);
     expect(states[0]).toContainKVs({playerHealth: 5, enemyHealth: 1});
     expect(states[0].playerDeck).toEqual([]);
@@ -42,8 +43,8 @@ describe('simulator', () => {
       playerDeck: [1, 2, 3, 4],
       enemyDeck: [1, 1, 3, 4],
     });
-    const states = Array.from(sim.getInitialStateGenerator(state));
-    expect(states.length).toBe(4);
+    const states = sim.getInitialStates(state);
+    expect(states.length).toBe(96);
     expect(states[0].playerDeck).toEqual([]);
     expect(states[0].playerHand).toEqualValues([1, 2, 3, 4]);
     expect(states[0].playerDiscard).toEqual([]);
@@ -99,8 +100,8 @@ describe('simulator', () => {
       enemyHand: [0],
     });
 
-    const states = Array.from(sim.getStateGenerator(state, 1));
-    expect(states.length).toBe(9);
+    const states = sim.getStates(state, 1);
+    expect(states.length).toBe(18);
     expect(states[0].playerHand.length).toBe(2);
   });
 
@@ -115,8 +116,8 @@ describe('simulator', () => {
       enemyHand: [0],
     });
 
-    const states = Array.from(sim.getStateGenerator(state, 0));
-    expect(states.length).toBe(12);
+    const states = sim.getStates(state, 5);
+    expect(states.length).toBe(24);
     expect(states[0].playerHand.length).toBe(3);
   });
 });

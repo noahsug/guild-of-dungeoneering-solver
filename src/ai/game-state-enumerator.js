@@ -18,14 +18,15 @@ export default class Simulator {
     return this.states_;
   }
 
-  play(playerIndex) {
+  putInPlay(playerCard) {
     this.accessor_.setState(this.states_[0]);
-    this.playerPlay_(this.accessor_.player, playerIndex);
-    this.playerPlay_(this.accessor_.enemy, 0);
+    this.playerPlay_(this.accessor_.player, playerCard);
+    this.playerPlay_(this.accessor_.enemy, this.accessor_.enemy.hand[0]);
   }
 
-  playerPlay_(player, index) {
-    player.inPlay = player.putInPlay(index);
+  playerPlay_(player, card) {
+    const cardIndex = player.hand.indexOf(card);
+    player.inPlay = player.putInPlay(cardIndex);
   }
 
   endTurn() {
@@ -42,7 +43,7 @@ export default class Simulator {
     player.removeFromPlay(player.inPlay);
   }
 
-  draw(playerCount, enemyCount) {
+  draw(playerCount, enemyCount = 0) {
     this.playerDraw_(this.accessor_.player, playerCount);
     this.playerDraw_(this.accessor_.enemy, enemyCount);
   }
@@ -57,12 +58,8 @@ export default class Simulator {
     }
   }
 
-  discard(playerCount, enemyCount) {
-    this.playerDiscard_(this.accessor_.player, playerCount);
-    this.playerDiscard_(this.accessor_.enemy, enemyCount);
-  }
-
-  playerDiscard_(player, count) {
+  discard(count) {
+    const player = this.accessor_.player;
     player.state = this.states_[0];
     count = Math.min(count, player.hand.length);
     for (let i = 0; i < count; i++) {
@@ -72,15 +69,11 @@ export default class Simulator {
     }
   }
 
-  cycle(playerCount, enemyCount) {
-    this.playerCycle_(this.accessor_.player, playerCount);
-    this.playerCycle_(this.accessor_.enemy, enemyCount);
-  }
-
-  playerCycle_(player, count) {
+  cycle(count) {
+    const player = this.accessor_.player;
     player.state = this.states_[0];
     count = Math.min(count, player.hand.length);
-    this.playerDiscard_(player, count);
+    this.discard(count);
     this.playerDraw_(player, count);
   }
 

@@ -16,15 +16,15 @@ export default class NodeFactory {
 
   createChildren(node) {
     if (node.type == Node.Type.PLAYER) {
-      const generator = this.simulator.getStateGenerator(
+      const states = this.simulator.getStates(
           node.gameState.state, node.gameState.move);
-      node.children = this.getChildrenForStates_(generator, node);
+      node.children = this.getChildrenForStates_(states, node);
     }
 
     else if (node.type == Node.Type.ROOT) {
-      const generator = this.simulator.getInitialStateGenerator(
+      const states = this.simulator.getInitialStates(
           node.gameState.state);
-      node.children = this.getChildrenForStates_(generator, node);
+      node.children = this.getChildrenForStates_(states, node);
     }
 
     else if (node.type == Node.Type.CHANCE) {
@@ -38,12 +38,10 @@ export default class NodeFactory {
     return node.children;
   }
 
-  getChildrenForStates_(generator, parent) {
-    const results = [];
-    for (const state of generator) {
-      results.push(this.createNode(state, Node.Type.CHANCE, parent));
-    }
-    return results;
+  getChildrenForStates_(states, parent) {
+    return states.map((state) => {
+      return this.createNode(state, Node.Type.CHANCE, parent);
+    });
   }
 
   // Value is either the card played or the next game state.

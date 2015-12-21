@@ -3,8 +3,9 @@ jest.dontMock('../game-state-accessor');
 jest.dontMock('../node-factory');
 jest.dontMock('../expectimax');
 jest.dontMock('../god-solver-factory');
+jest.dontMock('../game-state-enumerator');
 
-describe('God solver factory', () => {
+describe('God solver', () => {
   const GodSolverFactory = require('../god-solver-factory');
   const GameStateAccessor = require('../game-state-accessor');
 
