@@ -3,8 +3,7 @@ import GameStateAccessor from './game-state-accessor';
 import GameStateEnumerator from './game-state-enumerator';
 import _ from '../utils/common';
 
-// Base number of cards player draws at start of game.
-const INITIAL_DRAW = 4;
+const STARTING_HAND_SIZE = 3;
 
 export default class Simulator {
   constructor() {
@@ -15,9 +14,12 @@ export default class Simulator {
 
   getInitialStates(initialState) {
     this.cardResolver_.setInitialState(initialState);
+    const player = this.accessor_.setState(initialState).player;
     const state = this.cloneState(initialState);
+
     this.stateEnumerator_.setClonedState(state);
-    this.stateEnumerator_.draw(INITIAL_DRAW, 1);
+    this.stateEnumerator_.draw(STARTING_HAND_SIZE +
+                               player.extraHandSizeEffect, 1);
     return this.stateEnumerator_.getStates();
   }
 

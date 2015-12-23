@@ -81,7 +81,7 @@ export default class Expectimax {
 
   cleanUpMemory_() {
     if (!this.debug &&
-        (this.node_.parent.parent && this.node_.parent.parent.parent)) {
+        this.node_.parent.parent && this.node_.parent.parent.parent) {
       delete this.node_.children;
     }
   }
@@ -109,8 +109,7 @@ export default class Expectimax {
   }
 
   maybeDisplayChildren_(node) {
-    if (this.debug ||
-        !node.parent.parent ||
+    if (!node.parent.parent ||
         !node.parent.parent.parent) {
       this.nodeFactory.createChildren(node);
     }

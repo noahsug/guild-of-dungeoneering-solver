@@ -4,7 +4,7 @@ describe('game state accessor', () => {
   const GameStateAccessor = require('../game-state-accessor');
   const accessor = new GameStateAccessor();
 
-  it.only('can access deck, hand and discardPile', () => {
+  it('can access deck, hand and discardPile', () => {
     const state = {
       playerDeck: [1, 2, 3],
       enemyHand: [4, 5],

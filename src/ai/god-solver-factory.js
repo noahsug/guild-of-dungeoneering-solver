@@ -19,7 +19,7 @@ export default class GodSolverFactory {
   }
 
   getInitialStateForPlayer_(name, info) {
-    const char = gameData.players[info.type];
+    const char = gameData.players[info.name];
     const sets = char.sets.concat(info.sets || []);
     const traits = (char.traits || []).concat(info.traits || []);
 
@@ -47,14 +47,24 @@ export default class GodSolverFactory {
   getTraits_(name, traitList) {
     const traits = {};
     traitList.forEach((trait) => {
-      if (!traits[name + trait]) traits[name + trait] = 0;
-      traits[name + trait]++;
+      const traitName = name + trait.replace(' ', '');
+      if (!traits[traitName]) traits[traitName] = 0;
+      traits[traitName]++;
     });
     return traits;
   }
 
   resolveTraits_(name, state) {
     const player = GameStateAccessor.instance.setState(state)[name];
+    if (state[name + 'WarriorsMight']) {
+      state[name + 'PhysicalNextEffect'] = 1;
+    }
+    if (state[name + 'PhlogisTonic']) {
+      state[name + 'Health']++;
+    }
+    if (state[name + 'CronesDiscipline']) {
+      state[name + 'ExtraHandSizeEffect'] = 1;
+    }
     for (let i = 1; i < 9; i++) {
       let trait = name + '+' + i + 'HP';
       if (state[trait]) {
@@ -69,10 +79,11 @@ export default class GodSolverFactory {
     }
   }
 
-  createCustom(gameState, {iteration = 100000} = {}) {
+  createCustom(gameState, {iteration = 100000, debug = false} = {}) {
     const simulator = new Simulator();
     const nodeFactory = new NodeFactory(simulator);
-    const expectimax = new Expectimax({nodeFactory, runUntil: {iteration}});
+    const expectimax = new Expectimax({
+      nodeFactory, runUntil: {iteration}, debug});
     expectimax.setState(gameState);
     return expectimax;
   }

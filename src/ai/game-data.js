@@ -107,7 +107,7 @@ export default {
     'Gunnery II':  ['P/P/U', 'BP/BP/PN'],
     'Gunnery III': ['P/P/U', 'BP/BP/PN', 'BP/BP/PN'],
     'Gunnery IV':  ['P/P/U', 'BP/BP/PN', 'BP/BP/PN', 'P/Co'],
-    'Gunnery V ':  ['P/P/U', 'BP/BP/PN', 'BP/BP/PN', 'P/Co', 'P/P/P/P'],
+    'Gunnery V':   ['P/P/U', 'BP/BP/PN', 'BP/BP/PN', 'P/Co', 'P/P/P/P'],
 
     'Pickpocket I':   ['BP/SPB'],
     'Pickpocket II':  ['BP/SPB', 'P/P/SID'],
@@ -135,10 +135,10 @@ export default {
     'Fire III': ['M/M', 'M/M/Q', 'M/MRID'],
     'Fire IV':  ['M/M', 'M/M/Q', 'M/MRID', 'M/M/M/M/U'],
 
-    'Stupidity I ':  ['?'],
-    'Stupidity II ': ['?', '?'],
+    'Stupidity I':   ['?'],
+    'Stupidity II':  ['?', '?'],
     'Stupidity III': ['?', '?', '?'],
-    'Stupidity IV ': ['?', '?', '?', '?'],
+    'Stupidity IV':  ['?', '?', '?', '?'],
 
     'Growth I':   ['M/H'],
     'Growth II':  ['M/H', 'M/HID/HID'],

@@ -179,7 +179,8 @@ class Accessor {
 }
 
 const effects = ['discard', 'draw', 'cycle', 'steal', 'conceal', 'magicNext',
-                 'physicalNext', 'magicRound', 'physicalRound'];
+                 'physicalNext', 'magicRound', 'physicalRound',
+                 'extraHandSize'];
 effects.forEach((effect) => {
   const name = effect + 'Effect';
   const stateName = _.capitalize(name);

@@ -40,13 +40,13 @@ describe('simulator', () => {
 
   it('gets initial game states', () => {
     const state = GameStateAccessor.create({
-      playerDeck: [1, 2, 3, 4],
+      playerDeck: [1, 2, 3],
       enemyDeck: [1, 1, 3, 4],
     });
     const states = sim.getInitialStates(state);
-    expect(states.length).toBe(96);
+    expect(states.length).toBe(24);
     expect(states[0].playerDeck).toEqual([]);
-    expect(states[0].playerHand).toEqualValues([1, 2, 3, 4]);
+    expect(states[0].playerHand).toEqualValues([1, 2, 3]);
     expect(states[0].playerDiscard).toEqual([]);
     expect(states[0].enemyDeck.length).toEqual(3);
     expect([1, 3, 4]).toContain(states[0].enemyHand[0]);
