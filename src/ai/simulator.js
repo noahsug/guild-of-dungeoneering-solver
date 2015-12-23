@@ -14,7 +14,9 @@ export default class Simulator {
   }
 
   getInitialStates(initialState) {
-    this.stateEnumerator_.setState(initialState);
+    this.cardResolver_.setInitialState(initialState);
+    const state = this.cloneState(initialState);
+    this.stateEnumerator_.setClonedState(state);
     this.stateEnumerator_.draw(INITIAL_DRAW, 1);
     return this.stateEnumerator_.getStates();
   }

@@ -23,5 +23,9 @@ jasmine.getEnv().beforeEach(function() {
     toContainValues: function(values) {
       return _.difference(_.values(values), _.values(this.actual)).length == 0;
     },
+
+    toEqualFloat: function(value, fudge) {
+      return Math.abs(this.actual - value) < fudge;
+    },
   });
 })

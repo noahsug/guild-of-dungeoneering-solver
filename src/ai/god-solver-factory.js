@@ -69,7 +69,7 @@ export default class GodSolverFactory {
     }
   }
 
-  createCustom(gameState, {iteration = 5000}) {
+  createCustom(gameState, {iteration = 100000} = {}) {
     const simulator = new Simulator();
     const nodeFactory = new NodeFactory(simulator);
     const expectimax = new Expectimax({nodeFactory, runUntil: {iteration}});

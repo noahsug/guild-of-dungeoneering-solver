@@ -103,6 +103,7 @@ describe('simulator', () => {
     const states = sim.getStates(state, 1);
     expect(states.length).toBe(18);
     expect(states[0].playerHand.length).toBe(2);
+    expect(states[0].playerDiscardEffect).toBeFalsy();
   });
 
   it('handles player draws', () => {

@@ -1,20 +1,13 @@
-jest.dontMock('../simulator');
-jest.dontMock('../game-state-accessor');
-jest.dontMock('../node-factory');
-jest.dontMock('../expectimax');
-jest.dontMock('../god-solver-factory');
-jest.dontMock('../game-state-enumerator');
+jest.autoMockOff();
 
 describe('God solver', () => {
   const GodSolverFactory = require('../god-solver-factory');
-  const GameStateAccessor = require('../game-state-accessor');
 
-  it('returns solver', function() {
+  xit('Chump beats Gray Ooze 41.76% of the time', function() {
     const godSolverFactory = new GodSolverFactory();
-    const gameState = GameStateAccessor.create({
-      playerDeck: [1, 2, 3, 4], enemyDeck: [1, 2, 3, 4]});
-    const solver = godSolverFactory.createCustom(gameState, {iteration: 100});
+    const solver = new GodSolverFactory().create(
+        {type: 'Chump'}, {type: 'Gray Ooze'});
     solver.solve();
-    expect(solver.rootNode.result).toBeDefined();
+    expect(solver.rootNode.result).toEqualFloat(0.4176, 0.0001);
   });
 });

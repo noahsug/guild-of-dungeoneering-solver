@@ -12,7 +12,11 @@ export default class App {
     root.classList.add('App');
     window.addEventListener('keydown', this.onKeyDown_.bind(this), false);
 
-    this.player = {type: 'Chump', sets: [], traits: [], items: ['Straightjacket']};
+    this.player = {
+      type: 'Chump',
+      sets: [],
+      traits: [],
+      items: []};
     this.enemy = {type: 'Snake'};
     this.iterations = 5000000;
   }

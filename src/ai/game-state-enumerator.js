@@ -35,17 +35,22 @@ export default class Simulator {
   }
 
   playerEndTurn_(player) {
-    this.forEachState_(this.stateRemoveFromPlay_.bind(this, player));
+    this.forEachState_(this.stateEndTurn_.bind(this, player));
     this.playerDraw_(player, 1);
+    delete player.inPlay;
   }
 
-  stateRemoveFromPlay_(player) {
+  stateEndTurn_(player) {
     player.removeFromPlay(player.inPlay);
+    player.discardEffect = 0;
+    player.drawEffect = 0;
+    player.cycleEffect = 0;
+    player.stealEffect = 0;
   }
 
   draw(playerCount, enemyCount = 0) {
-    this.playerDraw_(this.accessor_.player, playerCount);
-    this.playerDraw_(this.accessor_.enemy, enemyCount);
+    if (playerCount) this.playerDraw_(this.accessor_.player, playerCount);
+    if (enemyCount) this.playerDraw_(this.accessor_.enemy, enemyCount);
   }
 
   playerDraw_(player, count) {
@@ -59,6 +64,7 @@ export default class Simulator {
   }
 
   discard(count) {
+    if (!count) return;
     const player = this.accessor_.player;
     player.state = this.states_[0];
     count = Math.min(count, player.hand.length);
@@ -70,6 +76,7 @@ export default class Simulator {
   }
 
   cycle(count) {
+    if (!count) return;
     const player = this.accessor_.player;
     player.state = this.states_[0];
     count = Math.min(count, player.hand.length);

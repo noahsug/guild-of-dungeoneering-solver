@@ -8,13 +8,19 @@ describe('card resolver', () => {
   const Card = require('../card');
   const GameStateAccessor = require('../game-state-accessor');
   const resolver = new CardResolver();
+  const accessor = new GameStateAccessor();
+
+  function useState(hp, options = {}) {
+    const stateOptions = Object.assign({enemyHealth: hp, playerHealth: hp},
+                                       options);
+    const state = GameStateAccessor.create(stateOptions);
+    resolver.setInitialState(state);
+    const nextState = GameStateAccessor.clone(state);
+    return [nextState, ...accessor.setState(nextState).access()];
+  }
 
   it('resolves dmg', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      enemyHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
     resolver.resolve(state, Card.create('P/P/P'), Card.create('P'));
     expect(player.health).toBe(4);
     expect(enemy.health).toBe(2);
@@ -24,11 +30,7 @@ describe('card resolver', () => {
   });
 
   it('resolves blocking', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      enemyHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
     resolver.resolve(state, Card.create('BP/BP/M/M'), Card.create('BM/P/P'));
     expect(player.health).toBe(5);
     expect(enemy.health).toBe(4);
@@ -38,33 +40,21 @@ describe('card resolver', () => {
   });
 
   it('resolves quick attacks', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 1,
-      enemyHealth: 1,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(1);
     resolver.resolve(state, Card.create('Q/P'), Card.create('P/P/P'));
     expect(player.dead).toBe(false);
     expect(enemy.dead).toBe(true);
   });
 
   it('resolves unblockable attacks', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      enemyHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
     resolver.resolve(state, Card.create('U/P'), Card.create('B'));
     expect(player.health).toBe(5);
     expect(enemy.health).toBe(4);
   });
 
   it('resolves heals', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      enemyHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
     resolver.resolve(state, Card.create('P/HID'), Card.create('B'));
     expect(player.health).toBe(5);
     expect(enemy.health).toBe(5);
@@ -80,37 +70,28 @@ describe('card resolver', () => {
   });
 
   it('resolves self damage', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-      enemyHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
     resolver.resolve(state, Card.create('-H'), Card.create('?'));
     expect(player.health).toBe(4);
     expect(enemy.health).toBe(5);
   });
 
   it('resolves effects', () => {
-    const state = GameStateAccessor.create({});
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(10);
     resolver.resolve(state, Card.create('D/C/S/MN/PN/Co'), Card.create('BP'));
     const playerEffects = ['steal', 'conceal', 'draw', 'physicalNext',
-                           'magicNext'];
-    const enemyEffects = ['cycle'];
+                           'magicNext', 'cycle'];
     playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(1));
-    enemyEffects.forEach((e) => expect(enemy[e + 'Effect']).toBe(1));
   });
 
   it('resolves duplicate effects', () => {
-    const state = GameStateAccessor.create({});
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(10);
     resolver.resolve(state, Card.create('D/D/D'), Card.create('BP'));
     expect(player.drawEffect).toBe(3);
   });
 
   it('resolves if damage effects', () => {
-    const state = GameStateAccessor.create({});
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(10);
     const card = Card.create('P/Di/PRID/MRID/SID/CoID');
     const playerEffects = ['steal', 'conceal'];
     const enemyEffects = ['discard', 'physicalRound', 'magicRound'];
@@ -125,10 +106,7 @@ describe('card resolver', () => {
   });
 
   it('resolves per block cards', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
     const card = Card.create('B/B/SPB/HPB');
 
     resolver.resolve(state, card, Card.create('B'));
@@ -145,10 +123,7 @@ describe('card resolver', () => {
   });
 
   it('resolves block all cards', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 5,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(5);
 
     resolver.resolve(state, Card.create('BPA'), Card.create('P/P/P/P'));
     expect(player.health).toBe(5);
@@ -161,21 +136,14 @@ describe('card resolver', () => {
   });
 
   it('resolves health = 6', () => {
-    const state = GameStateAccessor.create({
-      playerHealth: 1,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(1);
 
     resolver.resolve(state, Card.create('H6/Q'), Card.create('P/P/P/P'));
     expect(player.health).toBe(2);
   });
 
   it('resolves bonus physical dmg vs unblockable', () => {
-    const state = GameStateAccessor.create({
-      enemyHealth: 10,
-      playerHealth: 10,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(10);
 
     resolver.resolve(state, Card.create('P/P/PVU'), Card.create('P'));
     expect(enemy.health).toBe(8);
@@ -185,11 +153,7 @@ describe('card resolver', () => {
   });
 
   it('resolves bonus dmg on next attack', () => {
-    const state = GameStateAccessor.create({
-      enemyHealth: 10,
-      playerHealth: 10,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(10);
 
     resolver.resolve(state, Card.create('PN/MN'), Card.create('B'));
     resolver.resolve(state, Card.create('PN/PN/PN'), Card.create('B'));
@@ -209,22 +173,145 @@ describe('card resolver', () => {
   });
 
   it('resolves dmg per round', () => {
-    const state = GameStateAccessor.create({
-      enemyHealth: 10,
-      playerHealth: 10,
-    });
-    const [player, enemy] = GameStateAccessor.access(state);
+    const [state, player, enemy] = useState(10);
 
     resolver.resolve(state, Card.create('P/PRID'), Card.create('?'));
-    expect(enemy.health).toBe(8);
+    expect(enemy.health).toBe(9);
 
     resolver.resolve(state, Card.create('P'), Card.create('B/B'));
-    expect(enemy.health).toBe(7);
+    expect(enemy.health).toBe(8);
 
     resolver.resolve(state, Card.create('P/PRID'), Card.create('?'));
-    expect(enemy.health).toBe(4);
+    expect(enemy.health).toBe(6);
 
     resolver.resolve(state, Card.create('?'), Card.create('?'));
+    expect(enemy.health).toBe(4);
+  });
+
+  it('resolves frail', () => {
+    const [state, player, enemy] = useState(10, {enemyFrail: 1});
+    resolver.resolve(state, Card.create('P'), Card.create('?'));
+    expect(enemy.health).toBe(8);
+    resolver.resolve(state, Card.create('M'), Card.create('?'));
+    expect(enemy.health).toBe(7);
+  });
+
+  it('resolves mundane', () => {
+    const [state, player, enemy] = useState(10, {enemyMundane: 1});
+    resolver.resolve(state, Card.create('M'), Card.create('?'));
+    expect(enemy.health).toBe(8);
+    resolver.resolve(state, Card.create('P'), Card.create('?'));
+    expect(enemy.health).toBe(7);
+  });
+
+  it('resolves fury', () => {
+    const [state, player, enemy] = useState(10, {playerFury: 1});
+    resolver.resolve(state, Card.create('P'), Card.create('P/P/P/P/P'));
+    expect(enemy.health).toBe(9);
+    resolver.resolve(state, Card.create('P'), Card.create('P'));
+    expect(enemy.health).toBe(7);
+  });
+
+  it('resolves predictable', () => {
+    // TODO
+  });
+
+  it('resolves brittle', () => {
+    const [state, player, enemy] = useState(10, {enemyBrittle: 1});
+    resolver.resolve(state, Card.create('P/P/P/P'), Card.create('H/H/H'));
+    expect(enemy.health).toBe(7);
+    resolver.resolve(state, Card.create('P/P/P/PRID'), Card.create('H/H/H'));
+    expect(enemy.health).toBe(7);
+    resolver.resolve(state, Card.create('P/P/P'), Card.create('H/H/H'));
+    expect(enemy.health).toBe(4);
+  });
+
+  it('resolves tenacious', () => {
+    const [state, player, enemy] = useState(5, {enemyTenacious: 1});
+    resolver.resolve(state, Card.create('P/P/P/P/P/P'), Card.create('?'));
+    expect(enemy.health).toBe(1);
+  });
+
+  it('resolves sluggish', () => {
+    const [state, player, enemy] = useState(5, {playerSluggish: 1});
+    resolver.resolve(state, Card.create('P/P/P/P'), Card.create('B/BP'));
+    expect(enemy.health).toBe(5);
+    resolver.resolve(state, Card.create('P/P/P/P'), Card.create('B/B/HPB'));
+    expect(enemy.health).toBe(9);
+  });
+
+  it('resolves bulwark', () => {
+    const [state, player, enemy] = useState(5, {enemyBulwark: 1});
+    resolver.resolve(state, Card.create('P'), Card.create('H'));
+    expect(enemy.health).toBe(6);
+    resolver.resolve(state, Card.create('P/U'), Card.create('?'));
+    expect(enemy.health).toBe(5);
+    resolver.resolve(state, Card.create('P/P'), Card.create('B/HPB'));
+    expect(enemy.health).toBe(7);
+    resolver.resolve(state, Card.create('?'), Card.create('-H/HPB'));
+    expect(enemy.health).toBe(8);
+  });
+
+  it('resolves retribution', () => {
+    const [state, player, enemy] = useState(10, {enemyRetribution: 1});
+    resolver.resolve(state, Card.create('M/M/M'), Card.create('H/H/H'));
+    expect(player.health).toBe(9);
+    resolver.resolve(state, Card.create('M/M/M/BM'), Card.create('H/H/H'));
+    expect(player.health).toBe(9);
+  });
+
+  it('resolves decay', () => {
+    const [state, player, enemy] = useState(5, {enemyDecay: 1});
+    resolver.resolve(state, Card.create('P/P'), Card.create('?'));
     expect(enemy.health).toBe(2);
+  });
+
+  it('resolves tough', () => {
+    const [state, player, enemy] = useState(5, {enemyTough: 1});
+    resolver.resolve(state, Card.create('P/P/P/P'), Card.create('B/B/HPB'));
+    expect(enemy.health).toBe(7);
+  });
+
+  it('resolves spikey', () => {
+    const [state, player, enemy] = useState(5, {enemySpikey: 1});
+    resolver.resolve(state, Card.create('P/P'), Card.create('BP/B'));
+    expect(player.health).toBe(4);
+    resolver.resolve(state, Card.create('P/P'), Card.create('BM/B'));
+    expect(player.health).toBe(4);
+  });
+
+  it('resolves rum', () => {
+    const [state, player, enemy] = useState(5, {enemyRum: 1});
+    resolver.resolve(state, Card.create('P/P/P/P'), Card.create('?'));
+    expect(enemy.health).toBe(1);
+    resolver.resolve(state, Card.create('?'), Card.create('?'));
+    expect(enemy.health).toBe(3);
+    resolver.resolve(state, Card.create('P/P'), Card.create('?'));
+    expect(enemy.health).toBe(1);
+    resolver.resolve(state, Card.create('?'), Card.create('?'));
+    expect(enemy.health).toBe(1);
+  });
+
+  it('resolves ferocious', () => {
+    const [state, player, enemy] = useState(10, {playerFerocious: 1});
+    resolver.resolve(state, Card.create('P/P/P'), Card.create('?'));
+    expect(enemy.health).toBe(6);
+    resolver.resolve(state, Card.create('P/P/M'), Card.create('?'));
+    expect(enemy.health).toBe(3);
+  });
+
+  it('resolves burn', () => {
+    const [state, player, enemy] = useState(5, {enemyBurn: 1});
+    resolver.resolve(state, Card.create('B'), Card.create('BA'));
+    expect(enemy.health).toBe(4);
+    expect(player.health).toBe(4);
+  });
+
+  it('resolves respite', () => {
+    const [state, player, enemy] = useState(5, {enemyRespite: 1});
+    resolver.resolve(state, Card.create('P'), Card.create('BP'));
+    expect(enemy.health).toBe(6);
+    resolver.resolve(state, Card.create('P'), Card.create('H'));
+    expect(enemy.health).toBe(6);
   });
 });

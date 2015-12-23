@@ -17,7 +17,7 @@ _.mixin({
   },
 
   capitalize: (string) => {
-    return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+    return string.charAt(0).toUpperCase() + string.substring(1);
   },
 
   // Like _.without, but only removes the first instance of an element.

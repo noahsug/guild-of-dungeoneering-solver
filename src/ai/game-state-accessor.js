@@ -4,6 +4,8 @@ export default class GameStateAccessor {
   constructor() {
     this.player = new Accessor('player');
     this.enemy = new Accessor('enemy');
+    this.player.enemy = this.enemy;
+    this.enemy.enemy = this.player;
   }
 
   setState(state) {
@@ -33,17 +35,29 @@ export default class GameStateAccessor {
 
   copyInto(dest) {
     dest.playerHealth = this.state.playerHealth;
-    dest.enemyHealth = this.state.enemyHealth;
     dest.playerDeck = this.state.playerDeck.slice();
-    dest.enemyDeck = this.state.enemyDeck.slice();
     dest.playerHand = this.state.playerHand.slice();
-    dest.enemyHand = this.state.enemyHand.slice();
     dest.playerDiscard = this.state.playerDiscard.slice();
+    dest.playerDiscardEffect = this.state.playerDiscardEffect;
+    dest.playerDrawEffect = this.state.playerDrawEffect;
+    dest.playerCycleEffect = this.state.playerCycleEffect;
+    dest.playerMagicNextEffect = this.state.playerMagicNextEffect;
+    dest.playerPhysicalNextEffect = this.state.playerPhysicalNextEffect;
+    dest.playerMagicRoundEffect = this.state.playerMagicRoundEffect;
+    dest.playerPhysicalRoundEffect = this.state.playerPhysicalRoundEffect;
+
+    dest.enemyHealth = this.state.enemyHealth;
+    dest.enemyDeck = this.state.enemyDeck.slice();
+    dest.enemyHand = this.state.enemyHand.slice();
     dest.enemyDiscard = this.state.enemyDiscard.slice();
-    dest.playerFrail = this.state.playerFrail;
-    dest.enemyFrail = this.state.enemyFrail;
-    dest.playerMundane = this.state.playerMundane;
-    dest.enemyMundane = this.state.enemyMundane;
+    dest.enemyStealEffect = this.state.enemyStealEffect;
+    dest.enemyConcealEffect = this.state.enemyConcealEffect;
+    dest.enemyMagicNextEffect = this.state.enemyMagicNextEffect;
+    dest.enemyPhysicalNextEffect = this.state.enemyPhysicalNextEffect;
+    dest.enemyMagicRoundEffect = this.state.enemyMagicRoundEffect;
+    dest.enemyPhysicalRoundEffect = this.state.enemyPhysicalRoundEffect;
+    dest.enemyPredictable = this.state.enemyPredictable;
+    dest.enemyRum = this.state.enemyRum;
   }
 
   static get instance() {
@@ -82,57 +96,37 @@ export default class GameStateAccessor {
 }
 
 class Accessor {
-  constructor(key) {
-    this.key_ = {
-      deck: key + 'Deck',
-      hand: key + 'Hand',
-      discardPile: key + 'Discard',
-      health: key + 'Health',
-      discardEffect: key + 'DiscardEffect',
-      drawEffect: key + 'DrawEffect',
-      cycleEffect: key + 'CycleEffect',
-      stealEffect: key + 'StealEffect',
-      concealEffect: key + 'ConcealEffect',
-      magicNextEffect: key + 'MagicNextEffect',
-      physicalNextEffect: key + 'PhysicalNextEffect',
-      magicRoundEffect: key + 'MagicRoundEffect',
-      physicalRoundEffect: key + 'PhysicalRoundEffect',
-      frail: key + 'Frail',
-      mundane: key + 'Mundane',
-    };
+  constructor(type) {
+    this.type = type;
     this.state = null;
   }
 
   get deck() {
-    return this.state[this.key_.deck];
+    return this.state[this.type + 'Deck'];
   }
-
   set deck(cards) {
-    this.state[this.key_.deck] = cards;
+    this.state[this.type + 'Deck'] = cards;
   }
 
   get hand() {
-    return this.state[this.key_.hand];
+    return this.state[this.type + 'Hand'];
   }
-
   set hand(hand) {
-    this.state[this.key_.hand] = hand;
+    this.state[this.type + 'Hand'] = hand;
   }
 
   get discardPile() {
-    return this.state[this.key_.discardPile];
+    return this.state[this.type + 'Discard'];
   }
-
   set discardPile(cards) {
-    this.state[this.key_.discardPile] = cards;
+    this.state[this.type + 'Discard'] = cards;
   }
 
   get health() {
-    return this.state[this.key_.health];
+    return this.state[this.type + 'Health'];
   }
-
   set health(health) {
-    this.state[this.key_.health] = health;
+    this.state[this.type + 'Health'] = health;
   }
 
   get dead() {
@@ -182,73 +176,27 @@ class Accessor {
   removeFromPlay(card) {
     this.discardPile.push(card);
   }
-
-  get discardEffect() {
-    return this.state[this.key_.discardEffect] || 0;
-  }
-  set discardEffect(v) {
-    this.state[this.key_.discardEffect] = v;
-  }
-
-  get drawEffect() {
-    return this.state[this.key_.drawEffect] || 0;
-  }
-  set drawEffect(v) {
-    this.state[this.key_.drawEffect] = v;
-  }
-
-  get cycleEffect() {
-    return this.state[this.key_.cycleEffect] || 0;
-  }
-  set cycleEffect(v) {
-    this.state[this.key_.cycleEffect] = v;
-  }
-
-  get stealEffect() {
-    return this.state[this.key_.stealEffect] || 0;
-  }
-  set stealEffect(v) {
-    this.state[this.key_.stealEffect] = v;
-  }
-
-  get concealEffect() {
-    return this.state[this.key_.concealEffect] || 0;
-  }
-  set concealEffect(v) {
-    this.state[this.key_.concealEffect] = v;
-  }
-
-  get magicNextEffect() {
-    return this.state[this.key_.magicNextEffect] || 0;
-  }
-  set magicNextEffect(v) {
-    this.state[this.key_.magicNextEffect] = v;
-  }
-
-  get physicalNextEffect() {
-    return this.state[this.key_.physicalNextEffect] || 0;
-  }
-  set physicalNextEffect(v) {
-    this.state[this.key_.physicalNextEffect] = v;
-  }
-
-  get magicRoundEffect() {
-    return this.state[this.key_.magicRoundEffect] || 0;
-  }
-  set magicRoundEffect(v) {
-    this.state[this.key_.magicRoundEffect] = v;
-  }
-
-  get physicalRoundEffect() {
-    return this.state[this.key_.physicalRoundEffect] || 0;
-  }
-  set physicalRoundEffect(v) {
-    this.state[this.key_.physicalRoundEffect] = v;
-  }
-
-  get frail() { return this.state[this.key_.frail] || 0; }
-  set frail(v) { this.state[this.key_.frail] = v; }
-
-  get mundane() { return this.state[this.key_.mundane] || 0; }
-  set mundane(v) { this.state[this.key_.mundane] = v; }
 }
+
+const effects = ['discard', 'draw', 'cycle', 'steal', 'conceal', 'magicNext',
+                 'physicalNext', 'magicRound', 'physicalRound'];
+effects.forEach((effect) => {
+  const name = effect + 'Effect';
+  const stateName = _.capitalize(name);
+  Object.defineProperty(Accessor.prototype, effect + 'Effect', {
+    get: function() { return this.state[this.type + stateName] || 0; },
+    set: function(v) { this.state[this.type + stateName] = v; },
+  });
+});
+
+const traits = ['frail', 'mundane', 'fury', 'predictable', 'brittle',
+                'tenacious', 'sluggish', 'bulwark', 'retribution',
+                'decay', 'tough', 'spikey', 'rum', 'ferocious', 'burn',
+                'respite'];
+traits.forEach((trait) => {
+  const stateName = _.capitalize(trait);
+  Object.defineProperty(Accessor.prototype, trait, {
+    get: function() { return this.state[this.type + stateName] || 0; },
+    set: function(v) { this.state[this.type + stateName] = v; },
+  });
+});
