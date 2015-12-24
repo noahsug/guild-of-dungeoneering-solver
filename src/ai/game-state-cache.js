@@ -21,11 +21,17 @@ export default class GameStateCache {
   }
 
   getResult(node) {
-    return this.cache_[this.getId_(node)];
+    const id = this.getId_(node);
+    if (!this.cache_[id]) this.cache_[id] = 0;
+    return this.cache_[id];
   }
 
   getCachedNode(node) {
     return this.nodeCache_[this.getId_(node)];
+  }
+
+  hasVisitedWithNoResult(node) {
+    return this.cache_[this.getId_(node)] === 0;
   }
 
   getId_(node) {

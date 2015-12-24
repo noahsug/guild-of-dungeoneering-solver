@@ -4,6 +4,7 @@ import Simulator from './simulator';
 import Expectimax from './expectimax';
 import Card from './card';
 import gameData from './game-data';
+import _ from '../utils/common';
 
 export default class GodSolverFactory {
   create(player, enemy, runOptions) {
@@ -20,6 +21,7 @@ export default class GodSolverFactory {
 
   getInitialStateForPlayer_(name, info) {
     const char = gameData.players[info.name];
+    _.assert(char, 'invalid name: ' + info.name);
     const sets = char.sets.concat(info.sets || []);
     const traits = (char.traits || []).concat(info.traits || []);
 

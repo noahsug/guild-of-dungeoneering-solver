@@ -5,6 +5,7 @@ import GodSolverFactory from '../../ai/god-solver-factory';
 import Card from '../../ai/card';
 import Node from '../../ai/node';
 import results from '../../ai/results';
+import gameData from '../../ai/game-data';
 import ResultAccessor from '../../ai/result-accessor';
 import _ from '../../utils/common';
 
@@ -22,27 +23,61 @@ export default class App {
                          'Minotaur', 'Mummy', 'Scorpion', 'Shade', 'Sorceress'];
     const grasslands4 = ['Black knight', 'Embro', 'Lich', 'Eye Beast',
                          'Mimic Queen', 'Orc Warlord', 'Rat King'];
-    this.enemies = grasslands1.concat(grasslands2).concat(grasslands3).concat(grasslands4);
+
+    const trinkets = ['Phlogis Tonic', 'Warriors Might', 'Crones Discipline'];
+
+    const c1Items = [];
+    _.each(gameData.items, (i, name) => {
+      if (i.rarity == 'C1') c1Items.push(name);
+    });
+
+    //this.traits = trinkets;
+    this.traits = [];
+    this.traitIndex = 1;
+
+    this.items = c1Items;
+    //this.items = ['Ruffled Shirt'];
+    this.itemIndex = 1;
+
+    //this.enemies = grasslands1.concat(grasslands2).concat(grasslands3).concat(grasslands4);
+    this.enemies = grasslands1.concat(grasslands2).concat(['Rat King']);//.concat(grasslands3).concat(['Rat King']);
+    //this.enemies = ['Scary Spider'];
     this.enemyIndex = 0;
-    this.nextEnemy_();
 
     this.player = {
       name: 'Chump',
       sets: [],
-      traits: ['Warriors Might'],
-      items: []};
+      traits: this.traits[0] ? [this.traits[0]] : [],
+      items: this.items[0] ? [this.items[0]] : []};
 
-    this.iterations = 5000000;
-    this.debug = true;
+    this.iterations = 15000000;
+    //this.debug = true;
+    //this.showGameView = true;
+    //this.showTree = true;
+    this.showResults = true;
+
+    this.nextEnemy_();
   }
 
   nextEnemy_() {
     if (this.enemyIndex >= this.enemies.length) {
-      this.enemy = null;
-    } else {
-      this.enemy = {name: this.enemies[this.enemyIndex]};
-      this.enemyIndex++;
+      if (this.traitIndex >= this.traits.length) {
+        if (this.itemIndex >= this.items.length) {
+          return false;
+        }
+        this.player.items = [this.items[this.itemIndex]];
+        this.itemIndex++;
+        this.traitIndex = 0;
+      }
+      if (this.traits[this.traitIndex]) {
+        this.player.traits = [this.traits[this.traitIndex]];
+      }
+      this.traitIndex++;
+      this.enemyIndex = 0;
     }
+    this.enemy = {name: this.enemies[this.enemyIndex]};
+    this.enemyIndex++;
+    return true;
   }
 
   onKeyDown_(e) {
@@ -52,9 +87,18 @@ export default class App {
       this.root.innerHTML = '';
       this.render();
     }
+
+    if (e.keyCode == 80) {  // 'P'
+      this.paused = !this.paused;
+    }
   }
 
   render() {
+    if (this.paused) {
+      setTimeout(this.render.bind(this), 500);
+      return;
+    }
+
     const solver = new GodSolverFactory().create(
         this.player, this.enemy,
         {iteration: this.iterations, debug: this.debug});
@@ -76,9 +120,17 @@ export default class App {
   increment_(solver, start) {
     const time = Date.now() - start;
     if (solver.done) {
-      this.renderResult_(solver, time);
+      this.maybeSaveResult_(solver.rootNode.resul);
+      if (this.nextEnemy_()) {
+        setTimeout(() => this.render(), 30);
+      } else {
+        this.renderResult_(solver, time);
+      }
     } else {
-      this.renderIncrementalResult_(solver, time);
+      this.root.innerHTML = this.printMatchup_(solver.rootNode) +
+          ' - Win Rate: ' + this.percent_(solver.rootNode.winRate) +
+          ' - Iteraiton: ' + (this.iterations - solver.iteration);
+      //this.renderIncrementalResult_(solver, time);
       for (let i = 0; i < 10000 && !solver.done; i++) {
         solver.next();
       }
@@ -126,13 +178,15 @@ export default class App {
       this.addStat_(subTitle, 'to solve', this.printTime_(time / solved));
     }
 
-    const gameplayElement = document.createElement('div');
-    this.root.appendChild(gameplayElement);
-    const gameplayView = new GameplayView(gameplayElement);
-    gameplayView.rootNode = rootNode;
-    gameplayView.render();
+    if (this.showGameView) {
+      const gameplayElement = document.createElement('div');
+      this.root.appendChild(gameplayElement);
+      const gameplayView = new GameplayView(gameplayElement);
+      gameplayView.rootNode = rootNode;
+      gameplayView.render();
+    }
 
-    if (!this.debug) {
+    if (this.showTree) {
       const gameTreeElement = document.createElement('div');
       this.root.appendChild(gameTreeElement);
       const gameTree = new GameTree(gameTreeElement);
@@ -140,11 +194,8 @@ export default class App {
       gameTree.render();
     }
 
-    this.root.appendChild(this.renderAllResults_(rootNode.result));
-
-    this.nextEnemy_();
-    if (this.enemy) {
-      setTimeout(() => this.render(), 500);
+    if (this.showResults) {
+      this.root.appendChild(this.renderAllResults_(rootNode.result));
     }
   }
 
@@ -213,14 +264,22 @@ export default class App {
     container.appendChild(stat);
   }
 
-  renderAllResults_(result) {
+  maybeSaveResult_(result) {
     if (result) {
       new ResultAccessor().save(this.player, this.enemy, result);
+    } else {
+      console.error('NO RESULT FOR', this.enemy.name, ':',
+                    JSON.strinify(this.player, null, 2),
+                    JSON.strinify(this.enemy, null, 2));
     }
+  }
+
+  renderAllResults_(result) {
     const container = document.createElement('textarea');
     container.setAttribute('cols', 100);
     container.setAttribute('rows', 15);
     container.innerHTML = JSON.stringify(results, null, 2);
+    console.log(JSON.stringify(results, null, 2));
     return container;
   }
 }

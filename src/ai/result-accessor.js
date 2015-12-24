@@ -30,8 +30,11 @@ export default class ResultAccessor {
       resultObj = {
         player: this.buildPlayerObj_(player),
         enemy: this.buildPlayerObj_(enemy),
-      }
+      };
       results.push(resultObj);
+    } else if (!_.floatEquals(resultObj.result, result, 0.000001)) {
+      console.warn('Updating result from ', resultObj.result, 'to', result,
+                   'for player:', player, 'enemy:', enemy);
     }
     resultObj.result = result;
   }
@@ -47,6 +50,7 @@ export default class ResultAccessor {
     if (player.items && player.items.length) {
       obj.items = player.items.sort().slice();
     }
+    console.log(obj, player);
     return obj;
   }
 }

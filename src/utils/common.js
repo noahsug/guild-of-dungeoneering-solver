@@ -115,6 +115,7 @@ _.mixin({
   },
 
   arrayEquals: (array1, array2) => {
+    if (array1.length != array2.length) return false;
     return array1.every((v, i) => {
       return array2[i] === v;
     });
@@ -126,8 +127,11 @@ _.mixin({
     return _.arrayEquals(values1, values2);
   },
 
-  assert: (value) => {
-    if (!value) throw new Error('Assertion failed: ' + value);
+  assert: (value, msg) => {
+    if (!value) {
+      throw new Error('Assertion failed: ' +
+                      (value == undefined ? msg : value));
+    }
   },
 
   fail: () => {

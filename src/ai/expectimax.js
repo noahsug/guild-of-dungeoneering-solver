@@ -1,5 +1,6 @@
 import GameStateCache from './game-state-cache';
 import Node from './node';
+import Card from './card';
 import _ from '../utils/common';
 
 export default class Expectimax {
@@ -12,6 +13,20 @@ export default class Expectimax {
 
   setState(gameState) {
     this.rootNode = this.nodeFactory.createRootNode(gameState);
+
+    //this.nodeFactory.createChildren(this.rootNode);
+    //this.rootNode = this.rootNode.children.find((c) => {
+    //  if (c.gameState.state.enemyHand[0] != Card.create('HPD/M')) return false;
+    //  return c.gameState.state.playerHand.every((card) => {
+    //    return card == Card.create('P');
+    //  });
+    //});
+    //this.nodeFactory.createChildren(this.rootNode);
+    //this.rootNode = this.rootNode.children[0];
+    //
+    //this.nodeFactory.createChildren(this.rootNode);
+    //this.rootNode = this.rootNode.children[0];
+
     this.reset();
     return this;
   }
@@ -47,7 +62,7 @@ export default class Expectimax {
   }
 
   cacheResult_() {
-    if (this.node_.type == Node.Type.CHANCE) {
+    if (this.node_.type == Node.Type.CHANCE && this.node_.result != -Infinity) {
       this.cache_.cacheResult(this.node_);
     }
   }
@@ -97,6 +112,11 @@ export default class Expectimax {
   initNode_(node) {
     if (node.result) return;
     if (node.type == Node.Type.CHANCE) {
+      if (this.cache_.hasVisitedWithNoResult(node)) {
+        // There's a loop!
+        node.result = -Infinity;
+        return;
+      }
       node.result = this.cache_.getResult(node);
       if (node.result) {  // cached
         this.maybeDisplayChildren_(node);

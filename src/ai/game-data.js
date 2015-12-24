@@ -740,84 +740,115 @@ export default {
     // Body - C1
     'Straightjacket': {
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'C1',
     },
     'Ruffled Shirt': {
       sets: ['Swift I'],
+      slot: 'Head',
+      rarity: 'C1',
     },
     'Barrel': {
       sets: ['Stupidity I'],
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'C1',
     },
-    // Body - C2
     'Tattered Mail': {
       sets: ['Armour I', 'Stupidity I'],
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'C2',
     },
     'Shimmering Cloak': {
       sets: ['Arcane I', 'Fire I'],
+      slot: 'Head',
+      rarity: 'C2',
     },
-    // Body - C3
     'Red Mail': {
       sets: ['Armour I'],
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'C3',
     },
     'Bone Armour': {
       sets: ['Arcane I'],
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'C3',
     },
-    // Body - U1
     'Sash': {
       sets: ['Swift I', 'Growth I'],
+      slot: 'Head',
+      rarity: 'U1',
     },
-    // Body - U2
     'Mage Robes': {
       sets: ['Fire I', 'Arcane I', 'Holy I'],
+      slot: 'Head',
+      rarity: 'U2',
     },
     'Corset': {
       sets: ['Armour I', 'Growth I'],
+      slot: 'Head',
+      rarity: 'U2',
     },
-    // Body - U3
     'Wolf Pelt': {
       sets: ['Growth II'],
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'U3',
     },
     'Scale Mail': {
       sets: ['Armour I'],
       traits: ['+2HP'],
+      slot: 'Head',
+      rarity: 'U3',
     },
-    // Body - R1
     'Bark Vest': {
       sets: ['Growth I', 'Stupidity I'],
       traits: ['Tenacious'],
+      slot: 'Head',
+      rarity: 'R1',
     },
     'Fish Scale Cowl': {
       sets: ['Arcane I'],
       traits: ['+1HP'],
+      slot: 'Head',
+      rarity: 'R1',
     },
-    // Body - R2
     'Seafarers Brace': {
       sets: ['Armour I', 'Arcane I'],
       traits: ['Retribution'],
+      slot: 'Head',
+      rarity: 'R2',
     },
-    // Body - R3
     'Doom Plate': {
       sets: ['Armour I'],
       traits: ['Bulwark'],
+      slot: 'Head',
+      rarity: 'R3',
     },
     'Padded Vest': {
       sets: ['Arcane II', 'Armour I'],
+      slot: 'Head',
+      rarity: 'R3',
     },
-    // Body - E3
     'Dragon Scale': {
       sets: ['Armour III', 'Fire II'],
+      slot: 'Head',
+      rarity: 'E3',
     },
     'Coat Of Thorns': {
       sets: ['Armour II', 'Growth I'],
       traits: ['Spikey'],
+      slot: 'Head',
+      rarity: 'E3',
     },
     'Long Coat': {
       sets: ['Swift II'],
       traits: ['Showoff'],
+      slot: 'Head',
+      rarity: 'E3',
     },
 
     // Head
