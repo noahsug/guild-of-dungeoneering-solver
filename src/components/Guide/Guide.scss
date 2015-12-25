@@ -6,5 +6,17 @@ html, body {
 }
 
 .Guide {
-  margin: 20px;
+  table {
+    width: 100%;
+  }
+
+  .Scenario {
+    margin: 0;
+    padding: 5px;
+    border: 1px solid black;
+  }
+
+  textarea.results {
+    width: 100%;
+  }
 }

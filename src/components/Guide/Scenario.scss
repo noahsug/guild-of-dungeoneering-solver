@@ -1,0 +1,44 @@
+.Scenario {
+  .player {
+    margin-bottom: 15px;
+
+    label {
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    .typeahead-token {
+      display: inline;
+      text-decoration: underline;
+    }
+
+    > div {
+      margin-bottom: 5px;
+    }
+  }
+
+  .result {
+    margin-bottom: 12px;
+    font-weight: bold;
+
+    button {
+      float: right;
+    }
+  }
+}
+
+.Scenario:not(:hover) {
+  .typeahead input {
+    border: none;
+    padding: 0;
+    font-family: 'Roboto', 'Helvetica', sans-serif;
+    font-size: medium;
+  }
+
+  .typeahead-token ~ .typeahead {
+    display: none;
+  }
+}
