@@ -11,7 +11,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
 global.WATCH = true;
-const webpackConfig = require('./webpack.config')[0];
+const webpackConfig = require('./webpack.config');
 const bundler = webpack(webpackConfig);
 
 export default async () => {

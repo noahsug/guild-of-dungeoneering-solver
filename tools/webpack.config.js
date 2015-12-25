@@ -115,6 +115,22 @@ const appConfig = merge({}, config, {
   ],
   module: {
     loaders: [
+      //WATCH ? Object.assign({}, JS_LOADER, {
+      //  query: {
+      //    // Wraps all React components into arbitrary transforms
+      //    // https://github.com/gaearon/babel-plugin-react-transform
+      //    plugins: ['react-transform', {
+      //      transforms: [{
+      //        transform: 'react-transform-hmr',
+      //        imports: ['react'],
+      //        locals: ['module'],
+      //      }, {
+      //        transform: 'react-transform-catch-errors',
+      //        imports: ['react', 'redbox-react'],
+      //      }],
+      //    }],
+      //  },
+      //}) : JS_LOADER,
       JS_LOADER,
       ...config.module.loaders,
       {
@@ -125,4 +141,4 @@ const appConfig = merge({}, config, {
   },
 });
 
-export default [appConfig];
+export default appConfig;

@@ -1,4 +1,4 @@
 {
-  presets: ["stage-0", "es2016-node5"],
+  presets: ["stage-0", "es2016-node5", "react"],
   plugins: ["add-module-exports"]
 }

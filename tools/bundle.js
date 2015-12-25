@@ -15,7 +15,7 @@ export default task(function bundle() {
       if (err) {
         reject(err);
       } else {
-        console.log(stats.toString(webpackConfig[0].stats));
+        console.log(stats.toString(webpackConfig.stats));
         resolve();
       }
     };
