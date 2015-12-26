@@ -41,9 +41,37 @@ export default class GodSolverFactory {
   }
 
   getDeck_(sets) {
+    sets = this.addSetNumbers_(sets);
     let deck = [];
     sets.forEach(set => deck = deck.concat(Card.getSet(set)));
     return deck;
+  }
+
+  addSetNumbers_(sets) {
+    const setNumbers = {};
+    sets.forEach((set) => {
+      const num = Number(_.last(set));
+      if (!num) {
+        setNumbers[set] = 0;
+      } else {
+        _.increment(setNumbers, set.slice(0, -2), num);
+      }
+    });
+    const mergedSets = [];
+    _.each(setNumbers, (num, set) => {
+      if (!num) {
+        mergedSets.push(set);
+      } else {
+        let name = set + ' ' + num;
+        while (!gameData.sets[name]) {
+          num--;
+          name = set + ' ' + num;
+          _.assert(num);
+        }
+        mergedSets.push(name);
+      }
+    });
+    return mergedSets;
   }
 
   getTraits_(name, traitList) {
@@ -59,13 +87,16 @@ export default class GodSolverFactory {
   resolveTraits_(name, state) {
     const player = GameStateAccessor.instance.setState(state)[name];
     if (state[name + 'WarriorsMight']) {
-      state[name + 'PhysicalNextEffect'] = 1;
+      _.increment(state, name + 'PhysicalNextEffect');
     }
     if (state[name + 'PhlogisTonic']) {
-      state[name + 'Health']++;
+      _.increment(state, name + 'Health');
     }
     if (state[name + 'CronesDiscipline']) {
-      state[name + 'ExtraHandSizeEffect'] = 1;
+      _.increment(state, name + 'ExtraHandSizeEffect');
+    }
+    if (state[name + 'Wise']) {
+      _.increment(state, name + 'ExtraHandSizeEffect');
     }
     for (let i = 1; i < 9; i++) {
       let trait = name + '+' + i + 'HP';

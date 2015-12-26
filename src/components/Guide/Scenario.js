@@ -26,7 +26,19 @@ export default class Scenario extends Component {
     };
   }
 
+  static propTypes = {
+    resultUpdated: React.PropTypes.func,
+  }
+
   render() {
+    const enemies = [];
+    _.each(gameData.players, (p, name) => {
+      if (!p.player) enemies.push(name);
+    });
+    const items = Object.keys(gameData.items);
+    const traits = ['+1HP', '+2HP', '+3HP', '+4HP', '+5HP',
+                    '-1HP', '-2HP', '-3HP', '-4HP', '-5HP'];
+
     return (
       <div className="Scenario">
         <div className="player">
@@ -39,14 +51,14 @@ export default class Scenario extends Component {
           </div>
           <div>
             <label>Player Items</label>
-            <Tokenizer options={['Straightjacket', 'Ruffled Shirt']}
+            <Tokenizer options={items}
                        onTokenAdd={this.addItem_.bind(this, 'player')}
                        onTokenRemove={this.removeItem_.bind(this, 'player')}
             />
           </div>
           <div>
             <label>Player Traits</label>
-            <Tokenizer options={['+1HP', '+2HP', '+3HP', '+4HP']}
+            <Tokenizer options={traits}
                        onTokenAdd={this.addTrait_.bind(this, 'player')}
                        onTokenRemove={this.removeTrait_.bind(this, 'player')}
             />
@@ -56,14 +68,14 @@ export default class Scenario extends Component {
         <div className="player">
           <div>
             <label>Enemy Name</label>
-            <Typeahead options={['Fire Imp', 'Giant Bat', 'Goblin']}
+            <Typeahead options={enemies}
                        value={this.state.enemy.name}
                        onOptionSelected={this.setName_.bind(this, 'enemy')}
             />
           </div>
           <div>
             <label>Enemy Traits</label>
-            <Tokenizer options={[]}
+            <Tokenizer options={traits}
                        onTokenAdd={this.addTrait_.bind(this, 'enemy')}
                        onTokenRemove={this.removeTrait_.bind(this, 'enemy')}
             />
@@ -78,33 +90,53 @@ export default class Scenario extends Component {
   }
 
   setName_(player, name) {
-    const newState = _.clone(this.state);
-    newState[player] = _.defaults({
-      name: name,
-    }, newState[player]);
-    this.setState(newState);
+    const nextState = {result: 0};
+    nextState[player] = _.defaults({name}, this.state[player]);
+    this.setState(nextState);
   }
 
   addItem_(player, item) {
-    console.log('add item', item);
+    const items = (this.state[player].items || []).concat([item]);
+
+    const nextState = {result: 0};
+    nextState[player] = _.defaults({items}, this.state[player]);
+    this.setState(nextState);
   }
 
   removeItem_(player, item) {
-    console.log('remove item', item);
+    const items = _.remove(this.state[player].items, item);
+
+    const nextState = {result: 0};
+    nextState[player] = _.defaults({items}, this.state[player]);
+    this.setState(nextState);
   }
 
   addTrait_(player, trait) {
-    console.log('add trait', trait);
+    const traits = (this.state[player].traits || []).concat([trait]);
+
+    const nextState = {result: 0};
+    nextState[player] = _.defaults({traits}, this.state[player]);
+    this.setState(nextState);
   }
 
   removeTrait_(player, trait) {
-    console.log('remove trait', trait);
+    const traits = _.remove(this.state[player].traits, trait);
+
+    const nextState = {result: 0};
+    nextState[player] = _.defaults({traits}, this.state[player]);
+    this.setState(nextState);
   }
 
   getResult_() {
-    const solver = new GodSolverFactory().create(
+    const result = new ResultAccessor().get(
         this.state.player, this.state.enemy);
-    this.solve_(solver);
+    if (result) {
+      this.setResult_(result);
+    } else {
+      const solver = new GodSolverFactory().create(
+          this.state.player, this.state.enemy);
+      this.solve_(solver);
+    }
   }
 
   solve_(solver) {
@@ -123,10 +155,8 @@ export default class Scenario extends Component {
   setResult_(result) {
     if (result) {
       new ResultAccessor().save(this.state.player, this.state.enemy, result);
-      this.setState(_.defaults({
-        result: _.decimals(result, 4),
-      }, this.state));
       this.props.resultUpdated();
     }
+    this.setState({result: result ? _.decimals(result, 4) : ''});
   }
 }

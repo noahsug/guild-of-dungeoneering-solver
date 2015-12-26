@@ -32,31 +32,38 @@ export default class App {
     });
 
     //this.traits = trinkets;
-    this.traits = [];
-    this.traitIndex = 1;
+    //this.traits = ['+1HP'];
+    //this.traitIndex = 1;
 
-    this.items = c1Items;
-    //this.items = ['Ruffled Shirt'];
-    this.itemIndex = 1;
+    //this.items = c1Items;
+    //this.items = ['Paper Crown', 'Shimmering Cloak'];
+    //this.itemIndex = 1;
 
     //this.enemies = grasslands1.concat(grasslands2).concat(grasslands3).concat(grasslands4);
-    this.enemies = grasslands1.concat(grasslands2).concat(['Rat King']);//.concat(grasslands3).concat(['Rat King']);
-    //this.enemies = ['Scary Spider'];
-    this.enemyIndex = 0;
+    //this.enemies = grasslands1.concat(grasslands2).concat(['Rat King']);//.concat(grasslands3).concat(['Rat King']);
+    //this.enemies = ['Gnoll'];
+    //this.enemyIndex = 0;
 
     this.player = {
       name: 'Chump',
       sets: [],
-      traits: this.traits[0] ? [this.traits[0]] : [],
-      items: this.items[0] ? [this.items[0]] : []};
+      traits: ['+1HP'],
+      //items: [],
+      //items: ['Paper Crown', 'Shimmering Cloak'],
+      items: ['Paper Crown', 'Glyph'],
+    };
 
-    this.iterations = 15000000;
+    this.enemy = {
+      name: 'Rat King',
+    };
+
+    this.iterations = 150000000;
     //this.debug = true;
-    //this.showGameView = true;
+    this.showGameView = true;
     //this.showTree = true;
-    this.showResults = true;
+    //this.showResults = true;
 
-    this.nextEnemy_();
+    //this.nextEnemy_();
   }
 
   nextEnemy_() {
@@ -120,21 +127,22 @@ export default class App {
   increment_(solver, start) {
     const time = Date.now() - start;
     if (solver.done) {
-      this.maybeSaveResult_(solver.rootNode.resul);
-      if (this.nextEnemy_()) {
-        setTimeout(() => this.render(), 30);
-      } else {
-        this.renderResult_(solver, time);
-      }
+      this.maybeSaveResult_(solver.rootNode.result);
+      //if (this.nextEnemy_()) {
+      //  setTimeout(() => this.render(), 30);
+      //} else {
+      //  this.renderResult_(solver, time);
+      //}
+      this.renderResult_(solver, time);
     } else {
-      this.root.innerHTML = this.printMatchup_(solver.rootNode) +
-          ' - Win Rate: ' + this.percent_(solver.rootNode.winRate) +
-          ' - Iteraiton: ' + (this.iterations - solver.iteration);
-      //this.renderIncrementalResult_(solver, time);
-      for (let i = 0; i < 10000 && !solver.done; i++) {
+      //this.root.innerHTML = this.printMatchup_(solver.rootNode) +
+      //    ' - Win Rate: ' + this.percent_(solver.rootNode.winRate) +
+      //    ' - Iteraiton: ' + (this.iterations - solver.iteration);
+      this.renderIncrementalResult_(solver, time);
+      for (let i = 0; i < 50000 && !solver.done; i++) {
         solver.next();
       }
-      setTimeout(this.increment_.bind(this, solver, start), 30);
+      setTimeout(this.increment_.bind(this, solver, start), 10);
     }
   }
 
@@ -269,8 +277,8 @@ export default class App {
       new ResultAccessor().save(this.player, this.enemy, result);
     } else {
       console.error('NO RESULT FOR', this.enemy.name, ':',
-                    JSON.strinify(this.player, null, 2),
-                    JSON.strinify(this.enemy, null, 2));
+                    JSON.stringify(this.player, null, 2),
+                    JSON.stringify(this.enemy, null, 2));
     }
   }
 

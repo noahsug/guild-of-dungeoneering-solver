@@ -3,6 +3,7 @@ jest.autoMockOff();
 describe('God solver', () => {
   const GodSolverFactory = require('../god-solver-factory');
   const GameStateAccessor = require('../game-state-accessor');
+  const Card = require('../Card');
   const gameData = require('../game-data');
   const root = new GameStateAccessor();
 
@@ -46,5 +47,15 @@ describe('God solver', () => {
       traits: ['Crones Discipline'],
     }, {name: 'Gray Ooze'});
     expect(root.player.extraHandSizeEffect).toBe(1);
+  });
+
+  it('ensures Holy I + Holy I = Holy II', () => {
+    const solver = getSolver({
+      name: 'Chump',
+      items: ['Paper Crown', 'Glyph'],
+    }, {name: 'Gray Ooze'});
+    gameData.sets['Holy 2'].forEach((card) => {
+      expect(root.player.deck).toContain(Card.create(card));
+    });
   });
 });

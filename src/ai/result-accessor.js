@@ -50,7 +50,6 @@ export default class ResultAccessor {
     if (player.items && player.items.length) {
       obj.items = player.items.sort().slice();
     }
-    console.log(obj, player);
     return obj;
   }
 }

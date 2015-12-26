@@ -13,6 +13,7 @@
     .typeahead-token {
       display: inline;
       text-decoration: underline;
+      margin-right: 8px;
     }
 
     > div {
@@ -27,18 +28,5 @@
     button {
       float: right;
     }
-  }
-}
-
-.Scenario:not(:hover) {
-  .typeahead input {
-    border: none;
-    padding: 0;
-    font-family: 'Roboto', 'Helvetica', sans-serif;
-    font-size: medium;
-  }
-
-  .typeahead-token ~ .typeahead {
-    display: none;
   }
 }

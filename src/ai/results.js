@@ -1447,5 +1447,257 @@ export default [
       "name": "Rat King"
     },
     "result": 0.13164584908037225
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.8563858358914257
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Rat King"
+    },
+    "result": 0.6571822554338896
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Paper Crown",
+        "Shimmering Cloak"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.8361971446243149
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Glyph",
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.9147016555917215
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Club",
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.9128389812715222
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+2HP"
+      ],
+      "items": [
+        "Glyph",
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.9899757397871131
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Glyph",
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Rat Man"
+    },
+    "result": 0.9958535321871831
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+2HP"
+      ],
+      "items": [
+        "Glyph",
+        "Paper Crown"
+      ]
+    },
+    "enemy": {
+      "name": "Nasty Rat"
+    },
+    "result": 1
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Paper Crown",
+        "Shimmering Cloak"
+      ]
+    },
+    "enemy": {
+      "name": "Fire Imp"
+    },
+    "result": 1
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Fork"
+      ]
+    },
+    "enemy": {
+      "name": "Zombie"
+    },
+    "result": 0.7305195683211557
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Fork"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.6819614512471607
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Fork",
+        "Pigeon Nest"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.7759868669690024
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Fork",
+        "Pigeon Nest"
+      ]
+    },
+    "enemy": {
+      "name": "Zombie"
+    },
+    "result": 0.8349166375783904
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Fork",
+        "Wooden Stool"
+      ]
+    },
+    "enemy": {
+      "name": "Gnoll"
+    },
+    "result": 0.8105763154027212
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Cuppa",
+        "Fork"
+      ]
+    },
+    "enemy": {
+      "name": "Zombie"
+    },
+    "result": 0.7988121876837196
+  },
+  {
+    "player": {
+      "name": "Chump",
+      "traits": [
+        "+1HP"
+      ],
+      "items": [
+        "Fork",
+        "Pigeon Nest"
+      ]
+    },
+    "enemy": {
+      "name": "Ghost"
+    },
+    "result": 0.53227843915344
   }
 ]

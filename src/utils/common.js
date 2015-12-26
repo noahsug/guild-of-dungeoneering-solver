@@ -6,7 +6,7 @@ _.mixin({
     return array.reduce((p, c) => p + iteratee(c), 0);
   },
 
-  avg: (array, iteratee) => {
+  avg: (array, iteratee = _.identity) => {
     return _.sum(array, iteratee) / array.length;
   },
 
@@ -35,6 +35,10 @@ _.mixin({
       }
       return true;
     });
+  },
+
+  increment: (obj, key, value = 1) => {
+    obj[key] = (obj[key] || 0) + value;
   },
 
   // [1, 2, 3], [5, 6] => [[1, 5], [1, 6], [2, 5], ...]

@@ -12,34 +12,37 @@ export default class GameStateCache {
     this.debug = debug;
   }
 
-  cacheResult(node) {
-    this.cache_[this.getId_(node)] = node.result;
-
-    if (this.debug && !this.nodeCache_[this.getId_(node)]) {
-      this.nodeCache_[this.getId_(node)] = node;
-    }
-  }
-
-  getResult(node) {
-    const id = this.getId_(node);
-    if (!this.cache_[id]) this.cache_[id] = 0;
-    return this.cache_[id];
-  }
-
-  getCachedNode(node) {
-    return this.nodeCache_[this.getId_(node)];
-  }
-
-  hasVisitedWithNoResult(node) {
-    return this.cache_[this.getId_(node)] === 0;
-  }
-
-  getId_(node) {
+  hash(node) {
     if (node.__id === undefined) {
       node.__id = this.hashGameState_(node.gameState.state);
       //this.checkHashFunction_(node);
     }
     return node.__id;
+  }
+
+  cacheResult(node) {
+    this.cache_[this.hash(node)] = node.result;
+
+    if (this.debug && !this.nodeCache_[this.hash(node)]) {
+      this.nodeCache_[this.hash(node)] = node;
+    }
+  }
+
+  getResult(node) {
+    return this.cache_[this.hash(node)];
+  }
+
+  getCachedNode(node) {
+    return this.nodeCache_[this.hash(node)];
+  }
+
+  markAsVisited(node) {
+    const id = this.hash(node);
+    if (!this.cache_[id]) this.cache_[id] = 0;
+  }
+
+  hasVisitedWithNoResult(node) {
+    return this.cache_[this.hash(node)] === 0;
   }
 
   hashGameState_(state) {

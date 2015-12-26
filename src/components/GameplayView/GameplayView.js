@@ -81,8 +81,10 @@ export default class App {
       return c.winRate;
     });
     children.forEach((c) => {
-      if (visited[c.__id]) return;
-      visited[c.__id] = true;
+      if (c.__id != undefined) {
+        if (visited[c.__id]) return;
+        visited[c.__id] = true;
+      }
       const {player, enemy} =
           new GameStateAccessor().setState(c.gameState.state);
       const option = document.createElement('div');
