@@ -69,7 +69,6 @@ export default class Simulator {
       player.prepDraw();
     }
 
-    this.states_.actualLen = this.states_.length;
     this.states_.length *= _.factorial(count);
     for (let i = 0; i < count; i++) {
       const numChoices = player.deck.length;
@@ -87,7 +86,6 @@ export default class Simulator {
       return;
     }
 
-    this.states_.actualLen = this.states_.length;
     this.states_.length *= _.factorial(count);
     for (let i = 0; i < count; i++) {
       const numChoices = player.hand.length;
@@ -113,6 +111,7 @@ export default class Simulator {
   }
 
   forEachStateCallNTimes_(changeStateFn, numChoices) {
+    //_.assert(numChoices != 0);
     const numStates = this.states_.actualLen;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
       this.addStates_(stateIndex, changeStateFn, numChoices);
