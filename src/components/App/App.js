@@ -92,7 +92,7 @@ export default class App {
     // 37 = left
     if (e.keyCode == 82) {  // 'R'
       this.root.innerHTML = '';
-      this.render();
+      this.run();
     }
 
     if (e.keyCode == 80) {  // 'P'
@@ -101,8 +101,16 @@ export default class App {
   }
 
   render() {
+    this.root.innerHTML = '';
+    const startBtn = document.createElement('button');
+    this.root.appendChild(startBtn);
+    startBtn.innerText = 'Start';
+    startBtn.onclick = this.run.bind(this);
+  }
+
+  run() {
     if (this.paused) {
-      setTimeout(this.render.bind(this), 500);
+      setTimeout(this.run.bind(this), 500);
       return;
     }
 
@@ -129,7 +137,7 @@ export default class App {
     if (solver.done) {
       //this.maybeSaveResult_(solver.rootNode.result);
       //if (this.nextEnemy_()) {
-      //  setTimeout(() => this.render(), 30);
+      //  setTimeout(() => this.run(), 30);
       //} else {
       //  this.renderResult_(solver, time);
       //}
