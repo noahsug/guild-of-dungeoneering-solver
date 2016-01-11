@@ -23,8 +23,8 @@ describe('game state accessor', () => {
     };
     const {player} = accessor.setState(state);
     player.draw(0);
-    expect(state.playerDeck).toEqual([2, 3]);
-    expect(state.playerHand).toEqual([1, 4, 5]);
+    expect(state.playerDeck).toEqualValues([2, 3]);
+    expect(state.playerHand).toEqualValues([1, 4, 5]);
   });
 
   it('can discard a card', () => {
@@ -45,8 +45,8 @@ describe('game state accessor', () => {
     };
     const {player} = accessor.setState(state);
     player.discardMultiple([0, 2]);
-    expect(state.playerHand).toEqual([2, 4]);
-    expect(state.playerDiscard).toEqual([1, 3]);
+    expect(state.playerHand).toEqualValues([2, 4]);
+    expect(state.playerDiscard).toEqualValues([1, 3]);
   });
 
   it('can draw discard pile if deck is empty', () => {
@@ -59,12 +59,12 @@ describe('game state accessor', () => {
     player.prepDraw();
     expect(state.playerDeck).toEqual([1]);
     expect(state.playerHand).toEqual([]);
-    expect(state.playerDiscard).toEqual([2, 3]);
+    expect(state.playerDiscard).toEqualValues([2, 3]);
 
     player.draw(0);
     player.draw(0);
     expect(state.playerDeck).toEqual([3]);
-    expect(state.playerHand).toEqual([2, 1]);
+    expect(state.playerHand).toEqualValues([2, 1]);
     expect(state.playerDiscard).toEqual([]);
   });
 });

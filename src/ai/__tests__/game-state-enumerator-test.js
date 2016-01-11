@@ -22,7 +22,7 @@ describe('game state enumerator', () => {
     expect(states.length).toBe(6);
     const {player} = GameStateAccessor.instance.setState(states[0]);
     expect(player.deck).toEqual([3]);
-    expect(player.hand).toEqual([2, 1]);
+    expect(player.hand).toEqualValues([2, 1]);
   });
 
   it('enumerates card discards', () => {
@@ -36,7 +36,7 @@ describe('game state enumerator', () => {
     expect(states.length).toBe(6);
     const {player} = GameStateAccessor.instance.setState(states[0]);
     expect(player.hand).toEqual([3]);
-    expect(player.discardPile).toEqual([1, 2]);
+    expect(player.discardPile).toEqualValues([1, 2]);
   });
 
   it('enumerates card cycling', () => {
@@ -48,11 +48,11 @@ describe('game state enumerator', () => {
     enumerator.cycle(2);
 
     const states = enumerator.getStates();
-    expect(states.length).toBe(12);
+    expect(states.length).toBe(6);
     const {player, enemy} = GameStateAccessor.instance.setState(states[0]);
     expect(player.deck).toEqual([]);
-    expect(player.hand).toEqual([5, 4, 3]);
-    expect(player.discardPile).toEqual([1, 2]);
+    expect(player.hand).toEqualValues([5, 4, 3]);
+    expect(player.discardPile).toEqualValues([1, 2]);
   });
 
   it('can put cards in play and discard them when the turn ends', () => {
@@ -70,7 +70,7 @@ describe('game state enumerator', () => {
     expect(states.length).toBe(2);
     const {player, enemy} = GameStateAccessor.instance.setState(states[0]);
     expect(player.deck).toEqual([]);
-    expect(player.hand).toEqual([4, 3, 2]);
+    expect(player.hand).toEqualValues([2, 3, 4]);
     expect(player.discardPile).toEqual([1]);
     expect(enemy.deck).toEqual([]);
     expect(enemy.hand).toEqual([5]);

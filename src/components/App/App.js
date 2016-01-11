@@ -54,7 +54,7 @@ export default class App {
     };
 
     this.enemy = {
-      name: 'Rat King',
+      name: 'Gnoll',
     };
 
     this.iterations = 150000000;
@@ -127,7 +127,7 @@ export default class App {
   increment_(solver, start) {
     const time = Date.now() - start;
     if (solver.done) {
-      this.maybeSaveResult_(solver.rootNode.result);
+      //this.maybeSaveResult_(solver.rootNode.result);
       //if (this.nextEnemy_()) {
       //  setTimeout(() => this.render(), 30);
       //} else {
@@ -139,8 +139,9 @@ export default class App {
       //    ' - Win Rate: ' + this.percent_(solver.rootNode.winRate) +
       //    ' - Iteraiton: ' + (this.iterations - solver.iteration);
       this.renderIncrementalResult_(solver, time);
-      for (let i = 0; i < 50000 && !solver.done; i++) {
+      for (let i = 0; i < 150000; i++) {
         solver.next();
+        if (solver.rootNode.result) break;
       }
       setTimeout(this.increment_.bind(this, solver, start), 10);
     }

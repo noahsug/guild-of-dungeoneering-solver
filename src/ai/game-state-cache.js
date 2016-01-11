@@ -74,24 +74,25 @@ export default class GameStateCache {
   }
 
   buildHash_(h1, h2, h3, h4, h5, h6, h7) {
-    let cache = this.idGenerationCache_;
-    if (!cache.hasOwnProperty(h1)) cache[h1] = {};
-    cache = cache[h1];
-    if (!cache.hasOwnProperty(h2)) cache[h2] = {};
-    cache = cache[h2];
-    if (!cache.hasOwnProperty(h3)) cache[h3] = {};
-    cache = cache[h3];
-    if (!cache.hasOwnProperty(h4)) cache[h4] = {};
-    cache = cache[h4];
-    if (!cache.hasOwnProperty(h5)) cache[h5] = {};
-    cache = cache[h5];
-    if (!cache.hasOwnProperty(h6)) cache[h6] = {};
-    cache = cache[h6];
-    if (!cache.hasOwnProperty(h7)) {
-      cache[h7] = this.cache_.length;
-      this.cache_.length++;
-    }
-    return cache[h7];
+    return '' + h1 + h2 + h3 + h4 + h5 + h6 + h7;
+    //let cache = this.idGenerationCache_;
+    //if (!cache.hasOwnProperty(h1)) cache[h1] = {};
+    //cache = cache[h1];
+    //if (!cache.hasOwnProperty(h2)) cache[h2] = {};
+    //cache = cache[h2];
+    //if (!cache.hasOwnProperty(h3)) cache[h3] = {};
+    //cache = cache[h3];
+    //if (!cache.hasOwnProperty(h4)) cache[h4] = {};
+    //cache = cache[h4];
+    //if (!cache.hasOwnProperty(h5)) cache[h5] = {};
+    //cache = cache[h5];
+    //if (!cache.hasOwnProperty(h6)) cache[h6] = {};
+    //cache = cache[h6];
+    //if (!cache.hasOwnProperty(h7)) {
+    //  cache[h7] = this.cache_.length;
+    //  this.cache_.length++;
+    //}
+    //return cache[h7];
   }
 
   checkHashFunction_(node) {

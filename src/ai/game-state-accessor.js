@@ -135,8 +135,24 @@ class Accessor {
 
   draw(index) {
     this.prepDraw();
-    this.hand.unshift(this.deck[index]);
+    this.hand.push(this.deck[index]);
     return this.deck.splice(index, 1)[0];
+  }
+
+  drawAll() {
+    const originalHandLen = this.hand.length;
+    if (!originalHandLen) {
+      const temp = this.hand;
+      this.hand = this.deck;
+      this.deck = temp;
+      return;
+    }
+    const originalDeckLen = this.deck.length;
+    this.hand.length = originalHandLen + originalDeckLen;
+    for (let i = 0; i < originalDeckLen; i++) {
+      this.hand[originalHandLen + i] = this.deck[i];
+    }
+    this.deck = [];
   }
 
   // Moves discard pile to deck if deck is empty.
@@ -151,6 +167,22 @@ class Accessor {
   discard(index) {
     this.discardPile.push(this.hand[index]);
     return this.hand.splice(index, 1)[0];
+  }
+
+  discardAll() {
+    const originalDiscardPileLen = this.discardPile.length;
+    if (!originalDiscardPileLen) {
+      const temp = this.discardPile;
+      this.discardPile = this.hand;
+      this.hand = temp;
+      return;
+    }
+    const originalHandLen = this.hand.length;
+    this.discardPile.length = originalDiscardPileLen + originalHandLen;
+    for (let i = 0; i < originalHandLen; i++) {
+      this.discardPile[originalDiscardPileLen + i] = this.hand[i];
+    }
+    this.hand = [];
   }
 
   discardMultiple(indexes) {

@@ -12,6 +12,7 @@ export default class Simulator {
 
   setClonedState(state) {
     this.states_ = [state];
+    this.states_.actualLen = 1;
   }
 
   getStates() {
@@ -55,11 +56,24 @@ export default class Simulator {
 
   playerDraw_(player, count) {
     player.state = this.states_[0];
-    count = Math.min(count, player.deck.length + player.discardPile.length);
+    if (count >= player.deck.length) {
+      if (!player.deck.length) {
+        if (!player.discardPile.length) return;
+        player.prepDraw();
+        this.playerDraw_(player, count);
+        return;
+      }
+      count -= player.deck.length;
+      this.forEachState_(player.drawAll.bind(player));
+      if (!player.discardPile.length || !count) return;
+      player.prepDraw();
+    }
+
+    this.states_.actualLen = this.states_.length;
+    this.states_.length *= _.factorial(count);
     for (let i = 0; i < count; i++) {
-      player.state = this.states_[0];
-      const numChoices = player.deck.length || player.discardPile.length;
-      this.forEachState_(player.draw.bind(player), numChoices);
+      const numChoices = player.deck.length;
+      this.forEachStateCallNTimes_(player.draw.bind(player), numChoices);
     }
   }
 
@@ -67,11 +81,17 @@ export default class Simulator {
     if (!count) return;
     const player = this.accessor_.player;
     player.state = this.states_[0];
-    count = Math.min(count, player.hand.length);
+    if (player.hand.length <= count) {
+      if (!player.hand.length) return;
+      player.discardAll();
+      return;
+    }
+
+    this.states_.actualLen = this.states_.length;
+    this.states_.length *= _.factorial(count);
     for (let i = 0; i < count; i++) {
-      player.state = this.states_[0];
       const numChoices = player.hand.length;
-      this.forEachState_(player.discard.bind(player), numChoices);
+      this.forEachStateCallNTimes_(player.discard.bind(player), numChoices);
     }
   }
 
@@ -84,23 +104,30 @@ export default class Simulator {
     this.playerDraw_(player, count);
   }
 
-  forEachState_(changeStateFn, numChoices = 1, choiceStartIndex = 0) {
-    if (!numChoices) return;
+  forEachState_(changeStateFn) {
     const numStates = this.states_.length;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
-      this.addStates_(stateIndex, changeStateFn, numChoices, choiceStartIndex);
+      this.accessor_.setState(this.states_[stateIndex]);
+      changeStateFn();
     }
   }
 
-  addStates_(stateIndex, changeStateFn, numChoices, choiceStartIndex) {
+  forEachStateCallNTimes_(changeStateFn, numChoices) {
+    const numStates = this.states_.actualLen;
+    for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+      this.addStates_(stateIndex, changeStateFn, numChoices);
+    }
+  }
+
+  addStates_(stateIndex, changeStateFn, numChoices) {
     this.accessor_.setState(this.states_[stateIndex]);
-    for (let i = choiceStartIndex + 1; i < numChoices; i++) {
+    for (let i = 1; i < numChoices; i++) {
       const state = this.accessor_.clone();
       this.accessor_.setState(state);
       changeStateFn(i);
-      this.states_.push(state);
+      this.states_[this.states_.actualLen++] = state;
       this.accessor_.setState(this.states_[stateIndex]);
     }
-    changeStateFn(choiceStartIndex);
+    changeStateFn(0);
   }
 }

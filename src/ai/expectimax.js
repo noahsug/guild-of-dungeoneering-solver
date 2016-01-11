@@ -112,7 +112,7 @@ export default class Expectimax {
     if (!this.node_.children) {
       this.nodeFactory.createChildren(this.node_);
       if (this.node_.type != Node.Type.CHANCE) {
-        this.maybeRemoveRandomChildren_();
+        //this.maybeRemoveRandomChildren_();
       }
     }
     const child = this.node_.children[this.node_.index];

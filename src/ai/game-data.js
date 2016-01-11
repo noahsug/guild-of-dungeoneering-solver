@@ -736,6 +736,14 @@ export default {
     },
   },
 
+  // Trinkets are passed in via traits.
+  // Other valid traits include: +1HP, -1HP, +2HP, etc.
+  trinkets: {
+    'Warriors Might': {},
+    'Phlogis Tonic': {},
+    'Crones Discipline': {},
+  },
+
   items: {
     // Body - C1
     'Straightjacket': {

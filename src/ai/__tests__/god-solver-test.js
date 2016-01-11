@@ -13,8 +13,9 @@ describe('God solver', () => {
     return solver;
   }
 
-  xit('Chump beats Gray Ooze 41.76% of the time', function() {
-    const solver = getSolver({name: 'Chump'}, {name: 'Gray Ooze'});
+  it('Chump beats Gray Ooze 41.76% of the time w/ +1 hand size', function() {
+    const solver = getSolver({name: 'Chump', traits: ['Crones Discipline']},
+                             {name: 'Gray Ooze'});
     solver.solve();
     expect(solver.rootNode.result).toEqualFloat(0.4176, 0.0001);
   });

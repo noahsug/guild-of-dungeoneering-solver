@@ -32,7 +32,7 @@ describe('simulator', () => {
     expect(states.length).toBe(3);
     expect(states[0]).toContainKVs({playerHealth: 5, enemyHealth: 1});
     expect(states[0].playerDeck).toEqual([]);
-    expect(states[0].playerHand).toEqual([4, 1, 2, 3]);
+    expect(states[0].playerHand).toEqualValues([1, 2, 3, 4]);
     expect(states[0].playerDiscard).toEqual([]);
     expect(states[0].enemyDiscard).toEqual([3]);
     expect([1, 2, 4]).toContain(states[0].enemyHand[0]);
@@ -44,7 +44,7 @@ describe('simulator', () => {
       enemyDeck: [1, 1, 3, 4],
     });
     const states = sim.getInitialStates(state);
-    expect(states.length).toBe(24);
+    expect(states.length).toBe(4);
     expect(states[0].playerDeck).toEqual([]);
     expect(states[0].playerHand).toEqualValues([1, 2, 3]);
     expect(states[0].playerDiscard).toEqual([]);
@@ -65,7 +65,7 @@ describe('simulator', () => {
     expect(state.playerHealth).toEqual(1);
     expect(state.enemyHealth).toEqual(1);
     expect(state.playerDeck).toEqual([]);
-    expect(state.playerHand).toEqual([4, 1, 2, 3]);
+    expect(state.playerHand).toEqualValues([4, 1, 2, 3]);
     expect(state.playerDiscard).toEqual([]);
     expect(state.enemyDeck.length).toEqual(2);
     expect([1, 2, 3]).toContain(state.enemyHand[0]);
