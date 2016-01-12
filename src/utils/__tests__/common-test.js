@@ -73,3 +73,12 @@ describe('iterator', () => {
     expect(i.length).toBe(3);
   });
 });
+
+describe('fastRemoveAt', () => {
+  it('removes a value at a given index ', () => {
+    const a = [1, 2, 3, 4, 5];
+    const removed = _.fastRemoveAt(a, 2);
+    expect(removed).toBe(3);
+    expect(a).toEqualValues([1, 2, 4, 5]);
+  });
+});

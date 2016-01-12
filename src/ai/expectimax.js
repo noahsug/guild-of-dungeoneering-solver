@@ -111,9 +111,9 @@ export default class Expectimax {
   selectChildNode_() {
     if (!this.node_.children) {
       this.nodeFactory.createChildren(this.node_);
-      if (this.node_.type != Node.Type.CHANCE) {
-        //this.maybeRemoveRandomChildren_();
-      }
+      //if (this.node_.type != Node.Type.CHANCE) {
+      //  this.maybeRemoveRandomChildren_();
+      //}
     }
     const child = this.node_.children[this.node_.index];
     this.node_.index++;
@@ -227,7 +227,7 @@ export default class Expectimax {
       }
       node.result = this.cache_.getResult(node);
       if (node.result) {  // cached
-        this.maybeDisplayChildren_(node);
+        //this.maybeDisplayChildren_(node);
         return;
       }
     }

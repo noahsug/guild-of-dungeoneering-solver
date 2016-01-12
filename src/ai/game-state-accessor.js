@@ -1,9 +1,10 @@
+import {GameStatePlayerAccessor, GameStateEnemyAccessor} from './game-state-player-accessor';
 import _ from '../utils/common';
 
 export default class GameStateAccessor {
   constructor() {
-    this.player = new Accessor('player');
-    this.enemy = new Accessor('enemy');
+    this.player = new GameStatePlayerAccessor();
+    this.enemy = new GameStateEnemyAccessor();
     this.player.enemy = this.enemy;
     this.enemy.enemy = this.player;
   }
@@ -35,9 +36,9 @@ export default class GameStateAccessor {
 
   copyInto(dest) {
     dest.playerHealth = this.state.playerHealth;
-    dest.playerDeck = this.state.playerDeck.slice();
-    dest.playerHand = this.state.playerHand.slice();
-    dest.playerDiscard = this.state.playerDiscard.slice();
+    dest.playerDeck = _.clone(this.state.playerDeck);
+    dest.playerHand = _.clone(this.state.playerHand);
+    dest.playerDiscardPile = _.clone(this.state.playerDiscardPile);
     dest.playerDiscardEffect = this.state.playerDiscardEffect;
     dest.playerDrawEffect = this.state.playerDrawEffect;
     dest.playerCycleEffect = this.state.playerCycleEffect;
@@ -47,9 +48,9 @@ export default class GameStateAccessor {
     dest.playerPhysicalRoundEffect = this.state.playerPhysicalRoundEffect;
 
     dest.enemyHealth = this.state.enemyHealth;
-    dest.enemyDeck = this.state.enemyDeck.slice();
-    dest.enemyHand = this.state.enemyHand.slice();
-    dest.enemyDiscard = this.state.enemyDiscard.slice();
+    dest.enemyDeck = _.clone(this.state.enemyDeck);
+    dest.enemyHand = _.clone(this.state.enemyHand);
+    dest.enemyDiscardPile = _.clone(this.state.enemyDiscardPile);
     dest.enemyStealEffect = this.state.enemyStealEffect;
     dest.enemyConcealEffect = this.state.enemyConcealEffect;
     dest.enemyMagicNextEffect = this.state.enemyMagicNextEffect;
@@ -86,150 +87,11 @@ export default class GameStateAccessor {
       playerHealth: 5,
       playerDeck: [],
       playerHand: [],
-      playerDiscard: [],
+      playerDiscardPile: [],
       enemyHealth: 5,
       enemyDeck: [],
       enemyHand: [],
-      enemyDiscard: [],
+      enemyDiscardPile: [],
     });
   }
 }
-
-class Accessor {
-  constructor(type) {
-    this.type = type;
-    this.state = null;
-  }
-
-  get deck() {
-    return this.state[this.type + 'Deck'];
-  }
-  set deck(cards) {
-    this.state[this.type + 'Deck'] = cards;
-  }
-
-  get hand() {
-    return this.state[this.type + 'Hand'];
-  }
-  set hand(hand) {
-    this.state[this.type + 'Hand'] = hand;
-  }
-
-  get discardPile() {
-    return this.state[this.type + 'Discard'];
-  }
-  set discardPile(cards) {
-    this.state[this.type + 'Discard'] = cards;
-  }
-
-  get health() {
-    return this.state[this.type + 'Health'];
-  }
-  set health(health) {
-    this.state[this.type + 'Health'] = health;
-  }
-
-  get dead() {
-    return this.health <= 0;
-  }
-
-  draw(index) {
-    this.prepDraw();
-    this.hand.push(this.deck[index]);
-    return this.deck.splice(index, 1)[0];
-  }
-
-  drawAll() {
-    const originalHandLen = this.hand.length;
-    if (!originalHandLen) {
-      const temp = this.hand;
-      this.hand = this.deck;
-      this.deck = temp;
-      return;
-    }
-    const originalDeckLen = this.deck.length;
-    this.hand.length = originalHandLen + originalDeckLen;
-    for (let i = 0; i < originalDeckLen; i++) {
-      this.hand[originalHandLen + i] = this.deck[i];
-    }
-    this.deck = [];
-  }
-
-  // Moves discard pile to deck if deck is empty.
-  prepDraw() {
-    if (this.deck.length == 0) {
-      const temp = this.deck;
-      this.deck = this.discardPile;
-      this.discardPile = temp;
-    }
-  }
-
-  discard(index) {
-    this.discardPile.push(this.hand[index]);
-    return this.hand.splice(index, 1)[0];
-  }
-
-  discardAll() {
-    const originalDiscardPileLen = this.discardPile.length;
-    if (!originalDiscardPileLen) {
-      const temp = this.discardPile;
-      this.discardPile = this.hand;
-      this.hand = temp;
-      return;
-    }
-    const originalHandLen = this.hand.length;
-    this.discardPile.length = originalDiscardPileLen + originalHandLen;
-    for (let i = 0; i < originalHandLen; i++) {
-      this.discardPile[originalDiscardPileLen + i] = this.hand[i];
-    }
-    this.hand = [];
-  }
-
-  discardMultiple(indexes) {
-    this.hand = this.hand.filter((c, i) => {
-      if (indexes.indexOf(i) >= 0) {
-        this.discardPile.push(this.hand[i]);
-        return false;
-      }
-      return true;
-    });
-  }
-
-  stealFrom(enemy, index) {
-    const card = enemy.hand.splice(index, 1)[index];
-    this.deck.push(card);
-    return card;
-  }
-
-  putInPlay(index) {
-    return this.hand.splice(index, 1)[0];
-  }
-
-  removeFromPlay(card) {
-    this.discardPile.push(card);
-  }
-}
-
-const effects = ['discard', 'draw', 'cycle', 'steal', 'conceal', 'magicNext',
-                 'physicalNext', 'magicRound', 'physicalRound',
-                 'extraHandSize'];
-effects.forEach((effect) => {
-  const name = effect + 'Effect';
-  const stateName = _.capitalize(name);
-  Object.defineProperty(Accessor.prototype, effect + 'Effect', {
-    get: function() { return this.state[this.type + stateName] || 0; },
-    set: function(v) { this.state[this.type + stateName] = v; },
-  });
-});
-
-const traits = ['frail', 'mundane', 'fury', 'predictable', 'brittle',
-                'tenacious', 'sluggish', 'bulwark', 'retribution',
-                'decay', 'tough', 'spikey', 'rum', 'ferocious', 'burn',
-                'respite'];
-traits.forEach((trait) => {
-  const stateName = _.capitalize(trait);
-  Object.defineProperty(Accessor.prototype, trait, {
-    get: function() { return this.state[this.type + stateName] || 0; },
-    set: function(v) { this.state[this.type + stateName] = v; },
-  });
-});

@@ -7,7 +7,6 @@ export default class GameStateCache {
     this.nodeCache_ = [];
     this.playerCardCache_ = {list: [], index: 0};
     this.enemyCardCache_ = {list: [], index: 0};
-    this.idGenerationCache_ = {};
     this.accessor_ = new GameStateAccessor();
     this.debug = debug;
   }
@@ -59,14 +58,18 @@ export default class GameStateCache {
   }
 
   hashCards_(cards, cardCache) {
-    return cards.reduce((p, c) => {
-      if (!cardCache.list.hasOwnProperty(c)) {
-        cardCache.list[c] = cardCache.index + 1;
+    let result = 0;
+    const len = cards.length;
+    for (let i = 0; i < len; i++) {
+      const card = cards[i];
+      if (!cardCache.list.hasOwnProperty(card)) {
+        cardCache.list[card] = cardCache.index + 1;
         cardCache.index++;
       }
-      const cardId = cardCache.list[c];
-      return p + Math.pow(cardId, 5);
-    }, 0);
+      const cardId = cardCache.list[card];
+      result += Math.pow(cardId, 5);
+    }
+    return result;
   }
 
   hashStats_() {
@@ -75,24 +78,6 @@ export default class GameStateCache {
 
   buildHash_(h1, h2, h3, h4, h5, h6, h7) {
     return '' + h1 + h2 + h3 + h4 + h5 + h6 + h7;
-    //let cache = this.idGenerationCache_;
-    //if (!cache.hasOwnProperty(h1)) cache[h1] = {};
-    //cache = cache[h1];
-    //if (!cache.hasOwnProperty(h2)) cache[h2] = {};
-    //cache = cache[h2];
-    //if (!cache.hasOwnProperty(h3)) cache[h3] = {};
-    //cache = cache[h3];
-    //if (!cache.hasOwnProperty(h4)) cache[h4] = {};
-    //cache = cache[h4];
-    //if (!cache.hasOwnProperty(h5)) cache[h5] = {};
-    //cache = cache[h5];
-    //if (!cache.hasOwnProperty(h6)) cache[h6] = {};
-    //cache = cache[h6];
-    //if (!cache.hasOwnProperty(h7)) {
-    //  cache[h7] = this.cache_.length;
-    //  this.cache_.length++;
-    //}
-    //return cache[h7];
   }
 
   checkHashFunction_(node) {

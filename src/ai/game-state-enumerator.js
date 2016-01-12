@@ -37,7 +37,7 @@ export default class Simulator {
 
   playerEndTurn_(player) {
     this.forEachState_(this.stateEndTurn_.bind(this, player));
-    this.playerDraw_(player, 1);
+    this.playerDrawOne_(player);
     delete player.inPlay;
   }
 
@@ -52,6 +52,14 @@ export default class Simulator {
   draw(playerCount, enemyCount = 0) {
     if (playerCount) this.playerDraw_(this.accessor_.player, playerCount);
     if (enemyCount) this.playerDraw_(this.accessor_.enemy, enemyCount);
+  }
+
+  playerDrawOne_(player) {
+    player.state = this.states_[0];
+    player.prepDraw();
+    const numChoices = player.deck.length;
+    this.states_.length *= numChoices;
+    this.forEachStateCallNTimes_(player.draw.bind(player), numChoices);
   }
 
   playerDraw_(player, count) {
@@ -69,10 +77,11 @@ export default class Simulator {
       player.prepDraw();
     }
 
-    this.states_.length *= _.factorial(count);
+    const numChoices = player.deck.length;
+    this.states_.length *= _.factorial(numChoices) /
+        _.factorial(numChoices - count);
     for (let i = 0; i < count; i++) {
-      const numChoices = player.deck.length;
-      this.forEachStateCallNTimes_(player.draw.bind(player), numChoices);
+      this.forEachStateCallNTimes_(player.draw.bind(player), numChoices - i);
     }
   }
 
@@ -86,10 +95,11 @@ export default class Simulator {
       return;
     }
 
-    this.states_.length *= _.factorial(count);
+    const numChoices = player.hand.length;
+    this.states_.length *= _.factorial(numChoices) /
+        _.factorial(numChoices - count);
     for (let i = 0; i < count; i++) {
-      const numChoices = player.hand.length;
-      this.forEachStateCallNTimes_(player.discard.bind(player), numChoices);
+      this.forEachStateCallNTimes_(player.discard.bind(player), numChoices - i);
     }
   }
 

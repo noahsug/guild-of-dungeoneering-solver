@@ -1,5 +1,6 @@
 jest.dontMock('../card-resolver');
 jest.dontMock('../game-state-accessor');
+jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../card');
 jest.dontMock('../game-data');
 
@@ -76,12 +77,15 @@ describe('card resolver', () => {
     expect(enemy.health).toBe(5);
   });
 
-  it('resolves effects', () => {
+  it.only('resolves effects', () => {
     const [state, player, enemy] = useState(10);
     resolver.resolve(state, Card.create('D/C/S/MN/PN/Co'), Card.create('BP'));
     const playerEffects = ['steal', 'conceal', 'draw', 'physicalNext',
                            'magicNext', 'cycle'];
-    playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(1));
+    playerEffects.forEach((e) => {
+      if (!player[e + 'Effect']) console.error('Missing ', e + 'Effect');
+      expect(player[e + 'Effect']).toBe(1);
+    });
   });
 
   it('resolves duplicate effects', () => {

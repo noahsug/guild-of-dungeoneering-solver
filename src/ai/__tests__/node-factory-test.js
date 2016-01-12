@@ -2,6 +2,7 @@ import Node from '../node';
 import _ from '../../utils/common';
 
 jest.dontMock('../game-state-accessor');
+jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../node-factory');
 
 describe('node factory', () => {

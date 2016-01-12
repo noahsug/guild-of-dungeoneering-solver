@@ -37,6 +37,14 @@ _.mixin({
     });
   },
 
+  fastRemoveAt: (array, index) => {
+    const removed = array[index];
+    const len = array.length;
+    array[index] = array[len - 1];
+    delete array[len - 1];
+    return removed;
+  },
+
   increment: (obj, key, value = 1) => {
     obj[key] = (obj[key] || 0) + value;
   },

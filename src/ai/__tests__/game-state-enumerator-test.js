@@ -1,6 +1,7 @@
 import _ from '../../utils/common';
 
 jest.dontMock('../game-state-accessor');
+jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../game-state-enumerator');
 
 describe('game state enumerator', () => {
@@ -58,7 +59,7 @@ describe('game state enumerator', () => {
   it('can put cards in play and discard them when the turn ends', () => {
     enumerator.setState(GameStateAccessor.create({
       playerHand: [1, 2],
-      playerDiscard: [3, 4],
+      playerDiscardPile: [3, 4],
       enemyHand: [5],
     }));
 

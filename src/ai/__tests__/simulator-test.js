@@ -2,6 +2,7 @@ import _ from '../../utils/common';
 
 jest.dontMock('../simulator');
 jest.dontMock('../game-state-accessor');
+jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../game-state-enumerator');
 
 describe('simulator', () => {
@@ -33,8 +34,8 @@ describe('simulator', () => {
     expect(states[0]).toContainKVs({playerHealth: 5, enemyHealth: 1});
     expect(states[0].playerDeck).toEqual([]);
     expect(states[0].playerHand).toEqualValues([1, 2, 3, 4]);
-    expect(states[0].playerDiscard).toEqual([]);
-    expect(states[0].enemyDiscard).toEqual([3]);
+    expect(states[0].playerDiscardPile).toEqual([]);
+    expect(states[0].enemyDiscardPile).toEqual([3]);
     expect([1, 2, 4]).toContain(states[0].enemyHand[0]);
   });
 
@@ -47,10 +48,10 @@ describe('simulator', () => {
     expect(states.length).toBe(4);
     expect(states[0].playerDeck).toEqual([]);
     expect(states[0].playerHand).toEqualValues([1, 2, 3]);
-    expect(states[0].playerDiscard).toEqual([]);
+    expect(states[0].playerDiscardPile).toEqual([]);
     expect(states[0].enemyDeck.length).toEqual(3);
     expect([1, 3, 4]).toContain(states[0].enemyHand[0]);
-    expect(states[0].enemyDiscard).toEqual([]);
+    expect(states[0].enemyDiscardPile).toEqual([]);
   });
 
   it('plays a move, randomly choosing the game state', () => {
@@ -66,10 +67,10 @@ describe('simulator', () => {
     expect(state.enemyHealth).toEqual(1);
     expect(state.playerDeck).toEqual([]);
     expect(state.playerHand).toEqualValues([4, 1, 2, 3]);
-    expect(state.playerDiscard).toEqual([]);
+    expect(state.playerDiscardPile).toEqual([]);
     expect(state.enemyDeck.length).toEqual(2);
     expect([1, 2, 3]).toContain(state.enemyHand[0]);
-    expect(state.enemyDiscard).toEqual([4]);
+    expect(state.enemyDiscardPile).toEqual([4]);
   });
 
   it('ensures player with better cards will win', () => {
