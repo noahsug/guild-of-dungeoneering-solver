@@ -36,17 +36,13 @@ export default class Simulator {
   }
 
   playerEndTurn_(player) {
-    this.forEachState_(this.stateEndTurn_.bind(this, player));
+    const numStates = this.states_.actualLen;
+    for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+      player.state = this.states_[stateIndex];
+      player.removeFromPlay(player.inPlay);
+    }
     this.playerDrawOne_(player);
     delete player.inPlay;
-  }
-
-  stateEndTurn_(player) {
-    player.removeFromPlay(player.inPlay);
-    player.discardEffect = 0;
-    player.drawEffect = 0;
-    player.cycleEffect = 0;
-    player.stealEffect = 0;
   }
 
   draw(playerCount, enemyCount = 0) {
@@ -57,9 +53,21 @@ export default class Simulator {
   playerDrawOne_(player) {
     player.state = this.states_[0];
     player.prepDraw();
+    const numStates = this.states_.length;
     const numChoices = player.deck.length;
     this.states_.length *= numChoices;
-    this.forEachStateCallNTimes_(player.draw.bind(player), numChoices);
+    for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+      const currentNumStates = numStates + (numChoices - 1) * stateIndex - 1;
+      for (let i = 1; i < numChoices; i++) {
+        this.accessor_.setState(this.states_[stateIndex]);
+        player.state = this.accessor_.clone();
+        player.draw(i);
+        this.states_[currentNumStates + i] = player.state;
+      }
+      player.state = this.states_[stateIndex];
+      player.draw(0);
+    }
+    this.states_.actualLen = this.states_.length;
   }
 
   playerDraw_(player, count) {

@@ -114,6 +114,11 @@ export default class App {
       return;
     }
 
+    window.time = {
+      a: 0,
+      b: 0,
+    };
+
     const solver = new GodSolverFactory().create(
         this.player, this.enemy,
         {iteration: this.iterations, debug: this.debug});
@@ -142,6 +147,7 @@ export default class App {
       //  this.renderResult_(solver, time);
       //}
       this.renderResult_(solver, time);
+      console.log(window.time);
     } else {
       //this.root.innerHTML = this.printMatchup_(solver.rootNode) +
       //    ' - Win Rate: ' + this.percent_(solver.rootNode.winRate) +

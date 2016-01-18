@@ -37,7 +37,7 @@ export default class Expectimax {
     this.rootNode = this.nodeFactory.createRootNode(this.initState);
     this.iteration = this.runUntil.iteration;
     this.node_ = this.rootNode;
-    this.depth_ = 0;
+    //this.depth_ = 0;
     this.initNode_(this.node_);
   }
 
@@ -55,10 +55,10 @@ export default class Expectimax {
       this.updateParentResult_();
       this.cleanUpMemory_();
       this.node_ = this.node_.parent;
-      this.depth_--;
+      //this.depth_--;
     } else {
       this.node_ = this.selectChildNode_();
-      this.depth_++;
+      //this.depth_++;
     }
 
     this.iteration--;
@@ -101,7 +101,7 @@ export default class Expectimax {
   }
 
   cleanUpMemory_() {
-    if (this.debug) return;
+    //if (this.debug) return;
     //if (this.node_.parent.parent && this.node_.parent.parent.parent) {
     //  delete this.node_.children;
     //}

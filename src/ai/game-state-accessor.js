@@ -29,45 +29,63 @@ export default class GameStateAccessor {
   }
 
   clone() {
-    const dest = {};
-    this.copyInto(dest);
-    return dest;
+    return {
+      playerHealth: this.state.playerHealth,
+      playerDeck: _.clone(this.state.playerDeck),
+      playerHand: _.clone(this.state.playerHand),
+      playerDiscardPile: _.clone(this.state.playerDiscardPile),
+      playerDiscardEffect: this.state.playerDiscardEffect,
+      playerDrawEffect: this.state.playerDrawEffect,
+      playerCycleEffect: this.state.playerCycleEffect,
+      playerMagicNextEffect: this.state.playerMagicNextEffect,
+      playerPhysicalNextEffect: this.state.playerPhysicalNextEffect,
+      playerMagicRoundEffect: this.state.playerMagicRoundEffect,
+      playerPhysicalRoundEffect: this.state.playerPhysicalRoundEffect,
+
+      enemyHealth: this.state.enemyHealth,
+      enemyDeck: _.clone(this.state.enemyDeck),
+      enemyHand: _.clone(this.state.enemyHand),
+      enemyDiscardPile: _.clone(this.state.enemyDiscardPile),
+      enemyStealEffect: this.state.enemyStealEffect,
+      enemyConcealEffect: this.state.enemyConcealEffect,
+      enemyMagicNextEffect: this.state.enemyMagicNextEffect,
+      enemyPhysicalNextEffect: this.state.enemyPhysicalNextEffect,
+      enemyMagicRoundEffect: this.state.enemyMagicRoundEffect,
+      enemyPhysicalRoundEffect: this.state.enemyPhysicalRoundEffect,
+      enemyPredictable: this.state.enemyPredictable,
+      enemyRum: this.state.enemyRum,
+    };
   }
 
-  copyInto(dest) {
-    dest.playerHealth = this.state.playerHealth;
-    dest.playerDeck = _.clone(this.state.playerDeck);
-    dest.playerHand = _.clone(this.state.playerHand);
-    dest.playerDiscardPile = _.clone(this.state.playerDiscardPile);
-    dest.playerDiscardEffect = this.state.playerDiscardEffect;
-    dest.playerDrawEffect = this.state.playerDrawEffect;
-    dest.playerCycleEffect = this.state.playerCycleEffect;
-    dest.playerMagicNextEffect = this.state.playerMagicNextEffect;
-    dest.playerPhysicalNextEffect = this.state.playerPhysicalNextEffect;
-    dest.playerMagicRoundEffect = this.state.playerMagicRoundEffect;
-    dest.playerPhysicalRoundEffect = this.state.playerPhysicalRoundEffect;
+  // Clone with only persistant effects (e.g. no drawEffect).
+  newTurnClone() {
+    return {
+      playerHealth: this.state.playerHealth,
+      playerDeck: _.clone(this.state.playerDeck),
+      playerHand: _.clone(this.state.playerHand),
+      playerDiscardPile: _.clone(this.state.playerDiscardPile),
+      playerMagicNextEffect: this.state.playerMagicNextEffect,
+      playerPhysicalNextEffect: this.state.playerPhysicalNextEffect,
+      playerMagicRoundEffect: this.state.playerMagicRoundEffect,
+      playerPhysicalRoundEffect: this.state.playerPhysicalRoundEffect,
 
-    dest.enemyHealth = this.state.enemyHealth;
-    dest.enemyDeck = _.clone(this.state.enemyDeck);
-    dest.enemyHand = _.clone(this.state.enemyHand);
-    dest.enemyDiscardPile = _.clone(this.state.enemyDiscardPile);
-    dest.enemyStealEffect = this.state.enemyStealEffect;
-    dest.enemyConcealEffect = this.state.enemyConcealEffect;
-    dest.enemyMagicNextEffect = this.state.enemyMagicNextEffect;
-    dest.enemyPhysicalNextEffect = this.state.enemyPhysicalNextEffect;
-    dest.enemyMagicRoundEffect = this.state.enemyMagicRoundEffect;
-    dest.enemyPhysicalRoundEffect = this.state.enemyPhysicalRoundEffect;
-    dest.enemyPredictable = this.state.enemyPredictable;
-    dest.enemyRum = this.state.enemyRum;
+      enemyHealth: this.state.enemyHealth,
+      enemyDeck: _.clone(this.state.enemyDeck),
+      enemyHand: _.clone(this.state.enemyHand),
+      enemyDiscardPile: _.clone(this.state.enemyDiscardPile),
+      enemyConcealEffect: this.state.enemyConcealEffect,
+      enemyMagicNextEffect: this.state.enemyMagicNextEffect,
+      enemyPhysicalNextEffect: this.state.enemyPhysicalNextEffect,
+      enemyMagicRoundEffect: this.state.enemyMagicRoundEffect,
+      enemyPhysicalRoundEffect: this.state.enemyPhysicalRoundEffect,
+      enemyPredictable: this.state.enemyPredictable,
+      enemyRum: this.state.enemyRum,
+    };
   }
 
   static get instance() {
     if (!this.instance_) this.instance_ = new GameStateAccessor();
     return this.instance_;
-  }
-
-  static copyInto(dest, source) {
-    this.instance.setState(source).copyInto(dest);
   }
 
   static clone(state) {

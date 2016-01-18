@@ -28,7 +28,8 @@ export default class Simulator {
   }
 
   getStates(state, move) {
-    state = this.cloneState(state);
+    this.accessor_.setState(state);
+    state = this.accessor_.newTurnClone();
     this.accessor_.setState(state);
 
     // TODO: Implement conceal.
@@ -55,12 +56,6 @@ export default class Simulator {
 
   getResult(state) {
     return GameStateAccessor.instance.setState(state).result;
-  }
-
-  play(state, move) {
-    const nextState = _.sample(this.getStates(state, move));
-    GameStateAccessor.copyInto(state, nextState);
-    return this.getResult(state);
   }
 
   cloneState(state) {

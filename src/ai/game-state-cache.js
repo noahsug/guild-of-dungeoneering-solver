@@ -21,10 +21,9 @@ export default class GameStateCache {
 
   cacheResult(node) {
     this.cache_[this.hash(node)] = node.result;
-
-    if (this.debug && !this.nodeCache_[this.hash(node)]) {
-      this.nodeCache_[this.hash(node)] = node;
-    }
+    //if (this.debug && !this.nodeCache_[this.hash(node)]) {
+    //  this.nodeCache_[this.hash(node)] = node;
+    //}
   }
 
   getResult(node) {
@@ -54,19 +53,19 @@ export default class GameStateCache {
     const h5 = this.hashCards_(enemy.hand, this.enemyCardCache_);
     const h6 = this.hashCards_(enemy.discardPile, this.enemyCardCache_);
     const h7 = this.hashStats_();
-    return this.buildHash_(h1, h2, h3, h4, h5, h6, h7);
+    const hash = this.buildHash_(h1, h2, h3, h4, h5, h6, h7);
+    return hash;
   }
 
   hashCards_(cards, cardCache) {
     let result = 0;
     const len = cards.length;
     for (let i = 0; i < len; i++) {
-      const card = cards[i];
-      if (!cardCache.list.hasOwnProperty(card)) {
-        cardCache.list[card] = cardCache.index + 1;
-        cardCache.index++;
+      let cardId = cardCache.list[cards[i]];
+      if (!cardId) {
+        cardId = ++cardCache.index;
+        cardCache.list[cards[i]] = cardId;
       }
-      const cardId = cardCache.list[card];
       result += Math.pow(cardId, 5);
     }
     return result;
