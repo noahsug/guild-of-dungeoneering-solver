@@ -31,27 +31,32 @@ export default class NodeFactory {
     else if (node.type == Node.Type.CHANCE) {
       // Simulator is responsible for removing duplicates.
       const moves = this.simulator.getMoves(node.gameState.state);
-      node.children = moves.map(move => {
-        return this.createNode(move, Node.Type.PLAYER, node);
-      });
+      const len = moves.length;
+      node.children = new Array(len);
+      for (let i = 0; i < len; i++) {
+        node.children[i] = this.createNode(moves[i], Node.Type.PLAYER, node);
+      }
     }
 
     return node.children;
   }
 
   getChildrenForStates_(states, parent) {
-    return states.map((state) => {
-      return this.createNode(state, Node.Type.CHANCE, parent);
-    });
+    const len = states.length;
+    const result = new Array(len);
+    for (let i = 0; i < len; i++) {
+      result[i] = this.createNode(states[i], Node.Type.CHANCE, parent);
+    }
+    return result;
   }
 
   // Value is either the card played or the next game state.
   createNode(value, type, parent) {
     let gameState;
-    if (type == Node.Type.CHANCE || type == Node.Type.ROOT) {
-      gameState = {state: value};
-    } else {
+    if (type == Node.Type.PLAYER) {
       gameState = {state: parent.gameState.state, move: value};
+    } else {
+      gameState = {state: value};
     }
     const result = this.simulator.getResult(gameState.state);
     return {

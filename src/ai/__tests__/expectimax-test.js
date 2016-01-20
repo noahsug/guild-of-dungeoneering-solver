@@ -48,18 +48,14 @@ describe('expectimax', () => {
     expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 0 (has reuslt!)
-    expect(expectimax.node_.state).toEqual(tree[0][0][0]);
-    expect(expectimax.node_.result).toEqual(1);
+    expectimax.next();  // 0 -> 0 (children have reuslt!)
+    expect(expectimax.node_.state).toEqual(tree[0][0]);
   });
 
   it('takes the expected value', () => {
     expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 0 (result = 1)
-    expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 1 (result = -1)
     expectimax.next();  // 0 -> 0 (result = 0.5)
     expect(expectimax.node_.result).toBe(0.5);
   });
@@ -68,9 +64,6 @@ describe('expectimax', () => {
     expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 0 (result = 1)
-    expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 1 (result = -1)
     expectimax.next();  // 0 -> 0 (result = 0.5)
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 1 (result = 1)
@@ -83,11 +76,9 @@ describe('expectimax', () => {
 
   it('solves the tree', () => {
     expectimax.setState(tree);
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 0 (result = 1)
-    expectimax.next();  // 0 -> 0
-    expectimax.next();  // 0 -> 0 -> 1 (result = -1)
     expectimax.next();  // 0 -> 0 (result = 0.5)
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 1 (result = 1)
@@ -150,5 +141,35 @@ describe('expectimax', () => {
       if (expectimax.done) break;
     }
     expect(expectimax.rootNode.result).toBe(0.2);
+  });
+
+  it('does alpha beta pruning', () => {
+    const tree = [[
+      [1, -1],
+      [
+        -1,
+        [[-1, -1, 1]],
+        1,
+      ],
+    ]];
+    expectimax.setState(tree, {newGame: true});
+    expectimax.next();  // 0
+    expectimax.next();  // 0 -> 0
+    expectimax.next();  // 0 -> 0 (result = 0.5)
+    expectimax.next();  // 0
+    expectimax.next();  // 0 -> 1
+    expectimax.next();  // 0 -> 1 -> 1
+    expectimax.next();  // 0 -> 1 -> 1 -> 0
+    expectimax.next();  // 0 -> 1 -> 1 -> 0 (result = -Infinity)
+    expect(expectimax.node_.result).toBe(-Infinity);
+
+    expectimax.next();  // 0 -> 1 -> 1 (result = -Infinity)
+    expect(expectimax.node_.result).toBe(-Infinity);
+
+    expectimax.next();  // 0 -> 1 (result = -Infinity)
+    expect(expectimax.node_.result).toBe(-Infinity);
+
+    expectimax.next();  // 0
+    expect(expectimax.node_.result).toBe(0.5);
   });
 });

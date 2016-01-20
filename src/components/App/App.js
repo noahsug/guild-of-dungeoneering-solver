@@ -47,6 +47,7 @@ export default class App {
     this.player = {
       name: 'Chump',
       sets: [],
+      //traits: [],
       traits: ['+1HP'],
       //items: [],
       //items: ['Paper Crown', 'Shimmering Cloak'],
@@ -54,11 +55,13 @@ export default class App {
     };
 
     this.enemy = {
-      name: 'Gnoll',
+      //name: 'Gnoll',
+      //name: 'Giant Bat',
+      name: 'Rat King',
     };
 
     this.iterations = 150000000;
-    //this.debug = true;
+    this.debug = true;
     this.showGameView = true;
     //this.showTree = true;
     //this.showResults = true;
@@ -117,6 +120,7 @@ export default class App {
     window.time = {
       a: 0,
       b: 0,
+      c: 0,
     };
 
     const solver = new GodSolverFactory().create(
@@ -140,6 +144,25 @@ export default class App {
   increment_(solver, start) {
     const time = Date.now() - start;
     if (solver.done) {
+      const hints = _.sortBy(solver.cache_.hintCache_, function(v, k) {
+        v.k = k;
+        return v.results / v.count;
+      });
+      _.each(hints, function(v) {
+        const k = v.k;
+        const playerCardIndex = k % 1000;
+        const enemyCardIndex = (k - playerCardIndex) / 1000;
+        if (Card.list[playerCardIndex] === undefined) {
+          console.log('player:', k);
+        }
+        if (Card.list[enemyCardIndex] === undefined) {
+          console.log('enemy:', k);
+        }
+        console.log('p' + Card.list[playerCardIndex].desc,
+                    'e' + Card.list[enemyCardIndex].desc,
+                    v.count, '*', v.results / v.count);
+      });
+
       //this.maybeSaveResult_(solver.rootNode.result);
       //if (this.nextEnemy_()) {
       //  setTimeout(() => this.run(), 30);

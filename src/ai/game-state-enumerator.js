@@ -53,17 +53,19 @@ export default class Simulator {
   playerDrawOne_(player) {
     player.state = this.states_[0];
     player.prepDraw();
-    const numStates = this.states_.length;
     const numChoices = player.deck.length;
+    if (numChoices == 0) return;
+    const numStates = this.states_.length;
+    let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
-      const currentNumStates = numStates + (numChoices - 1) * stateIndex - 1;
       for (let i = 1; i < numChoices; i++) {
         this.accessor_.setState(this.states_[stateIndex]);
         player.state = this.accessor_.clone();
         player.draw(i);
-        this.states_[currentNumStates + i] = player.state;
+        this.states_[lastStateIndex + i] = player.state;
       }
+      lastStateIndex += numChoices - 1;
       player.state = this.states_[stateIndex];
       player.draw(0);
     }

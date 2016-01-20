@@ -52,7 +52,7 @@ export default class Expectimax {
   next() {
     if (this.node_.result) {
       this.cacheResult_();
-      this.updateParentResult_();
+      this.updateParentResult_(this.node_);
       this.cleanUpMemory_();
       this.node_ = this.node_.parent;
       //this.depth_--;
@@ -73,30 +73,32 @@ export default class Expectimax {
     }
   }
 
-  updateParentResult_() {
-    const parent = this.node_.parent;
-    if (this.node_.type == Node.Type.PLAYER && this.node_.result == 1) {
+  updateParentResult_(node) {
+    const isChance = node.type == Node.Type.CHANCE;
+    const parent = node.parent;
+    if (!isChance && node.result == 1) {
       parent.result = 1;
       return;
     }
 
-    this.updateParentWinRate_();
+    this.updateParentWinRate_(node);
     if (parent.index == parent.children.length) {
       parent.result = parent.winRate || -1;
+    } else if (parent.winRate < parent.pruneCutoff && isChance) {
+      parent.result = -Infinity;
     }
   }
 
-  updateParentWinRate_() {
-    const parent = this.node_.parent;
-    if (this.node_.type == Node.Type.PLAYER) {
-      const winRate = this.node_.result < 0 ? 0 : this.node_.result;
-      if (winRate > parent.winRate) parent.winRate = winRate;
+  updateParentWinRate_(node) {
+    const parent = node.parent;
+    if (node.type == Node.Type.PLAYER) {
+      if (node.result > parent.winRate) {
+        parent.winRate = node.result;
+      }
     } else {
-      const wins = parent.children.reduce((p, c) => {
-        const winRate = c.result < 0 ? 0 : (c.result || 1);
-        return p + winRate;
-      }, 0);
-      parent.winRate = wins / parent.children.length;
+      const winRate = node.result == -1 ? 0 : node.result;
+      parent.wins -= 1 - winRate;
+      parent.winRate = parent.wins / parent.children.length;
     }
   }
 
@@ -111,14 +113,38 @@ export default class Expectimax {
   selectChildNode_() {
     if (!this.node_.children) {
       this.nodeFactory.createChildren(this.node_);
+      this.node_.wins = this.node_.children.length;
+      this.processFinishedChildren_();
+      if (this.node_.result) return this.node_;
       //if (this.node_.type != Node.Type.CHANCE) {
       //  this.maybeRemoveRandomChildren_();
       //}
     }
+
     const child = this.node_.children[this.node_.index];
     this.node_.index++;
     this.initNode_(child);
     return child;
+  }
+
+  processFinishedChildren_() {
+    if (this.node_.type == Node.Type.CHANCE) {
+      // TODO: Check hints?
+      return;
+    }
+    const len = this.node_.children.length;
+    for (let i = 0; i < len; i++) {
+      const child = this.node_.children[i];
+      child.result = child.result || this.cache_.getResult(child);
+      if (child.result) {
+        this.maybeDisplayChildren_(child);
+        this.node_.index++;
+        this.updateParentResult_(child);
+        if (this.node_.result) return;
+        this.node_.children[i] = this.node_.children[this.node_.index - 1];
+        this.node_.children[this.node_.index - 1] = child;
+      }
+    }
   }
 
   maybeCutBadMoves_() {
@@ -227,21 +253,33 @@ export default class Expectimax {
       }
       node.result = this.cache_.getResult(node);
       if (node.result) {  // cached
-        //this.maybeDisplayChildren_(node);
+        //maybeDisplayChildren_(node);
         return;
       }
+      node.winRate = -Infinity;
+    } else {
+      node.winRate = 1;
     }
-
+    node.pruneCutoff = this.getPruneCutoff_(node);
     node.index = 0;
-    node.winRate = node.type == Node.Type.CHANCE ? 0 : 1;
+  }
+
+  getPruneCutoff_(node) {
+    if (!node.parent) return 0;
+    if (node.type == Node.Type.CHANCE) {
+      const req = node.parent.winRate - node.parent.pruneCutoff;
+      const max = 1 / node.parent.children.length;
+      return req < max ? 1 - req / max : 0;
+    }
+    return Math.max(node.parent.winRate, node.parent.pruneCutoff);
   }
 
   maybeDisplayChildren_(node) {
     if (!this.debug) return;
-    if (!node.parent.parent ||
-        !node.parent.parent.parent) {
-      this.nodeFactory.createChildren(node);
-    }
+    //if (!node.parent.parent ||
+    //    !node.parent.parent.parent) {
+    //  this.nodeFactory.createChildren(node);
+    //}
     node.cached = this.cache_.getCachedNode(node);
   }
 }

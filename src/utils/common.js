@@ -45,6 +45,37 @@ _.mixin({
     return removed;
   },
 
+  fastArrayCopy: (array) => {
+    const len = array.length;
+    const array2 = new Array(len);
+    for (let i = 0; i < array.length; i++) {
+      array2[i] = array[i];
+    }
+    return array2;
+  },
+
+  copyWithoutIndex: (array, index) => {
+    const len = array.length - 1;
+    const array2 = new Array(len);
+    for (let i = 0; i < index; i++) {
+      array2[i] = array[i];
+    }
+    for (let i = index; i < len; i++) {
+      array2[i] = array[i + 1];
+    }
+    return array2;
+  },
+
+  copyWithValue: (array, value) => {
+    const len = array.length;
+    const array2 = new Array(len + 1);
+    for (let i = 0; i < len; i++) {
+      array2[i] = array[i];
+    }
+    array2[len] = value;
+    return array2;
+  },
+
   increment: (obj, key, value = 1) => {
     obj[key] = (obj[key] || 0) + value;
   },

@@ -3,6 +3,8 @@ import _ from '../../utils/common';
 jest.dontMock('../game-state-cache');
 jest.dontMock('../game-state-accessor');
 jest.dontMock('../game-state-player-accessor');
+jest.dontMock('../game-data');
+jest.dontMock('../card');
 
 describe('Game state cache', () => {
   const GameStateCache = require('../game-state-cache');

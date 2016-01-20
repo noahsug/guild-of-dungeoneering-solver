@@ -1,6 +1,18 @@
 import _ from 'underscore';
 
 jasmine.getEnv().beforeEach(function() {
+  window.crypto = {
+    getRandomValues: function(array) {
+      for (let i = 0; i < array.length; i++) {
+        array[i] = Math.random() * Math.pow(2, 32);
+      }
+    }
+  };
+
+  window.performance = {
+    now: function() { return Date.now(); },
+  };
+
   this.addMatchers({
     toContainKeys: function(keys) {
       var diff = _.difference(keys, Object.keys(this.actual));

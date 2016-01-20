@@ -13,8 +13,8 @@ export default class NodePrinter {
       msg.push('S');
     }
 
-    msg.push(node.gameState.state.playerHealth + '/' +
-             node.gameState.state.enemyHealth);
+    //msg.push(node.gameState.state.playerHealth + '/' +
+    //         node.gameState.state.enemyHealth);
 
     //msg.push(`${i(node.wins)}/${i(node.losses)}`);
     //function i(n) { return n == Infinity ? '@' : n; }
@@ -23,7 +23,9 @@ export default class NodePrinter {
 
     //if (node.selection) msg.push('X' + Math.round(node.expansion * 100) / 100);
 
-    //msg.push('R' + _.decimals(node.winRate, 2));
+    if (node.pruneCutoff) {
+      msg.push(_.decimals(node.pruneCutoff, 2));
+    }
 
     //if (node.gameState.state.id) msg.push('I' + node.gameState.state.id);
 
