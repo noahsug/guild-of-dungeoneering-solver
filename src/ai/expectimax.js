@@ -8,7 +8,7 @@ export default class Expectimax {
   constructor({nodeFactory, runUntil = {}, debug = false} = {}) {
     this.nodeFactory = nodeFactory;
     this.debug = debug;
-    this.cache_ = new GameStateCache({debug});
+    this.cache_ = GameStateCache.instance;
     this.runUntil = _.defaults(runUntil, {iteration: Infinity});
     this.accessor_ = new GameStateAccessor();
   }
@@ -103,7 +103,6 @@ export default class Expectimax {
   }
 
   cleanUpMemory_() {
-    //if (this.debug) return;
     //if (this.node_.parent.parent && this.node_.parent.parent.parent) {
     //  delete this.node_.children;
     //}
