@@ -8,7 +8,7 @@ export default class Expectimax {
   constructor({nodeFactory, runUntil = {}, debug = false} = {}) {
     this.nodeFactory = nodeFactory;
     this.debug = debug;
-    this.cache_ = GameStateCache.instance;
+    this.cache_ = new GameStateCache({debug});
     this.runUntil = _.defaults(runUntil, {iteration: Infinity});
     this.accessor_ = new GameStateAccessor();
   }

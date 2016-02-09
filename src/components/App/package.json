@@ -1,6 +1,1 @@
-{
-  "name": "App",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./App.js"
-}
+{"name": "App", "main": "./App.js"}

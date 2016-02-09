@@ -1,12 +1,17 @@
 import 'babel-polyfill';
+import 'normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
+import ToolboxApp from 'react-toolbox/lib/app';
 import App from './components/App';
 
 function run() {
-  const container = document.getElementById('content');
-  ReactDOM.render(<App />, container);
+  ReactDOM.render(
+    <ToolboxApp>
+      <App />
+    </ToolboxApp>
+  , document.getElementById('app'));
 }
 
 if (canUseDOM) {

@@ -7,6 +7,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import merge from 'lodash.merge';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
@@ -27,7 +28,7 @@ const JS_LOADER = {
   include: [
     path.resolve(__dirname, '../src'),
   ],
-  loader: 'babel-loader',
+  loader: 'babel',
 };
 
 
@@ -58,6 +59,13 @@ const config = {
       '__DEV__': DEBUG,
     }),
   ],
+  resolve: {
+    extensions: ['', '.jsx', '.scss', '.js', '.json'],
+    modulesDirectories: [
+      'node_modules',
+      path.resolve(__dirname, './node_modules')
+    ]
+  },
   module: {
     loaders: [
       {
@@ -77,8 +85,6 @@ const config = {
   },
   postcss: function plugins(bundler) {
     return [
-      require('postcss-import')({ addDependencyTo: bundler }),
-      require('precss')(),
       require('autoprefixer')({
         browsers: AUTOPREFIXER_BROWSERS,
       }),
@@ -95,7 +101,6 @@ const appConfig = merge({}, config, {
   output: {
     filename: 'app.js',
   },
-  // http://webpack.github.io/docs/configuration.html#devtool
   devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
   plugins: [
     ...config.plugins,
@@ -108,6 +113,7 @@ const appConfig = merge({}, config, {
       }),
       new webpack.optimize.AggressiveMergingPlugin(),
     ]),
+    new ExtractTextPlugin('app.css', { allChunks: true }),
     ...(WATCH ? [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin(),
@@ -134,9 +140,12 @@ const appConfig = merge({}, config, {
       JS_LOADER,
       ...config.module.loaders,
       {
-        test: /\.scss$/,
-        loaders: ['style-loader', 'css-loader', 'postcss-loader'],
-      },
+        test: /(\.scss|\.css)$/,
+        loader: ExtractTextPlugin.extract(
+          'style',
+          'css?sourceMap&modules&importLoaders=1&localIdentName=' +
+              '[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
+      }
     ],
   },
 });

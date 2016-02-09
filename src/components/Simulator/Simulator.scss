@@ -1,0 +1,32 @@
+@import "~react-toolbox/lib/commons";
+
+.content {
+  padding: $unit;
+}
+
+.player {
+  margin-bottom: 15px;
+  label {
+    font-weight: bold;
+  }
+  input {
+    width: 50%;
+  }
+  .typeahead-token {
+    display: inline;
+    text-decoration: underline;
+    margin-right: 8px;
+  }
+  > div {
+    margin-bottom: 5px;
+  }
+}
+
+.result {
+  margin-bottom: 12px;
+  font-weight: bold;
+  button {
+    float: right;
+    margin-right: calc(50%);
+  }
+}

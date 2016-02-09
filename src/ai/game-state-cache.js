@@ -22,11 +22,6 @@ export default class GameStateCache {
     this.hashes_.stats = this.getHashes_(2);
   }
 
-  static get instance() {
-    if (!this.instance_) this.instance_ = new GameStateCache();
-    return this.instance_;
-  }
-
   getHashes_(len) {
     const hashes = new Uint32Array(len);
     window.crypto.getRandomValues(hashes);
