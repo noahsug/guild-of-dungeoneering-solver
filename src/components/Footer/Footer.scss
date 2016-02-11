@@ -1,0 +1,11 @@
+@import "~react-toolbox/lib/base";
+
+.content {
+  padding: $unit;
+  a {
+    color: $color-text-secondary;
+    abbr {
+      text-transform: lowercase;
+    }
+  }
+}

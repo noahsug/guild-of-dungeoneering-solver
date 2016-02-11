@@ -144,9 +144,13 @@ const appConfig = merge({}, config, {
         loader: ExtractTextPlugin.extract(
           'style',
           'css?sourceMap&modules&importLoaders=1&localIdentName=' +
-              '[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
+              '[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap' +
+              '!toolbox')
       }
     ],
+  },
+  toolbox: {
+    theme: 'src/theme.scss'
   },
 });
 

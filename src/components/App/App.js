@@ -1,16 +1,18 @@
 import React, { PropTypes, Component } from 'react';
-import './App.scss';
+import style from './App.scss';
 import Simulator from '../Simulator';
 import Header from '../Header';
+import Footer from '../Footer';
 import _ from '../../utils/common';
 
 export default class App extends Component {
   render() {
     return (
-      <div className="App">
+      <div>
         <Header />
         <Simulator onSimulationStart={this.onSimulationStart.bind(this)}
                    onSimulationFinish={this.onSimulationFinish.bind(this)} />
+        <Footer />
       </div>
     );
   }

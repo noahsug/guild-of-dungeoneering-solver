@@ -3,10 +3,28 @@
 
 $title-font-size: 1.8 * $unit;
 
+%title-text {
+  font-weight: $font-weight-thin;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+}
+
 .appbar {
+  margin-top: 3 * $unit;
+  background-color: #1E2225;
+
   > .title {
-    font-size: $title-font-size;
-    font-weight: $font-weight-bold;
-    position: relative;
+    text-align: center;
+    width: 100%;
+
+    > h1 {
+      @extend %title-text;
+      font-size: $title-font-size;
+    }
+    > div {
+      @extend %title-text;
+      font-size: 1.23rem;
+    }
   }
 }

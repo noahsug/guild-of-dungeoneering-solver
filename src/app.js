@@ -5,10 +5,11 @@ import ReactDOM from 'react-dom';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import ToolboxApp from 'react-toolbox/lib/app';
 import App from './components/App';
+import style from './style.scss';
 
 function run() {
   ReactDOM.render(
-    <ToolboxApp>
+    <ToolboxApp className={style.content}>
       <App />
     </ToolboxApp>
   , document.getElementById('app'));

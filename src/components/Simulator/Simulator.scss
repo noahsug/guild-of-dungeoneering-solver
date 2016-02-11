@@ -1,32 +1,22 @@
 @import "~react-toolbox/lib/commons";
 
 .content {
-  padding: $unit;
-}
-
-.player {
-  margin-bottom: 15px;
-  label {
-    font-weight: bold;
+  margin: $unit * 0.25 auto $unit * 2;
+  width: 400px;
+  .autocomplete {
+    padding: 0;
   }
-  input {
-    width: 50%;
+  .card-actions {
+    padding-top: 0;
   }
-  .typeahead-token {
-    display: inline;
-    text-decoration: underline;
-    margin-right: 8px;
-  }
-  > div {
-    margin-bottom: 5px;
-  }
-}
-
-.result {
-  margin-bottom: 12px;
-  font-weight: bold;
-  button {
-    float: right;
-    margin-right: calc(50%);
+  .win-rate {
+    line-height: 3.6rem;
+    padding: 0 0.8rem;
+    color: #58D1C1;
+    font-size: $font-size;
+    font-weight: $font-weight-semi-bold;
+    .percent {
+      font-weight: $font-weight-bold;
+    }
   }
 }

@@ -1,11 +1,11 @@
 import React, { PropTypes, Component } from 'react';
 import {Typeahead, Tokenizer} from 'react-typeahead';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
+import ProgressBar from 'react-toolbox/lib/progress_bar';
 import Button from 'react-toolbox/lib/button';
+import { Card, CardText, CardActions, CardTitle } from 'react-toolbox/lib/card';
 import style from './Simulator.scss';
 import GodSolverFactory from '../../ai/god-solver-factory';
-import Card from '../../ai/card';
-import Node from '../../ai/node';
 import gameData from '../../ai/game-data';
 import _ from '../../utils/common';
 
@@ -53,90 +53,56 @@ export default class Simulator extends Component {
 
   render() {
     const {players, enemies, items, traits} = this.renderInfo_;
-    const renderBtn = this.simulationRunning_ ? <div /> :
-        <button onClick={this.solve_.bind(this)}>Battle!</button>;
+
     return (
-      <section className={style.content}>
-        <Autocomplete label="Enemy"
-                      source={enemies}
-                      multiple={false}
-                      value={this.state.enemy.name}
-                      onChange={this.setName_.bind(this, 'enemy')} />
-
-        <div className={style.player}>
-          <div>
-            <label>Hero</label>
-            <Typeahead options={players}
-                       value={this.state.player.name}
-                       onOptionSelected={this.setName_.bind(this, 'player')}
-            />
-          </div>
-          <div>
-            <label>Player Items</label>
-            <Tokenizer options={items}
-                       onTokenAdd={this.addItem_.bind(this, 'player')}
-                       onTokenRemove={this.removeItem_.bind(this, 'player')}
-            />
-          </div>
-          <div>
-            <label>Player Traits</label>
-            <Tokenizer options={traits}
-                       onTokenAdd={this.addTrait_.bind(this, 'player')}
-                       onTokenRemove={this.removeTrait_.bind(this, 'player')}
-            />
-          </div>
-        </div>
-
-        <div className={style.player}>
-          <div>
-            <label>Enemy</label>
-            <Typeahead options={enemies}
-                       value={this.state.enemy.name}
-                       onOptionSelected={this.setName_.bind(this, 'enemy')}
-            />
-          </div>
-          <div>
-            <label>Enemy Traits</label>
-            <Tokenizer options={traits}
-                       onTokenAdd={this.addTrait_.bind(this, 'enemy')}
-                       onTokenRemove={this.removeTrait_.bind(this, 'enemy')}
-            />
-          </div>
-        </div>
-        <div className={style.result}>
-          <label>Win rate: {this.printResult_()}</label>
-          {renderBtn}
-        </div>
-      </section>
+      <Card className={style.content}>
+        <CardText>
+          {this.renderInput_('Hero', 'player', 'name', players)}
+          {this.renderInput_('Items', 'player', 'items', items, {multiple: true})}
+          {this.renderInput_('Trinkets, Level', 'player', 'traits', traits,
+                             {multiple: true})}
+          {this.renderInput_('Enemy', 'enemy', 'name', enemies)}
+          {this.renderInput_('Traits', 'enemy', 'traits', traits,
+                             {multiple: true})}
+        </CardText>
+        {this.simulationRunning_ ? (
+          <ProgressBar type="linear" mode="indeterminate" />
+        ) : this.state.result ? (
+          <CardActions className={style['card-actions']}>
+            <span className={style['win-rate']}>{this.renderWinRate_()}</span>
+          </CardActions>
+        ) : (
+          <CardActions className={style['card-actions']}>
+            <Button primary label="Solve" onClick={this.solve_.bind(this)} />
+          </CardActions>
+        )}
+      </Card>
     );
   }
 
-  get simulationRunning_() {
-    return !this.state.result && this.state.iterations;
+  renderInput_(label, player, type, source, {multiple = false} = {}) {
+    return (
+      <Autocomplete className={style.autocomplete}
+                    label={label}
+                    source={source}
+                    multiple={multiple}
+                    value={this.state[player][type]}
+                    onChange={onChange.bind(this)} />
+    );
+
+    function onChange(newValue) {
+      const newState = {[type]: newValue};
+      this.setState({
+        [player]: _.defaults(newState, this.state[player]),
+        result: 0,
+        iterations: 0,
+      });
+    }
   }
 
-  setName_(player, name) {
-    this.setState({[player]: _.defaults({name}, this.state[player])});
-  }
-
-  addItem_(player, item) {
-    const items = this.state[player].items.concat([item]);
-    this.setState({[player]: _.defaults({items}, this.state[player])});
-  }
-
-  removeItem_(player, item) {
-    const items = _.remove(this.state[player].items, item);
-    this.setState({[player]: _.defaults({items}, this.state[player])});
-  }
-
-  addTrait_(player, trait) {
-    const traits = this.state[player].traits.concat([trait]);
-    this.setState({[player]: _.defaults({traits}, this.state[player])});
-  }
-
-  removeTrait_(player, trait) {
-    const traits = _.remove(this.state[player].traits, trait);
-    this.setState({[player]: _.defaults({traits}, this.state[player])});
+  onInputChange_(player, valueName, value) {
+    const newState = {[valueName]: value};
+    this.setState({[player]: _.defaults(newState, this.state[player])});
   }
 
   solve_() {
@@ -173,9 +139,17 @@ export default class Simulator extends Component {
     }
   }
 
-  printResult_() {
-    if (!this.state.result) return this.state.iterations || '';
+  get simulationRunning_() {
+    return !this.state.result && this.state.iterations;
+  }
+
+  renderWinRate_() {
     const result = this.state.result;
-    return _.decimals(result == -1 ? 0 : result, 4);
+    const percent = _.decimals(result == -1 ? 0 : result, 4) * 100 + '%';
+    return (
+      <span>
+        win rate: <span className={style.percent}>{percent}</span>
+      </span>
+    );
   }
 }
