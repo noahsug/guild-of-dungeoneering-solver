@@ -35,7 +35,7 @@ export default class Simulator extends Component {
         traits: [],
       },
       result: 0,
-      iterations: 0,
+      running: false,
     };
   }
 
@@ -65,7 +65,7 @@ export default class Simulator extends Component {
           {this.renderInput_('Traits', 'enemy', 'traits', traits,
                              {multiple: true})}
         </CardText>
-        {this.simulationRunning_ ? (
+        {this.state.running ? (
           <ProgressBar type="linear" mode="indeterminate" />
         ) : this.state.result ? (
           <CardActions className={style['card-actions']}>
@@ -95,7 +95,6 @@ export default class Simulator extends Component {
       this.setState({
         [player]: _.defaults(newState, this.state[player]),
         result: 0,
-        iterations: 0,
       });
     }
   }
@@ -114,7 +113,7 @@ export default class Simulator extends Component {
       enemy: this.state.enemy,
       rootNode: this.solver_.rootNode,
     });
-    this.setState({iterations: 0, result: 0});
+    this.setState({result: 0, running: true});
 
     setTimeout(this.solveLoop_.bind(this), 5);
   }
@@ -123,12 +122,9 @@ export default class Simulator extends Component {
     this.incrementSolve_(20000);
     const result = this.solver_.rootNode.result;
     if (result) {
-      this.setState({result});
+      this.setState({result, running: false});
       this.props.onSimulationFinish();
     } else {
-      const iterations =
-          this.solver_.runUntil.iteration - this.solver_.iteration;
-      this.setState({iterations});
       setTimeout(this.solveLoop_.bind(this), 5);
     }
   }
@@ -139,13 +135,9 @@ export default class Simulator extends Component {
     }
   }
 
-  get simulationRunning_() {
-    return !this.state.result && this.state.iterations;
-  }
-
   renderWinRate_() {
     const result = this.state.result;
-    const percent = _.decimals(result == -1 ? 0 : result, 4) * 100 + '%';
+    const percent = _.decimals(100 * (result == -1 ? 0 : result), 2) + '%';
     return (
       <span>
         win rate: <span className={style.percent}>{percent}</span>

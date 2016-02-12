@@ -1,0 +1,27 @@
+@import "~react-toolbox/lib/commons";
+
+$break-large: 850px;
+
+.content {
+  position: absolute;
+  right: 0;
+  top: 9.5rem;
+  padding-right: 1rem;
+  color: $color-text-secondary;
+  font-size: $font-size-tiny;
+  text-transform: lowercase;
+  @media (max-width: 850px) {
+    position: initial;
+    padding-right: 0;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  > p {
+    width: 20rem;
+    margin-bottom: 1rem;
+    @media (max-width: 850px) {
+      width: 40rem;
+      margin: auto;
+    }
+  }
+}

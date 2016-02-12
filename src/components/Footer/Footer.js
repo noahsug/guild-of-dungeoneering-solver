@@ -9,10 +9,10 @@ export default class Footer extends Component {
         <Link href="mailto:noahsug+god@gmail.com"
               target="_blank"
               label="Created by Noah Sugarman"
-              icon='email' />
+              icon="email" />
         <Link href="https://github.com/noahsug/guild-of-dungeoneering-solver"
               target="_blank"
-              label="Source code lives on github" icon='code' />
+              label="Source code lives on github" icon="code" />
       </nav>
     );
   }
