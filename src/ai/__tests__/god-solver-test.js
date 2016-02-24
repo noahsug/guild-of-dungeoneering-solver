@@ -22,7 +22,7 @@ describe('God solver', () => {
 
   it('supports +HP traits', () => {
     const solver = getSolver(
-        {name: 'Chump', traits: ['+1HP', '+2HP']}, {name: 'Gray Ooze'});
+        {name: 'Chump', traits: ['Level 3']}, {name: 'Gray Ooze'});
     expect(root.player.health).toBe(gameData.players.Chump.health + 3);
   });
 

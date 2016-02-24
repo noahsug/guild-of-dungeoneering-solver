@@ -1,8 +1,9 @@
 @import "~react-toolbox/lib/commons";
 
 .content {
-  margin: $unit * 0.5 auto 2rem;
+  margin: 0.5 * $unit auto 2 * $unit;
   width: 400px;
+  overflow: initial;
   .autocomplete {
     padding: 0;
   }
@@ -10,11 +11,12 @@
     padding-top: 0;
   }
   .win-rate {
-    line-height: 3.6rem;
-    padding: 0 0.8rem;
+    line-height: 3.6 * $unit;
+    padding: 0 0.8 * $unit;
     color: #58D1C1;
-    font-size: $font-size;
+    font-size: $font-size-small;
     font-weight: $font-weight-semi-bold;
+    text-transform: uppercase;
     .percent {
       font-weight: $font-weight-bold;
     }

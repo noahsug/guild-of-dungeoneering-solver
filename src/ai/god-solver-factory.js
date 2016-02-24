@@ -20,7 +20,7 @@ export default class GodSolverFactory {
   }
 
   getInitialStateForPlayer_(name, info) {
-    const char = gameData.players[info.name];
+    const char = gameData[name == 'player' ? 'players' : 'enemies'][info.name];
     _.assert(char, 'invalid name: ' + info.name);
     const sets = char.sets.concat(info.sets || []);
     const traits = (char.traits || []).concat(info.traits || []);
@@ -35,8 +35,8 @@ export default class GodSolverFactory {
     state[name + 'Deck'] = this.getDeck_(sets);
     state[name + 'Health'] = char.health;
 
+    this.resolveTraits_(name, state, traits);
     Object.assign(state, this.getTraits_(name, traits));
-    this.resolveTraits_(name, state);
     return state;
   }
 
@@ -74,6 +74,17 @@ export default class GodSolverFactory {
     return mergedSets;
   }
 
+  resolveTraits_(name, state, traits) {
+    const player = GameStateAccessor.instance.setState(state)[name];
+    traits.forEach((trait) => {
+      const info = gameData.traits[trait];
+      if (!info) return;
+      _.increment(state, name + 'Health', info.health || 0);
+      _.increment(state, name + 'PhysicalNextEffect', info.physicalNext || 0);
+      _.increment(state, name + 'ExtraHandSizeEffect', info.extraHandSize || 0);
+    });
+  }
+
   getTraits_(name, traitList) {
     const traits = {};
     traitList.forEach((trait) => {
@@ -82,34 +93,6 @@ export default class GodSolverFactory {
       traits[traitName]++;
     });
     return traits;
-  }
-
-  resolveTraits_(name, state) {
-    const player = GameStateAccessor.instance.setState(state)[name];
-    if (state[name + 'WarriorsMight']) {
-      _.increment(state, name + 'PhysicalNextEffect');
-    }
-    if (state[name + 'PhlogisTonic']) {
-      _.increment(state, name + 'Health');
-    }
-    if (state[name + 'CronesDiscipline']) {
-      _.increment(state, name + 'ExtraHandSizeEffect');
-    }
-    if (state[name + 'Wise']) {
-      _.increment(state, name + 'ExtraHandSizeEffect');
-    }
-    for (let i = 1; i < 9; i++) {
-      let trait = name + '+' + i + 'HP';
-      if (state[trait]) {
-        state[name + 'Health'] += i * state[trait];
-        delete state[trait];
-      }
-      trait = name + '-' + i + 'HP';
-      if (state[trait]) {
-        state[name + 'Health'] -= i * state[trait];
-        delete state[trait];
-      }
-    }
   }
 
   createCustom(gameState, {iteration = 15000000, debug = false} = {}) {

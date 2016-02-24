@@ -7,7 +7,7 @@ describe('Game data', () => {
   const gameData = require('../game-data.js');
 
   it('each player is valid', function() {
-    _.each(gameData.players, (player) => {
+    _.each(gameData.enemies, (player) => {
       expect(player.health).toBeDefined();
       expect(player.sets).toBeDefined();
       _.each(player.sets, (set) => {

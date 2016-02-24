@@ -19,9 +19,8 @@ export default class Results extends Component {
     let playerItems = result.player.items.join(', ');
     let playerTraits = result.player.traits.join(', ');
     const enemyTraits = result.enemy.traits.join(', ');
-    const winRate = result.rootNode.result;
+    const winRate = result.solver.rootNode.result;
     const percent = 100 * (winRate == -1 ? 0 : winRate);
-    console.log(result, playerItems);
     if (playerItems) playerItems = ' ' + playerItems;
     if (playerTraits) playerTraits = ' ' + playerTraits;
     return (

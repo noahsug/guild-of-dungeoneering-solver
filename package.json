@@ -80,7 +80,7 @@
       "fbjs",
       "react",
       "underscore",
-      "./src/utils/common.js"
+      "./src/utils/*"
     ]
   },
   "scripts": {
@@ -93,5 +93,8 @@
     "start": "babel-node tools/run start",
     "deploy": "babel-node tools/run deploy"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "underscore.string": "^3.2.3"
+  }
 }

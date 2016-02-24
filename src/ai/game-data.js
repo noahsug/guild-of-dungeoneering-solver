@@ -14,9 +14,10 @@ export default {
     '?': 'stupidity',
     '-H': 'selfDmg',
     'C': 'cycle',
-    'S': 'steal',
-    'SPB': 'stealPerBlock',
-    'SID': 'stealIfDmg',
+    'Cl': 'clone',  // TODO: implement
+    'S': 'steal',  // TODO: implement
+    'SPB': 'stealPerBlock',  // TODO: implement
+    'SID': 'stealIfDmg',  // TODO: implement
     'MRID': 'magicRoundIfDmg',
     'PRID': 'physicalRoundIfDmg',
     'MN': 'magicNext',
@@ -26,8 +27,8 @@ export default {
     'BPA': 'blockPhysicalAll',
     'BA': 'blockAll',
     'D': 'draw',
-    'Co': 'conceal',
-    'CoID': 'concealIfDmg',
+    'Co': 'conceal',  // TODO: implement
+    'CoID': 'concealIfDmg',  // TODO: implement
     'H6': 'healthSix',
     'PVU': 'physicalVsUnblockable',
   },
@@ -35,6 +36,10 @@ export default {
   sets: {
     // Player sets
     'Chump': ['P', 'P', 'P', 'P/P', 'B', 'B'],
+    'Cat Burglar': ['PN', 'PN', 'P/U', 'P/Q', 'P/P', 'P/P'],
+    'Bruiser': ['P', 'P', 'BP/BP', 'P/BP', 'P/U', 'BM', 'BM'],
+    'Apprentice': ['M/BM', 'M/BM', 'D/D', 'M/U', 'M/U', 'M/Q'],
+    'Shapeshifter': ['H/H', 'M/U', 'P/P', 'P/P', 'M/BM/BM', 'BP/BP/BP'],
 
     // Enemy sets
     'Feral 1': ['P/U'],
@@ -177,14 +182,54 @@ export default {
   },
 
   players: {
-    // Dungeoneers
+    // Tier 1
     'Chump': {
       sets: ['Chump'],
       health: 5,
     },
+    'Cat Burglar': {
+      sets: ['Cat Burglar'],
+      health: 5,
+    },
+    'Bruiser': {
+      sets: ['Bruiser'],
+      health: 5,
+      traits: ['Spikey'],
+    },
+    'Apprentice': {
+      sets: ['Apprentice'],
+      health: 5,
+      traits: ['Fire 1'],
+    },
+    //'Mime': {
+    //},
+    // Tier 2
+    //'Alchemist': {
+    //  traits: ['Blessing'],
+    //}
+    //'Barbarian': {
+    //  sets: ['Cat Burgler'],
+    //  health: 5,
+    //  traits: ['Deathwish'],
+    //},
+    //'Ranger': {
+    //  sets: ['Cat Burgler'],
+    //  health: 5,
+    //  traits: ['Ranged'],
+    //},
+    //'Ranger': {
+    //  sets: ['Cat Burgler'],
+    //  health: 5,
+    //  traits: ['Ranged'],
+    //},
+    'Shapeshifter': {
+      sets: ['Shapeshifter'],
+      health: 5,
+      traits: ['Growth I'],
+    },
+  },
 
-    // Enemies
-
+  enemies: {
     // Cove - 1
     'Deckhand': {
       health: 7,
@@ -219,11 +264,11 @@ export default {
       sets: ['Spooky 2', 'Armed 5', 'Aquatic 3', 'Nature 1'],
       traits: ['Tough'],
     },
-    'Gunner': {
-      health: 7,
-      sets: ['Armed 3', 'Burly 2', 'Rage 2', 'Gunnery 4'],
-      traits: ['Spikey', 'Rum'],
-    },
+    //'Gunner': {
+    //  health: 7,
+    //  sets: ['Armed 3', 'Burly 2', 'Rage 2', 'Gunnery 4'],
+    //  traits: ['Spikey', 'Rum'],
+    //},
     'Hermit Crab': {
       health: 9,
       sets: ['Armed 4', 'Aquatic 3', 'Nature 1'],
@@ -234,15 +279,15 @@ export default {
       sets: ['Aquatic 4', 'Irritable 5', 'Feral 5'],
       traits: ['Mundane'],
     },
-    'Sea Monkey': {
-      health: 8,
-      sets: ['Feral 3', 'Irritable 2', 'Pickpocket 3', 'Aquatic 3', 'Electrical 1'],
-    },
-    'Werecrab Mage': {
-      health: 9,
-      sets: ['Spooky 3', 'Sorcery 3', 'Aquatic 2', 'Electrical 4'],
-      traits: ['Frail'],
-    },
+    //'Sea Monkey': {
+    //  health: 8,
+    //  sets: ['Feral 3', 'Irritable 2', 'Pickpocket 3', 'Aquatic 3', 'Electrical 1'],
+    //},
+    //'Werecrab Mage': {
+    //  health: 9,
+    //  sets: ['Spooky 3', 'Sorcery 3', 'Aquatic 2', 'Electrical 4'],
+    //  traits: ['Frail'],
+    //},
     // Cove - 3
     'Ancient Mariner': {
       health: 10,
@@ -264,21 +309,21 @@ export default {
       sets: ['Armed 2', 'Burly 3', 'Gunnery 2', 'Irritable 3', 'Pickpocket 2'],
       traits: ['Crewmate'],
     },
-    'Flaming Gallah': {
-      health: 9,
-      sets: ['Flame 4', 'Feral 5', 'Rage 1', 'Nature 1', 'Pickpocket 3'],
-      traits: ['Burn', 'Ferocious'],
-    },
-    'Ghost Pirate': {
-      health: 10,
-      sets: ['Sorcery 3', 'Death 2', 'Pickpocket 2'],
-      traits: ['Bulwark', 'Aggressive'],
-    },
-    'Master Gunner': {
-      health: 14,
-      sets: ['Gunnery 5', 'Burly 2', 'Armed 2', 'Rage 2'],
-      traits: ['Tough', 'Spikey', 'Aggressive'],
-    },
+    //'Flaming Gallah': {
+    //  health: 9,
+    //  sets: ['Flame 4', 'Feral 5', 'Rage 1', 'Nature 1', 'Pickpocket 3'],
+    //  traits: ['Burn', 'Ferocious'],
+    //},
+    //'Ghost Pirate': {
+    //  health: 10,
+    //  sets: ['Sorcery 3', 'Death 2', 'Pickpocket 2'],
+    //  traits: ['Bulwark', 'Aggressive'],
+    //},
+    //'Master Gunner': {
+    //  health: 14,
+    //  sets: ['Gunnery 5', 'Burly 2', 'Armed 2', 'Rage 2'],
+    //  traits: ['Tough', 'Spikey', 'Aggressive'],
+    //},
     'Pearl Guard': {
       health: 10,
       sets: ['Feral 3', 'Irritable 2', 'Aquatic 4'],
@@ -288,11 +333,11 @@ export default {
       sets: ['Armed 3', 'Rage 2', 'Pickpocket 1'],
       traits: ['Aggressive', 'Rum', 'Crewmate'],
     },
-    'Ships Cook': {
-      health: 9,
-      sets: ['Pickpocket 3', 'Rage 2', 'Irritable 2', 'Burly 2'],
-      traits: ['Fury', 'Rum', 'Respite'],
-    },
+    //'Ships Cook': {
+    //  health: 9,
+    //  sets: ['Pickpocket 3', 'Rage 2', 'Irritable 2', 'Burly 2'],
+    //  traits: ['Fury', 'Rum', 'Respite'],
+    //},
     'Three-Headed Monkey': {
       health: 10,
       sets: ['Irritable 5', 'Burly 4', 'Feral 3', 'Nature 1'],
@@ -309,16 +354,16 @@ export default {
       sets: ['Irritable 5', 'Burly 3', 'Gunnery 2', 'Armed 2', 'Pickpocket 2'],
       traits: ['Bulwark', 'Crewmate'],
     },
-    'Captain Rosalita': {
-      health: 14,
-      sets: ['Rage 2', 'Irritable 4', 'Pickpocket 4', 'Armed 4'],
-      traits: ['Skilled', 'Crewmate'],
-    },
-    'Cleaver Joe': {
-      health: 13,
-      sets: ['Flame 2', 'Rage 2', 'Irritable 3', 'Burly 2', 'Pickpocket 3'],
-      traits: ['Fury', 'Rum', 'Respite'],
-    },
+    //'Captain Rosalita': {
+    //  health: 14,
+    //  sets: ['Rage 2', 'Irritable 4', 'Pickpocket 4', 'Armed 4'],
+    //  traits: ['Skilled', 'Crewmate'],
+    //},
+    //'Cleaver Joe': {
+    //  health: 13,
+    //  sets: ['Flame 2', 'Rage 2', 'Irritable 3', 'Burly 2', 'Pickpocket 3'],
+    //  traits: ['Fury', 'Rum', 'Respite'],
+    //},
     'Crab King': {
       health: 12,
       sets: ['Spooky 4', 'Armed 5', 'Nature 1'],
@@ -348,6 +393,7 @@ export default {
       sets: ['Death 2', 'Spooky 2', 'Ghoulish 3', 'Pickpocket 1'],
       traits: ['Brittle', 'Aggressive', 'Crewmate'],
     },
+    // Final
     'Angry Bunny': {
       health: 14,
       sets: ['Demonic 4', 'Burly 4', 'Rage 4', 'Irritable 5', 'Feral 5'],
@@ -367,7 +413,7 @@ export default {
     'Giant Bat': {
       health: 4,
       sets: ['Spooky 3', 'Feral 2'],
-      traits: ['Loner'],
+      situationalTraits: ['Loner'],
     },
     'Goblin': {
       health: 6,
@@ -424,7 +470,7 @@ export default {
     'Bandito': {
       health: 7,
       sets: ['Armed 5'],
-      traits: ['Loner'],
+      situationalTraits: ['Loner'],
     },
     'Bear Owl': {
       health: 7,
@@ -524,7 +570,7 @@ export default {
     'Plague Rat': {
       health: 6,
       sets: ['Venom 2', 'Feral 2'],
-      traits: ['Loner'],
+      situationalTraits: ['Loner'],
     },
     // Jungle - 2
     'Harpy': {
@@ -556,11 +602,11 @@ export default {
       traits: ['Sluggish'],
     },
     // Jungle - 3
-    'Air elemental': {
-      health: 9,
-      sets: ['Sorcery 3', 'Irritable 3'],
-      traits: ['Bulwark', 'Wandering'],
-    },
+    //'Air elemental': {
+    //  health: 9,
+    //  sets: ['Sorcery 3', 'Irritable 3'],
+    //  traits: ['Bulwark', 'Wandering'],
+    //},
     'Dire Scorpion': {
       health: 8,
       sets: ['Burly 2', 'Nature 2'],
@@ -571,11 +617,11 @@ export default {
       sets: ['Demonic 3', 'Feral 3'],
       traits: ['Brittle'],
     },
-    'Jungle Shaman': {
-      health: 8,
-      sets: ['Flame 3', 'Sorcery 3'],
-      traits: ['Leader'],
-    },
+    //'Jungle Shaman': {
+    //  health: 8,
+    //  sets: ['Flame 3', 'Sorcery 3'],
+    //  traits: ['Leader'],
+    //},
     'Owl Bear': {
       health: 8,
       sets: ['Rage 3', 'Nature 2'],
@@ -663,15 +709,16 @@ export default {
       sets: ['Rage 2', 'Burly 2', 'Ghoulish 2'],
       traits: ['Decay', 'Wandering'],
     },
-    'Spider Drill': {
-      health: 9,
-      sets: ['Sorcery 3', 'Burly 2'],
-      traits: ['Bulwark', 'Aggressive'],
-    },
+    //'Spider Drill': {
+    //  health: 9,
+    //  sets: ['Sorcery 3', 'Burly 2'],
+    //  traits: ['Bulwark', 'Aggressive'],
+    //},
     'Wailing Ghost': {
       health: 7,
       sets: ['Sorcery 2', 'Demonic 2', 'Ghoulish 3'],
-      traits: ['Tenacious', 'Loner'],
+      traits: ['Tenacious'],
+      situationalTraits: ['Loner'],
     },
     // Mines - 3
     'Cave Troll': {
@@ -689,15 +736,15 @@ export default {
       sets: ['Burly 3', 'Demonic 2'],
       traits: ['Brittle'],
     },
-    'Genii': {
-      health: 9,
-      sets: ['Demonic 2', 'Sorcery 3'],
-    },
-    'Nymph': {
-      health: 9,
-      sets: ['Venom 3', 'Sorcery 3'],
-      traits: ['Tenacious'],
-    },
+    //'Genii': {
+    //  health: 9,
+    //  sets: ['Demonic 2', 'Sorcery 3'],
+    //},
+    //'Nymph': {
+    //  health: 9,
+    //  sets: ['Venom 3', 'Sorcery 3'],
+    //  traits: ['Tenacious'],
+    //},
     'Vampire': {
       health: 9,
       sets: ['Demonic 3', 'Ghoulish 3'],
@@ -709,21 +756,21 @@ export default {
       sets: ['Burly 4', 'Ghoulish 2'],
       traits: ['Sluggish'],
     },
-    'Dwarf Magnate': {
-      health: 10,
-      sets: ['Demonic 2', 'Sorcery 4'],
-      traits: ['Fury'],
-    },
-    'Dwarf Masterpiece': {
-      health: 13,
-      sets: ['Venom 4', 'Sorcery 4'],
-      traits: ['Brittle'],
-    },
-    'Dwarf Mecha': {
-      health: 14,
-      sets: ['Burly 4', 'Sorcery 3'],
-      traits: ['Predictable', 'Frail'],
-    },
+    //'Dwarf Magnate': {
+    //  health: 10,
+    //  sets: ['Demonic 2', 'Sorcery 4'],
+    //  traits: ['Fury'],
+    //},
+    //'Dwarf Masterpiece': {
+    //  health: 13,
+    //  sets: ['Venom 4', 'Sorcery 4'],
+    //  traits: ['Brittle'],
+    //},
+    //'Dwarf Mecha': {
+    //  health: 14,
+    //  sets: ['Burly 4', 'Sorcery 3'],
+    //  traits: ['Predictable', 'Frail'],
+    //},
     'Dwarf Sentry': {
       health: 12,
       sets: ['Burly 3', 'Demonic 2'],
@@ -1266,6 +1313,52 @@ export default {
       sets: ['Blade 2', 'Growth 3'],
       slot: 'Weapon',
       rarity: 'E3',
+    },
+  },
+
+  traits: {
+    'Level 1': {
+      health: 1,
+      for: 'player',
+      type: 'level',
+    },
+    'Level 2': {
+      health: 2,
+      for: 'player',
+      type: 'level',
+    },
+    'Level 3': {
+      health: 3,
+      for: 'player',
+      type: 'level',
+    },
+    'Level 4': {
+      health: 4,
+      for: 'player',
+      type: 'level',
+    },
+    'Level 5': {
+      health: 5,
+      for: 'player',
+      type: 'level',
+    },
+    'Warriors Might': {
+      physicalNext: 1,
+      for: 'player',
+      type: 'trinket',
+    },
+    'Phlogis Tonic': {
+      health: 1,
+      for: 'player',
+      type: 'trinket',
+    },
+    'Crones Discipline': {
+      extraHandSize: 1,
+      for: 'player',
+      type: 'trinket',
+    },
+    'Wise': {
+      extraHandSize: 1,
     },
   },
 };

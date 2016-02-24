@@ -29,32 +29,13 @@ export default class GameStateAccessor {
   }
 
   clone() {
-    return {
-      playerHealth: this.state.playerHealth,
-      playerDeck: _.clone(this.state.playerDeck),
-      playerHand: _.clone(this.state.playerHand),
-      playerDiscardPile: _.clone(this.state.playerDiscardPile),
-      playerDiscardEffect: this.state.playerDiscardEffect,
-      playerDrawEffect: this.state.playerDrawEffect,
-      playerCycleEffect: this.state.playerCycleEffect,
-      playerMagicNextEffect: this.state.playerMagicNextEffect,
-      playerPhysicalNextEffect: this.state.playerPhysicalNextEffect,
-      playerMagicRoundEffect: this.state.playerMagicRoundEffect,
-      playerPhysicalRoundEffect: this.state.playerPhysicalRoundEffect,
+    const clone = this.newTurnClone();
+    clone.playerDiscardEffect = this.state.playerDiscardEffect;
+    clone.playerDrawEffect = this.state.playerDrawEffect;
+    clone.playerCycleEffect = this.state.playerCycleEffect;
 
-      enemyHealth: this.state.enemyHealth,
-      enemyDeck: _.clone(this.state.enemyDeck),
-      enemyHand: _.clone(this.state.enemyHand),
-      enemyDiscardPile: _.clone(this.state.enemyDiscardPile),
-      enemyStealEffect: this.state.enemyStealEffect,
-      enemyConcealEffect: this.state.enemyConcealEffect,
-      enemyMagicNextEffect: this.state.enemyMagicNextEffect,
-      enemyPhysicalNextEffect: this.state.enemyPhysicalNextEffect,
-      enemyMagicRoundEffect: this.state.enemyMagicRoundEffect,
-      enemyPhysicalRoundEffect: this.state.enemyPhysicalRoundEffect,
-      enemyPredictable: this.state.enemyPredictable,
-      enemyRum: this.state.enemyRum,
-    };
+    clone.enemyStealEffect = this.state.enemyStealEffect;
+    return clone;
   }
 
   // Clone with only persistant effects (e.g. no drawEffect).

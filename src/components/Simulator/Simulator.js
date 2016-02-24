@@ -1,5 +1,4 @@
 import React, { PropTypes, Component } from 'react';
-import {Typeahead, Tokenizer} from 'react-typeahead';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 import Button from 'react-toolbox/lib/button';
@@ -15,11 +14,13 @@ export default class Simulator extends Component {
     this.state = this.getInitialState_();
     this.renderInfo_ = this.parseGameData_();
     this.solver_ = null;
+    //this.solve_();
   }
 
   static propTypes = {
     onSimulationStart: React.PropTypes.func,
     onSimulationFinish: React.PropTypes.func,
+    openPlaythrough: React.PropTypes.func,
   }
 
   getInitialState_() {
@@ -40,44 +41,75 @@ export default class Simulator extends Component {
   }
 
   parseGameData_() {
-    const players = ['Chump'];
+    const players = [];
+    _.each(gameData.players, (player, name) => {
+      players.push(name);
+    });
     const enemies = [];
-    _.each(gameData.players, (p, name) => {
-      if (!p.player) enemies.push(name);
+    _.each(gameData.enemies, (enemy, name) => {
+      enemies.push(name);
     });
     const items = Object.keys(gameData.items);
-    const traits = ['+1HP', '+2HP', '+3HP', '+4HP', '+5HP',
-                    '-1HP', '-2HP', '-3HP', '-4HP', '-5HP'];
-    return {players, enemies, items, traits};
+    const playerTraits = [];
+    _.each(gameData.traits, (trait, name) => {
+      if (trait.for == 'player') playerTraits.push(name);
+    });
+    const enemyTraits = [];
+    _.each(gameData.traits, (trait, name) => {
+      if (trait.for == 'enemy') enemyTraits.push(name);
+    });
+    return {players, enemies, items, playerTraits, enemyTraits};
   }
 
   render() {
-    const {players, enemies, items, traits} = this.renderInfo_;
+    const {players, enemies, items} = this.renderInfo_;
+    const playerTraits = this.filterTraits_(
+        this.renderInfo_.playerTraits, this.state.player.traits);
+    const enemyTraits = this.filterTraits_(
+        this.renderInfo_.enemyTraits, this.state.enemy.traits);
 
     return (
       <Card className={style.content}>
         <CardText>
-          {this.renderInput_('Hero', 'player', 'name', players)}
-          {this.renderInput_('Items', 'player', 'items', items, {multiple: true})}
-          {this.renderInput_('Trinkets, Level', 'player', 'traits', traits,
+          {this.renderInput_('Dungeoneer', 'player', 'name', players)}
+          {this.renderInput_('Items', 'player', 'items', items,
                              {multiple: true})}
+          {this.renderInput_('Trinkets, Level', 'player', 'traits',
+                             playerTraits, {multiple: true})}
           {this.renderInput_('Enemy', 'enemy', 'name', enemies)}
-          {this.renderInput_('Traits', 'enemy', 'traits', traits,
+          {this.renderInput_('Enemy Traits', 'enemy', 'traits', enemyTraits,
                              {multiple: true})}
         </CardText>
-        {this.state.running ? (
-          <ProgressBar type="linear" mode="indeterminate" />
-        ) : this.state.result ? (
-          <CardActions className={style['card-actions']}>
-            <span className={style['win-rate']}>{this.renderWinRate_()}</span>
-          </CardActions>
-        ) : (
-          <CardActions className={style['card-actions']}>
+        <CardActions className={style['card-actions']}>
+          {this.state.running ? (
+            <Button label="Stop"
+                    onClick={this.stopRunning_.bind(this)} />
+          ) : this.state.result ? (
+            <span>
+              <span className={style['win-rate']}>{this.renderWinRate_()}</span>
+              <Button label="See Breakdown"
+                      onClick={this.openPlaythrough_.bind(this)} />
+            </span>
+          ) : (
             <Button primary label="Solve" onClick={this.solve_.bind(this)} />
-          </CardActions>
-        )}
+          )}
+        </CardActions>
+        {this.state.running ? (
+            <ProgressBar type="linear" mode="indeterminate" />) : ''}
       </Card>
     );
+  }
+
+  // Removes traits of the same type, e.g. can't select a level twice.
+  filterTraits_(traits, selected) {
+    const types = _.createSet(selected.map((trait) => {
+      return gameData.traits[trait].type;
+    }));
+    return traits.filter((trait) => {
+      if (selected.includes(trait)) return true;
+      const type = gameData.traits[trait].type;
+      return !type || !types[type];
+    });
   }
 
   renderInput_(label, player, type, source, {multiple = false} = {}) {
@@ -111,7 +143,7 @@ export default class Simulator extends Component {
     this.props.onSimulationStart({
       player: this.state.player,
       enemy: this.state.enemy,
-      rootNode: this.solver_.rootNode,
+      solver: this.solver_,
     });
     this.setState({result: 0, running: true});
 
@@ -124,7 +156,7 @@ export default class Simulator extends Component {
     if (result) {
       this.setState({result, running: false});
       this.props.onSimulationFinish();
-    } else {
+    } else if (this.state.running) {
       setTimeout(this.solveLoop_.bind(this), 5);
     }
   }
@@ -135,13 +167,20 @@ export default class Simulator extends Component {
     }
   }
 
+  stopRunning_() {
+    this.setState({running: false});
+  }
+
   renderWinRate_() {
-    const result = this.state.result;
-    const percent = _.decimals(100 * (result == -1 ? 0 : result), 2) + '%';
+    const percent = _.percent(this.state.result) + '%';
     return (
       <span>
         win rate: <span className={style.percent}>{percent}</span>
       </span>
     );
+  }
+
+  openPlaythrough_() {
+    this.props.openPlaythrough();
   }
 }

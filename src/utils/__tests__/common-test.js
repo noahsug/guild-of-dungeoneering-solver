@@ -82,3 +82,12 @@ describe('fastRemoveAt', () => {
     expect(a).toEqualValues([1, 2, 4, 5]);
   });
 });
+
+describe('expand', () => {
+  it('expands an array ', () => {
+    const a = [1, 2, 3];
+    const fn = item => item.toString().repeat(item).split('');
+    const result = _.expand(a, fn);
+    expect(result).toEqual(['1', '2', '2', '3', '3', '3']);
+  });
+});

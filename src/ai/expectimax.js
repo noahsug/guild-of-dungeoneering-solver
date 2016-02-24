@@ -13,8 +13,11 @@ export default class Expectimax {
     this.accessor_ = new GameStateAccessor();
   }
 
-  setState(gameState) {
-    this.initState = gameState;
+  /**
+   * @param {!Object} state Board state of a root or chance node.
+   */
+  setState(state) {
+    this.initState = state;
 
     //this.nodeFactory.createChildren(this.rootNode);
     //this.rootNode = this.rootNode.children.find((c) => {
@@ -38,7 +41,8 @@ export default class Expectimax {
     this.iteration = this.runUntil.iteration;
     this.node_ = this.rootNode;
     //this.depth_ = 0;
-    this.initNode_(this.node_);
+    this.node_.winRate = 1;
+    this.node_.pruneCutoff = this.node_.index = 0;
   }
 
   get done() {
@@ -47,13 +51,16 @@ export default class Expectimax {
 
   solve() {
     while (!this.done) this.next();
+    return this.rootNode;
   }
 
   next() {
     if (this.node_.result) {
-      this.cacheResult_();
       this.updateParentResult_(this.node_);
-      this.cleanUpMemory_();
+      if (this.node_.type == Node.Type.CHANCE) {
+        this.cacheResult_();
+        this.cleanUpMemory_();
+      }
       this.node_ = this.node_.parent;
       //this.depth_--;
     } else {
@@ -68,7 +75,7 @@ export default class Expectimax {
   }
 
   cacheResult_() {
-    if (this.node_.type == Node.Type.CHANCE && this.node_.result != -Infinity) {
+    if (this.node_.result != -Infinity) {
       this.cache_.cacheResult(this.node_);
     }
   }
@@ -126,6 +133,7 @@ export default class Expectimax {
     return child;
   }
 
+  // Look ahead at each child to see if we can prune early.
   processFinishedChildren_() {
     if (this.node_.type == Node.Type.CHANCE) {
       // TODO: Check hints?
@@ -136,7 +144,7 @@ export default class Expectimax {
       const child = this.node_.children[i];
       child.result = child.result || this.cache_.getResult(child);
       if (child.result) {
-        this.maybeDisplayChildren_(child);
+        //this.maybeDisplayChildren_(child);
         this.node_.index++;
         this.updateParentResult_(child);
         if (this.node_.result) return;
@@ -264,7 +272,6 @@ export default class Expectimax {
   }
 
   getPruneCutoff_(node) {
-    if (!node.parent) return 0;
     if (node.type == Node.Type.CHANCE) {
       const req = node.parent.winRate - node.parent.pruneCutoff;
       const max = 1 / node.parent.children.length;

@@ -5,8 +5,8 @@ $break-large: 850px;
 .content {
   position: absolute;
   right: 0;
-  top: 9.5rem;
-  padding-right: 1rem;
+  top: 9.5 * $unit;
+  padding-right: 1 * $unit;
   color: $color-text-secondary;
   font-size: $font-size-tiny;
   text-transform: lowercase;
@@ -14,13 +14,13 @@ $break-large: 850px;
     position: initial;
     padding-right: 0;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2 * $unit;
   }
   > p {
-    width: 20rem;
-    margin-bottom: 1rem;
+    width: 20 * $unit;
+    margin-bottom: 1 * $unit;
     @media (max-width: 850px) {
-      width: 40rem;
+      width: 40 * $unit;
       margin: auto;
     }
   }

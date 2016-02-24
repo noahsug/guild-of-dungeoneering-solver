@@ -1,0 +1,10 @@
+@import "~react-toolbox/lib/commons";
+
+.content {
+  margin: 0.5 * $unit auto 2 * $unit;
+  width: 400px;
+  overflow: initial;
+  .pruned {
+    pointer-events: none;
+  }
+}

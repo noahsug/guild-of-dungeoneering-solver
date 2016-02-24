@@ -4,7 +4,7 @@ import _ from '../utils/common.js';
 export default class Card {
   constructor(desc) {
     this.desc = desc;
-    const attrs = desc.split('/');
+    const attrs = desc.split(Card.DELIMITER);
     this.validateAttrs_(attrs);
 
     const groups = _.groupBy(attrs);
@@ -21,10 +21,14 @@ export default class Card {
     });
   }
 
+  static DELIMITER = '/';
+
   static list = [];
 
   static getSet(set) {
-    return Card.cardIndexesInSets[set];
+    const indexes = Card.cardIndexesInSets[set];
+    _.assert(indexes, 'Missing set ' + set);
+    return indexes;
   }
 
   static get(desc) {
@@ -41,7 +45,7 @@ export default class Card {
   }
 
   static sortDesc(desc) {
-    return desc.split('/').sort().join('/');
+    return desc.split(Card.DELIMITER).sort().join(Card.DELIMITER);
   }
 
   static initCardList() {

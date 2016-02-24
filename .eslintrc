@@ -30,5 +30,6 @@
     "no-loop-func": 0,
     "wrap-iife": 0,
     "no-nested-ternary": 0,
+    "camelcase": 0,
   }
 }
