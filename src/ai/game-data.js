@@ -531,22 +531,22 @@ export default {
       sets: ['Death 5', 'Irritable 5', 'Feral 4'],
       traits: ['Brittle'],
     },
-    'Orc Warlord': {
-      health: 11,
-      sets: ['Armed 5', 'Irritable 5', 'Stupidity 2'],
-      traits: ['Predictable'],
-    },
+    //'Orc Warlord': {
+    //  health: 11,
+    //  sets: ['Armed 5', 'Irritable 5', 'Stupidity 2'],
+    //  traits: ['Predictable'],
+    //},
     'Rat King': {
       health: 7,
       sets: ['Armed 3', 'Irritable 3', 'Feral 3'],
       traits: ['Leader'],
     },
     // Jungle - 1
-    'Bloodstarved Bat': {
-      health: 6,
-      sets: ['Rage 2', 'Spooky 2'],
-      traits: ['Predictable'],
-    },
+    //'Bloodstarved Bat': {
+    //  health: 6,
+    //  sets: ['Rage 2', 'Spooky 2'],
+    //  traits: ['Predictable'],
+    //},
     'Frenzied Goblin': {
       health: 6,
       sets: ['Rage 2', 'Armed 2'],
@@ -652,11 +652,11 @@ export default {
       sets: ['Venom 3', 'Demonic 2', 'Ghoulish 2'],
       traits: ['Night Owl'],
     },
-    'Ogre': {
-      health: 13,
-      sets: ['Burly 3', 'Rage 2', 'Stupidity 2'],
-      traits: ['Predictable'],
-    },
+    //'Ogre': {
+    //  health: 13,
+    //  sets: ['Burly 3', 'Rage 2', 'Stupidity 2'],
+    //  traits: ['Predictable'],
+    //},
     // Mines - 1
     'Albino Goblin': {
       health: 8,

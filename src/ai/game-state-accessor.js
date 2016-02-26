@@ -54,12 +54,12 @@ export default class GameStateAccessor {
       enemyDeck: _.clone(this.state.enemyDeck),
       enemyHand: _.clone(this.state.enemyHand),
       enemyDiscardPile: _.clone(this.state.enemyDiscardPile),
-      enemyConcealEffect: this.state.enemyConcealEffect,
+      //enemyConcealEffect: this.state.enemyConcealEffect,
       enemyMagicNextEffect: this.state.enemyMagicNextEffect,
       enemyPhysicalNextEffect: this.state.enemyPhysicalNextEffect,
       enemyMagicRoundEffect: this.state.enemyMagicRoundEffect,
       enemyPhysicalRoundEffect: this.state.enemyPhysicalRoundEffect,
-      enemyPredictable: this.state.enemyPredictable,
+      //enemyPredictable: this.state.enemyPredictable,
       enemyRum: this.state.enemyRum,
     };
   }

@@ -20,7 +20,7 @@ describe('simulator', () => {
     sim.cardResolver_ = resolver;
   }
 
-  it.only('gets the next states', () => {
+  it('gets the next states', () => {
     const state = GameStateAccessor.create({
       playerDeck: [],
       playerHealth: 5,

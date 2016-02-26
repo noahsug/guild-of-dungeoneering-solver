@@ -41,7 +41,7 @@ export default class Expectimax {
     this.iteration = this.runUntil.iteration;
     this.node_ = this.rootNode;
     //this.depth_ = 0;
-    this.node_.winRate = 1;
+    this.node_.winRate = this.node_.type == Node.Type.CHANCE ? -Infinity : 1;
     this.node_.pruneCutoff = this.node_.index = 0;
   }
 

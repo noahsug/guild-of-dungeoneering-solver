@@ -189,112 +189,112 @@ export class GameStatePlayerAccessor {
 
   // Traits
   get frail() {
-    return this.state.playerFrail;
+    return this.state.playerFrail || 0;
   }
   set frail(value) {
     this.state.playerFrail = value;
   }
 
   get mundane() {
-    return this.state.playerMundane;
+    return this.state.playerMundane || 0;
   }
   set mundane(value) {
     this.state.playerMundane = value;
   }
 
   get fury() {
-    return this.state.playerFury;
+    return this.state.playerFury || 0;
   }
   set fury(value) {
     this.state.playerFury = value;
   }
 
   get predictable() {
-    return this.state.playerPredictable;
+    return this.state.playerPredictable || 0;
   }
   set predictable(value) {
     this.state.playerPredictable = value;
   }
 
   get brittle() {
-    return this.state.playerBrittle;
+    return this.state.playerBrittle || 0;
   }
   set brittle(value) {
     this.state.playerBrittle = value;
   }
 
   get tenacious() {
-    return this.state.playerTenacious;
+    return this.state.playerTenacious || 0;
   }
   set tenacious(value) {
     this.state.playerTenacious = value;
   }
 
   get sluggish() {
-    return this.state.playerSluggish;
+    return this.state.playerSluggish || 0;
   }
   set sluggish(value) {
     this.state.playerSluggish = value;
   }
 
   get bulwark() {
-    return this.state.playerBulwark;
+    return this.state.playerBulwark || 0;
   }
   set bulwark(value) {
     this.state.playerBulwark = value;
   }
 
   get retribution() {
-    return this.state.playerRetribution;
+    return this.state.playerRetribution || 0;
   }
   set retribution(value) {
     this.state.playerRetribution = value;
   }
 
   get decay() {
-    return this.state.playerDecay;
+    return this.state.playerDecay || 0;
   }
   set decay(value) {
     this.state.playerDecay = value;
   }
 
   get tough() {
-    return this.state.playerTough;
+    return this.state.playerTough || 0;
   }
   set tough(value) {
     this.state.playerTough = value;
   }
 
   get spikey() {
-    return this.state.playerSpikey;
+    return this.state.playerSpikey || 0;
   }
   set spikey(value) {
     this.state.playerSpikey = value;
   }
 
   get rum() {
-    return this.state.playerRum;
+    return this.state.playerRum || 0;
   }
   set rum(value) {
     this.state.playerRum = value;
   }
 
   get ferocious() {
-    return this.state.playerFerocious;
+    return this.state.playerFerocious || 0;
   }
   set ferocious(value) {
     this.state.playerFerocious = value;
   }
 
   get burn() {
-    return this.state.playerBurn;
+    return this.state.playerBurn || 0;
   }
   set burn(value) {
     this.state.playerBurn = value;
   }
 
   get respite() {
-    return this.state.playerRespite;
+    return this.state.playerRespite || 0;
   }
   set respite(value) {
     this.state.playerRespite = value;
@@ -491,112 +491,112 @@ export class GameStateEnemyAccessor {
 
   // Traits
   get frail() {
-    return this.state.enemyFrail;
+    return this.state.enemyFrail || 0;
   }
   set frail(value) {
     this.state.enemyFrail = value;
   }
 
   get mundane() {
-    return this.state.enemyMundane;
+    return this.state.enemyMundane || 0;
   }
   set mundane(value) {
     this.state.enemyMundane = value;
   }
 
   get fury() {
-    return this.state.enemyFury;
+    return this.state.enemyFury || 0;
   }
   set fury(value) {
     this.state.enemyFury = value;
   }
 
   get predictable() {
-    return this.state.enemyPredictable;
+    return this.state.enemyPredictable || 0;
   }
   set predictable(value) {
     this.state.enemyPredictable = value;
   }
 
   get brittle() {
-    return this.state.enemyBrittle;
+    return this.state.enemyBrittle || 0;
   }
   set brittle(value) {
     this.state.enemyBrittle = value;
   }
 
   get tenacious() {
-    return this.state.enemyTenacious;
+    return this.state.enemyTenacious || 0;
   }
   set tenacious(value) {
     this.state.enemyTenacious = value;
   }
 
   get sluggish() {
-    return this.state.enemySluggish;
+    return this.state.enemySluggish || 0;
   }
   set sluggish(value) {
     this.state.enemySluggish = value;
   }
 
   get bulwark() {
-    return this.state.enemyBulwark;
+    return this.state.enemyBulwark || 0;
   }
   set bulwark(value) {
     this.state.enemyBulwark = value;
   }
 
   get retribution() {
-    return this.state.enemyRetribution;
+    return this.state.enemyRetribution || 0;
   }
   set retribution(value) {
     this.state.enemyRetribution = value;
   }
 
   get decay() {
-    return this.state.enemyDecay;
+    return this.state.enemyDecay || 0;
   }
   set decay(value) {
     this.state.enemyDecay = value;
   }
 
   get tough() {
-    return this.state.enemyTough;
+    return this.state.enemyTough || 0;
   }
   set tough(value) {
     this.state.enemyTough = value;
   }
 
   get spikey() {
-    return this.state.enemySpikey;
+    return this.state.enemySpikey || 0;
   }
   set spikey(value) {
     this.state.enemySpikey = value;
   }
 
   get rum() {
-    return this.state.enemyRum;
+    return this.state.enemyRum || 0;
   }
   set rum(value) {
     this.state.enemyRum = value;
   }
 
   get ferocious() {
-    return this.state.enemyFerocious;
+    return this.state.enemyFerocious || 0;
   }
   set ferocious(value) {
     this.state.enemyFerocious = value;
   }
 
   get burn() {
-    return this.state.enemyBurn;
+    return this.state.enemyBurn || 0;
   }
   set burn(value) {
     this.state.enemyBurn = value;
   }
 
   get respite() {
-    return this.state.enemyRespite;
+    return this.state.enemyRespite || 0;
   }
   set respite(value) {
     this.state.enemyRespite = value;

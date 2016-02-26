@@ -1,0 +1,15 @@
+@import "~react-toolbox/lib/commons";
+
+.content {
+  margin-bottom: 2 * $unit;
+  > p {
+    color: $color-text-secondary;
+    font-size: $font-size-tiny;
+    text-transform: lowercase;
+    text-align: center;
+    &.title {
+      font-size: $font-size-small;
+      text-decoration: underline;
+    }
+  }
+}

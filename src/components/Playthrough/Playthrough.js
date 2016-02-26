@@ -95,7 +95,7 @@ export default class Playthrough extends Component {
         const onClick = this.selectPlayerHand_.bind(this, hand);
 
         // Average the win rate between all cards.
-        let winRate = _.percent(child.result);
+        let winRate = child.result < 0 ? 0 : child.result;
         let count = 1;
         if (moves[hand]) {
           count = moves[hand].count;
@@ -124,11 +124,18 @@ export default class Playthrough extends Component {
   }
 
   getSortableMoveItem_(child, cards, onClick, opt_winRate) {
-    let winRate = _.ifDef(opt_winRate, _.percent(child.result));
-    let legend = winRate + '% win rate';
+    if (child.result == -Infinity) {
+      // Child was pruned, so we have to calculate win rate manually.
+      child.result = _.avg(child.children, node => {
+        return node.result < 0 ? 0 : node.result;
+      });
+    }
+
+    let winRate = child.result < 0 ? 0 : child.result;
+    if (isFinite(opt_winRate)) winRate = opt_winRate;
+    let legend = _.percent(winRate) + '% win rate';
     let listItemClass = '';
 
-    // Node was pruned.
     if (opt_winRate == 'pruned') {
       legend = 'pruned';
       listItemClass = style.pruned;

@@ -49,6 +49,8 @@ export default class Simulator {
     // TODO: Implement steal and clone.
     this.stateEnumerator_.cycle(player.cycleEffect);
     this.stateEnumerator_.draw(player.drawEffect);
+    // TODO: Implement enemyDiscardEffect, the card not discarded is played next
+    // by the enemy (put into enemy hand).
     this.stateEnumerator_.discard(player.discardEffect);
     this.stateEnumerator_.endTurn();
     return this.stateEnumerator_.getStates();

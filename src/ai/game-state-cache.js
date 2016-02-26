@@ -19,7 +19,7 @@ export default class GameStateCache {
     this.hashes_.enemyDeck = this.getHashes_(numCards);
     this.hashes_.enemyHand = this.getHashes_(numCards);
     this.hashes_.enemyDiscardPile = this.getHashes_(numCards);
-    this.hashes_.stats = this.getHashes_(2);
+    this.hashes_.stats = this.getHashes_(13);
   }
 
   getHashes_(len) {
@@ -104,12 +104,18 @@ export default class GameStateCache {
   }
 
   hashStats_() {
+    // TODO: Implement conceal and predictable.
     return this.accessor_.player.health * this.hashes_.stats[0] +
-        this.accessor_.enemy.health * this.hashes_.stats[1];
-  }
-
-  buildHash_(h1, h2, h3, h4, h5, h6, h7) {
-    return '' + h1 + h2 + h3 + h4 + h5 + h6 + h7;
+        this.accessor_.enemy.health * this.hashes_.stats[1] +
+        this.accessor_.player.magicNextEffect * this.hashes_.stats[2] +
+        this.accessor_.player.physicalNextEffect * this.hashes_.stats[3] +
+        this.accessor_.player.magicRoundEffect * this.hashes_.stats[4] +
+        this.accessor_.player.physicalRoundEffect * this.hashes_.stats[5] +
+        this.accessor_.enemy.magicNextEffect * this.hashes_.stats[6] +
+        this.accessor_.enemy.magicNextEffect * this.hashes_.stats[7] +
+        this.accessor_.enemy.magicRoundEffect * this.hashes_.stats[8] +
+        this.accessor_.enemy.physicalRoundEffect * this.hashes_.stats[9] +
+        !!this.accessor_.enemy.rum * this.hashes_.stats[10];
   }
 
   checkHashFunction_(node) {

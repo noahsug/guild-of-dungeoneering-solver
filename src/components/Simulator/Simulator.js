@@ -14,7 +14,7 @@ export default class Simulator extends Component {
     this.state = this.getInitialState_();
     this.renderInfo_ = this.parseGameData_();
     this.solver_ = null;
-    //this.solve_();
+    this.time_ = 0;
   }
 
   static propTypes = {
@@ -26,13 +26,13 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Chump',
+        name: 'Cat Burglar',
         items: [],
         traits: [],
         level: 0,
       },
       enemy: {
-        name: 'Fire Imp',
+        name: 'Rat King',
         traits: [],
       },
       result: 0,
@@ -140,6 +140,7 @@ export default class Simulator extends Component {
     this.solver_ = new GodSolverFactory().create(
         this.state.player, this.state.enemy);
     this.incrementSolve_(2);
+    this.time_ = Date.now();
     this.props.onSimulationStart({
       player: this.state.player,
       enemy: this.state.enemy,
@@ -154,6 +155,7 @@ export default class Simulator extends Component {
     this.incrementSolve_(20000);
     const result = this.solver_.rootNode.result;
     if (result) {
+      this.time_ = Date.now() - this.time_;
       this.setState({result, running: false});
       this.props.onSimulationFinish();
     } else if (this.state.running) {
@@ -175,7 +177,7 @@ export default class Simulator extends Component {
     const percent = _.percent(this.state.result) + '%';
     return (
       <span>
-        win rate: <span className={style.percent}>{percent}</span>
+        win rate: <span className={style.percent}>{percent}</span> ({this.time_ / 1000}s)
       </span>
     );
   }

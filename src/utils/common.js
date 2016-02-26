@@ -7,8 +7,7 @@ let uid = 0;
 _.s = s;
 
 _.mixin({
-  sum: (array, iteratee) => {
-    if (!iteratee) iteratee = _.identity;
+  sum: (array, iteratee = _.identity) => {
     return array.reduce((p, c) => p + iteratee(c), 0);
   },
 

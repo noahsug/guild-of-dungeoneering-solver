@@ -40,6 +40,12 @@ describe('sum', () => {
   it('sums an array of values', () => {
     expect(_.sum([1, 2, 3, 4])).toEqual(10);
   });
+
+  it('can take an iteratee', () => {
+    const list = [{age: 2}, {age: 5}, {age: 1}];
+    const result = _.sum(list, _.iteratee('age'));
+    expect(result).toBe(8);
+  });
 });
 
 describe('avg', () => {

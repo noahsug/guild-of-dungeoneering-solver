@@ -47,6 +47,14 @@ describe('card resolver', () => {
     expect(enemy.dead).toBe(true);
   });
 
+  it('resolves quick attacks against self dmg', () => {
+    const [state, player, enemy] = useState(2);
+    resolver.resolve(state, Card.create('Q/P'), Card.create('-H/P/P'));
+    expect(player.dead).toBe(true);
+    expect(enemy.dead).toBe(true);
+    expect(accessor.result).toBe(-1);
+  });
+
   it('resolves unblockable attacks', () => {
     const [state, player, enemy] = useState(5);
     resolver.resolve(state, Card.create('U/P'), Card.create('B'));
@@ -77,7 +85,7 @@ describe('card resolver', () => {
     expect(enemy.health).toBe(5);
   });
 
-  it.only('resolves effects', () => {
+  it('resolves effects', () => {
     const [state, player, enemy] = useState(10);
     resolver.resolve(state, Card.create('D/C/S/MN/PN/Co'), Card.create('BP'));
     const playerEffects = ['steal', 'conceal', 'draw', 'physicalNext',
@@ -212,8 +220,17 @@ describe('card resolver', () => {
     const [state, player, enemy] = useState(10, {playerFury: 1});
     resolver.resolve(state, Card.create('P'), Card.create('P/P/P/P/P'));
     expect(enemy.health).toBe(9);
-    resolver.resolve(state, Card.create('P'), Card.create('P'));
+    resolver.resolve(state, Card.create('P'), Card.create('?'));
     expect(enemy.health).toBe(7);
+    resolver.resolve(state, Card.create('H/P'), Card.create('?'));
+    expect(enemy.health).toBe(5);
+  });
+
+  it('resolves fury + quick', () => {
+    const [state, player, enemy] = useState(4, {enemyFury: 1});
+    // Quick doesn't trigger fury on the same turn.
+    resolver.resolve(state, Card.create('P/P/P/Q'), Card.create('P'));
+    expect(player.health).toBe(3);
   });
 
   it('resolves predictable', () => {
@@ -250,10 +267,16 @@ describe('card resolver', () => {
     expect(enemy.health).toBe(6);
     resolver.resolve(state, Card.create('P/U'), Card.create('?'));
     expect(enemy.health).toBe(5);
+    // Bulwark triggers heal per block.
     resolver.resolve(state, Card.create('P/P'), Card.create('B/HPB'));
     expect(enemy.health).toBe(7);
     resolver.resolve(state, Card.create('?'), Card.create('-H/HPB'));
     expect(enemy.health).toBe(8);
+    resolver.resolve(state, Card.create('P/P/PRID'), Card.create('?'));
+    expect(enemy.health).toBe(6);
+    // Bulwark stops bleed.
+    resolver.resolve(state, Card.create('?'), Card.create('?'));
+    expect(enemy.health).toBe(6);
   });
 
   it('resolves retribution', () => {
@@ -262,6 +285,8 @@ describe('card resolver', () => {
     expect(player.health).toBe(9);
     resolver.resolve(state, Card.create('M/M/M/BM'), Card.create('H/H/H'));
     expect(player.health).toBe(9);
+    resolver.resolve(state, Card.create('?'), Card.create('-H/-H/-H'));
+    expect(player.health).toBe(8);
   });
 
   it('resolves decay', () => {
