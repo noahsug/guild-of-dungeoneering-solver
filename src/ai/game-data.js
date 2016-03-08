@@ -31,6 +31,9 @@ export default {
     'CoID': 'concealIfDmg',  // TODO: implement
     'H6': 'healthSix',
     'PVU': 'physicalVsUnblockable',
+    'W': 'withstand',
+    'Cs': 'cardStorm',
+    'Ps': 'paperShield',
   },
 
   sets: {
@@ -40,6 +43,12 @@ export default {
     'Bruiser': ['P', 'P', 'BP/BP', 'P/BP', 'P/U', 'BM', 'BM'],
     'Apprentice': ['M/BM', 'M/BM', 'D/D', 'M/U', 'M/U', 'M/Q'],
     'Shapeshifter': ['H/H', 'M/U', 'P/P', 'P/P', 'M/BM/BM', 'BP/BP/BP'],
+    'Alchemist': ['M/M', 'M/M', 'H', 'H', 'M/Q', 'BM/BM/MN/MN'],
+    'Barbarian': ['P/P/-H', 'P/P/-H', 'P/P/P/-H', 'P/P/BM', 'P/P/U', 'W'],
+    'Ranger': ['P', 'P/U', 'M/M', 'P/P', 'B/PN', 'B/PN'],
+    'Cartomancer': ['M/M', 'Cs', 'P/U/Q', 'Ps', 'M/BM/BM', 'H/D'],
+    'Most Holy Grail Knight': ['P/HID', 'P/HID', 'M/HID/HID', 'P/P/U', 'P/P/-H', 'H/H/H/-H'],
+    'Troubador': ['M/U', 'P/P/Q', 'P/P/BP/BP', 'P/P/BM/BM', 'P/M', 'P/M'],
 
     // Enemy sets
     'Feral 1': ['P/U'],
@@ -197,35 +206,47 @@ export default {
       traits: ['Spikey'],
     },
     'Apprentice': {
-      sets: ['Apprentice'],
+      sets: ['Apprentice', 'Fire 1'],
       health: 5,
-      traits: ['Fire 1'],
     },
     //'Mime': {
     //},
     // Tier 2
-    //'Alchemist': {
-    //  traits: ['Blessing'],
-    //}
-    //'Barbarian': {
-    //  sets: ['Cat Burgler'],
-    //  health: 5,
-    //  traits: ['Deathwish'],
-    //},
-    //'Ranger': {
-    //  sets: ['Cat Burgler'],
-    //  health: 5,
-    //  traits: ['Ranged'],
-    //},
-    //'Ranger': {
-    //  sets: ['Cat Burgler'],
-    //  health: 5,
-    //  traits: ['Ranged'],
-    //},
-    'Shapeshifter': {
-      sets: ['Shapeshifter'],
+    'Alchemist': {
+      traits: ['Blessing'],
+    },
+    'Barbarian': {
+      sets: ['Barbarian'],
       health: 5,
-      traits: ['Growth I'],
+    },
+    'Ranger': {
+      sets: ['Ranger'],
+      health: 5,
+      traits: ['Ranged'],
+    },
+    'Shapeshifter': {
+      sets: ['Shapeshifter', 'Growth 1'],
+      health: 5,
+    },
+    // Tier 3
+    //'Artificer': {
+    //},
+    'Cartomancer': {
+      sets: ['Cartomancer'],
+      health: 5,
+      traits: ['Rules Lawyer'],
+    },
+    //'Mathemagician': {
+    //},
+    'Most Holy Grail Knight': {
+      sets: ['Most Holy Grail Knight'],
+      health: 5,
+      traits: ['Retribution'],
+    },
+    'Troubador': {
+      sets: ['Troubador'],
+      health: 5,
+      traits: ['Spellsword'],
     },
   },
 
@@ -1356,6 +1377,11 @@ export default {
       extraHandSize: 1,
       for: 'player',
       type: 'trinket',
+    },
+    'Deathwish': {
+      health: 2,
+      for: 'player',
+      type: 'Barbarian',
     },
     'Wise': {
       extraHandSize: 1,

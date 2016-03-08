@@ -44,7 +44,9 @@ export default class App extends Component {
   }
 
   openPlaythrough_() {
-    this.setState({showPlaythrough: true});
+    // Trigger playthrough to be re-rendered.
+    this.setState({showPlaythrough: false});
+    setTimeout(() => this.setState({showPlaythrough: true}), 1);
   }
 
   closePlaythrough_() {

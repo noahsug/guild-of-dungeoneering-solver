@@ -187,7 +187,21 @@ export class GameStatePlayerAccessor {
     this.state.playerExtraHandSizeEffect = value;
   }
 
+  get withstandEffect() {
+    return this.state.playerWithstandEffect || 0;
+  }
+  set withstandEffect(value) {
+    this.state.playerWithstandEffect = value;
+  }
+
   // Traits
+  get blessing() {
+    return this.state.playerBlessing || 0;
+  }
+  set blessing(value) {
+    this.state.playerBlessing = value;
+  }
+
   get frail() {
     return this.state.playerFrail || 0;
   }
@@ -298,6 +312,27 @@ export class GameStatePlayerAccessor {
   }
   set respite(value) {
     this.state.playerRespite = value;
+  }
+
+  get ranged() {
+    return this.state.playerRanged || 0;
+  }
+  set ranged(value) {
+    this.state.playerRanged = value;
+  }
+
+  get rulesLawyer() {
+    return this.state.playerRulesLawyer || 0;
+  }
+  set rulesLawyer(value) {
+    this.state.playerRulesLawyer = value;
+  }
+
+  get spellsword() {
+    return this.state.playerSpellsword || 0;
+  }
+  set spellsword(value) {
+    this.state.playerSpellsword = value;
   }
 }
 
@@ -489,7 +524,21 @@ export class GameStateEnemyAccessor {
     this.state.enemyExtraHandSizeEffect = value;
   }
 
+  get withstandEffect() {
+    return this.state.enemyWithstandSizeEffect || 0;
+  }
+  set withstandEffect(value) {
+    this.state.enemyWithstandEffect = value;
+  }
+
   // Traits
+  get blessing() {
+    return this.state.enemyblessing || 0;
+  }
+  set blessing(value) {
+    this.state.enemyblessing = value;
+  }
+
   get frail() {
     return this.state.enemyFrail || 0;
   }
@@ -600,5 +649,26 @@ export class GameStateEnemyAccessor {
   }
   set respite(value) {
     this.state.enemyRespite = value;
+  }
+
+  get ranged() {
+    return this.state.enemyRanged || 0;
+  }
+  set ranged(value) {
+    this.state.enemyRanged = value;
+  }
+
+  get rulesLawyer() {
+    return this.state.enemyRulesLawyer || 0;
+  }
+  set rulesLawyer(value) {
+    this.state.enemyRulesLawyer = value;
+  }
+
+  get spellsword() {
+    return this.state.enemySpellsword || 0;
+  }
+  set spellsword(value) {
+    this.state.enemySpellsword = value;
   }
 }

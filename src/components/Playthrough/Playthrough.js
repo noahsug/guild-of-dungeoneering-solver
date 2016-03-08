@@ -126,9 +126,14 @@ export default class Playthrough extends Component {
   getSortableMoveItem_(child, cards, onClick, opt_winRate) {
     if (child.result == -Infinity) {
       // Child was pruned, so we have to calculate win rate manually.
-      child.result = _.avg(child.children, node => {
-        return node.result < 0 ? 0 : node.result;
+      let total = 0;
+      let count = 0;
+      child.children.forEach(node => {
+        if (!isFinite(node.result)) return;
+        count++;
+        total += node.result < 0 ? 0 : node.result;
       });
+      child.result = count && total / count;
     }
 
     let winRate = child.result < 0 ? 0 : child.result;

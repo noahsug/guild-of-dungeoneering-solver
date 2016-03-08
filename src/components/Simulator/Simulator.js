@@ -26,7 +26,7 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Cat Burglar',
+        name: 'Apprentice',
         items: [],
         traits: [],
         level: 0,
@@ -108,6 +108,7 @@ export default class Simulator extends Component {
     return traits.filter((trait) => {
       if (selected.includes(trait)) return true;
       const type = gameData.traits[trait].type;
+      if (type == 'Barbarian' && this.state.player.name != type) return false;
       return !type || !types[type];
     });
   }

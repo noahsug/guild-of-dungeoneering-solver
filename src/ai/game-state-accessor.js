@@ -49,6 +49,7 @@ export default class GameStateAccessor {
       playerPhysicalNextEffect: this.state.playerPhysicalNextEffect,
       playerMagicRoundEffect: this.state.playerMagicRoundEffect,
       playerPhysicalRoundEffect: this.state.playerPhysicalRoundEffect,
+      playerWithstandEffect: this.state.playerWithstandEffect,
 
       enemyHealth: this.state.enemyHealth,
       enemyDeck: _.clone(this.state.enemyDeck),

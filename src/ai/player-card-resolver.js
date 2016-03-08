@@ -19,7 +19,7 @@ export default class PlayerCardResolver {
   }
 
   get quick() {
-    return this.card_.quick;
+    return this.card_.quick || this.initial_.ranged;
   }
 
   init(card) {
@@ -31,6 +31,8 @@ export default class PlayerCardResolver {
       this.state_.health += 2;
       this.state_.rum = 0;
     }
+
+    if (card.withstand) this.state_.withstandEffect = 2;
   }
 
   reset_() {
@@ -43,6 +45,7 @@ export default class PlayerCardResolver {
     this.dmgBlocked_ = 0;
     this.dmgTaken_ = 0;
     this.dmgFromEnemy_ = 0;
+    this.magicDmgTakenFromEnemy_ = 0;
     // Traits that have had their effect used.
     this.used_ = {};
     // Used when looking ahead to see if quick ends the round.
@@ -112,7 +115,10 @@ export default class PlayerCardResolver {
         (!this.dmgFromEnemy_ || !this.enemy_.card_.unblockable)) {
       this.dmgTaken_--;
       this.dmgBlocked_++;
-      if (this.dmgFromEnemy_) this.dmgFromEnemy_--;
+      if (this.dmgFromEnemy_) {
+        this.dmgFromEnemy_--;
+        if (this.dmgFromEnemy_ == 0) this.magicDmgTakenFromEnemy_ = 0;
+      }
     }
     if (this.dmgBlocked_) this.resolveIfBlock_(this.dmgBlocked_);
   }
@@ -130,9 +136,14 @@ export default class PlayerCardResolver {
       dmg -= 6 - this.state_.health;
     }
     this.state_.health += this.heal_;
+    // Blessing
+    if (this.heal_ && this.initial_.blessing) {
+      this.state_.health += 1;
+    }
     // Respite
     if (this.initial_.respite && !this.dmgTaken_) this.state_.health += 1;
     this.resolveDmg_(dmg);
+    if (this.state_.withstandEffect) this.state_.withstandEffect -= 1;
   }
 
   resolveDmg_(dmg) {
@@ -142,6 +153,11 @@ export default class PlayerCardResolver {
       this.state_.health = 1;
     } else {
       this.state_.health -= dmg;
+    }
+
+    // Withstand
+    if (this.state_.withstandEffect && this.state_.health <= 0) {
+      this.state_.health = 1;
     }
   }
 
@@ -195,8 +211,9 @@ export default class PlayerCardResolver {
 
   getMagicDmg_() {
     let magic = this.card_.magic;
+    if (this.card_.cardStorm) magic += this.state_.hand.length - 1;
     if (!magic) return 0;
-    if (this.enemy_.initial_.mundane) magic++;
+    magic = this.buffMagicDmg_(magic, this.enemy_);
     magic += this.state_.magicNextEffect;
     if (!this.noEffects_) {
       this.state_.magicNextEffect = 0;
@@ -206,7 +223,9 @@ export default class PlayerCardResolver {
 
   getPhysicalBlock_() {
     if (this.card_.blockPhysicalAll) return Infinity;
-    return this.buffBlock_(this.card_.blockPhysical);
+    let block = this.card_.blockPhysical;
+    if (this.card_.paperShield) block += this.state_.hand.length - 1;
+    return this.buffBlock_(block);
   }
 
   getMagicBlock_() {
@@ -248,16 +267,31 @@ export default class PlayerCardResolver {
     }
     this.dmgTaken_ += this.getAdditionalDmgTaken_();
     this.dmgFromEnemy_ += this.dmgTaken_ - this.burnDmgTaken_;
+    if (this.enemy_.magicDmg_ && this.enemy_.physicalDmg_ +
+        this.enemy_.magicDmg_ - this.dmgBlocked_ > 0) {
+      this.magicDmgTakenFromEnemy_ = 1;
+    }
   }
 
   takeMagicDmg_(dmg) {
+    dmg = this.buffMagicDmg_(dmg, this);
     const physicalDmg = Math.max(
       this.enemy_.physicalDmg_ - this.physicalBlock_, 0);
     const block = Math.max(this.block_ - physicalDmg, 0);
     const magicBlock = Math.max(
         this.magicBlock_ + block - this.enemy_.magicDmg_, 0);
     const blocked = Math.min(magicBlock, dmg);
+    if (dmg > blocked) this.magicDmgTakenFromEnemy_ = 1;
     this.takeExtraDmg_(dmg, blocked);
+  }
+
+  buffMagicDmg_(dmg, defender) {
+    // Mundane
+    if (defender.initial_.mundane && !defender.used_.mundane) {
+      dmg++;
+      defender.mundane = true;
+    }
+    return dmg;
   }
 
   takeExtraDmg_(dmg, blocked = 0) {
@@ -288,6 +322,11 @@ export default class PlayerCardResolver {
 
   resolveEffects_() {
     this.state_.drawEffect += this.card_.draw;
+    // Rules Lawyer
+    if (this.initial_.rulesLawyer && this.dmgTaken_ >= 2) {
+      this.state_.drawEffect += 1;
+    }
+    if (this.card_.cardStorm) this.state_.discardEffect += 4;
     //this.state_.stealEffect += this.card_.steal;
     //this.state_.concealEffect += this.card_.conceal;
     this.state_.physicalNextEffect += this.card_.physicalNext;
@@ -295,5 +334,9 @@ export default class PlayerCardResolver {
     const player = this.state_.type == 'player' ?
           this.state_ : this.enemy_.state_;
     player.cycleEffect += this.card_.cycle;
+    // Spellsword
+    if (this.initial_.spellsword && this.enemy_.magicDmgTakenFromEnemy_) {
+      this.state_.physicalNextEffect += 1;
+    }
   }
 }
