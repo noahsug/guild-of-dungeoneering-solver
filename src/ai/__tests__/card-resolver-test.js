@@ -1,4 +1,5 @@
 jest.dontMock('../card-resolver');
+jest.dontMock('../player-card-resolver');
 jest.dontMock('../game-state-accessor');
 jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../card');
@@ -87,9 +88,8 @@ describe('card resolver', () => {
 
   it('resolves effects', () => {
     const [state, player, enemy] = useState(10);
-    resolver.resolve(state, Card.create('D/C/S/MN/PN/Co'), Card.create('BP'));
-    const playerEffects = ['steal', 'conceal', 'draw', 'physicalNext',
-                           'magicNext', 'cycle'];
+    resolver.resolve(state, Card.create('D/C/MN/PN'), Card.create('BP'));
+    const playerEffects = ['draw', 'physicalNext', 'magicNext', 'cycle'];
     playerEffects.forEach((e) => {
       if (!player[e + 'Effect']) console.error('Missing ', e + 'Effect');
       expect(player[e + 'Effect']).toBe(1);
@@ -104,33 +104,27 @@ describe('card resolver', () => {
 
   it('resolves if damage effects', () => {
     const [state, player, enemy] = useState(10);
-    const card = Card.create('P/Di/PRID/MRID/SID/CoID');
-    const playerEffects = ['steal', 'conceal'];
+    const card = Card.create('P/DID/PRID/MRID');
     const enemyEffects = ['discard', 'physicalRound', 'magicRound'];
 
     resolver.resolve(state, card, Card.create('BP'));
-    playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(0));
     enemyEffects.forEach((e) => expect(enemy[e + 'Effect']).toBe(0));
 
     resolver.resolve(state, card, Card.create('BM'));
-    playerEffects.forEach((e) => expect(player[e + 'Effect']).toBe(1));
     enemyEffects.forEach((e) => expect(enemy[e + 'Effect']).toBe(1));
   });
 
   it('resolves per block cards', () => {
     const [state, player, enemy] = useState(5);
-    const card = Card.create('B/B/SPB/HPB');
+    const card = Card.create('B/B/HPB');
 
     resolver.resolve(state, card, Card.create('B'));
-    expect(player.stealEffect).toBe(0);
     expect(player.health).toBe(5);
 
     resolver.resolve(state, card, Card.create('P'));
-    expect(player.stealEffect).toBe(1);
     expect(player.health).toBe(6);
 
     resolver.resolve(state, card, Card.create('P/P'));
-    expect(player.stealEffect).toBe(3);
     expect(player.health).toBe(8);
   });
 
@@ -233,10 +227,6 @@ describe('card resolver', () => {
     expect(player.health).toBe(3);
   });
 
-  it('resolves predictable', () => {
-    // TODO
-  });
-
   it('resolves brittle', () => {
     const [state, player, enemy] = useState(10, {enemyBrittle: 1});
     resolver.resolve(state, Card.create('P/P/P/P'), Card.create('H/H/H'));
@@ -290,9 +280,15 @@ describe('card resolver', () => {
   });
 
   it('resolves decay', () => {
-    const [state, player, enemy] = useState(5, {enemyDecay: 1});
+    const [state, player, enemy] = useState(10, {enemyDecay: 1});
     resolver.resolve(state, Card.create('P/P'), Card.create('?'));
-    expect(enemy.health).toBe(2);
+    expect(enemy.health).toBe(7);
+
+    // Burn counts as dmg taken towards decay.
+    resolver.resolve(state, Card.create('P/PRID'), Card.create('?'));
+    expect(enemy.health).toBe(6);
+    resolver.resolve(state, Card.create('P'), Card.create('?'));
+    expect(enemy.health).toBe(3);
   });
 
   it('resolves tough', () => {

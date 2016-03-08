@@ -3,7 +3,7 @@ export default {
     'H': 'heal',
     'HPD': 'healPerDmg',
     'HID': 'healIfDmg',
-    'Di': 'discardIfDmg',
+    'DID': 'discardIfDmg',
     'P': 'physical',
     'M': 'magic',
     'Q': 'quick',
@@ -49,9 +49,9 @@ export default {
     'Feral 5': ['P/U', 'P/U', 'P/P/BM', 'P/P/BM', 'P/P/P'],
 
     'Nature 1': ['P'],
-    'Nature 2': ['P', 'P/Di'],
-    'Nature 3': ['P', 'P/Di', 'M/HID/HID'],
-    'Nature 4': ['P', 'P/Di', 'M/HID/HID', 'P/M/M'],
+    'Nature 2': ['P', 'P/DID'],
+    'Nature 3': ['P', 'P/DID', 'M/HID/HID'],
+    'Nature 4': ['P', 'P/DID', 'M/HID/HID', 'P/M/M'],
 
     'Spooky 1': ['M/BP'],
     'Spooky 2': ['M/BP', 'M/HPD'],
@@ -66,10 +66,10 @@ export default {
     'Flame 5': ['M', 'M/U', 'M/P', 'M/M', 'M/M/M'],
 
     'Armed 1': ['P'],
-    'Armed 2': ['P', 'P/Di'],
-    'Armed 3': ['P', 'P/Di', 'P/P/BP'],
-    'Armed 4': ['P', 'P/Di', 'P/P/BP', 'P/P/U'],
-    'Armed 5': ['P', 'P/Di', 'P/P/BP', 'P/P/U', 'P/P/P/BP/BP'],
+    'Armed 2': ['P', 'P/DID'],
+    'Armed 3': ['P', 'P/DID', 'P/P/BP'],
+    'Armed 4': ['P', 'P/DID', 'P/P/BP', 'P/P/U'],
+    'Armed 5': ['P', 'P/DID', 'P/P/BP', 'P/P/U', 'P/P/P/BP/BP'],
 
     'Burly 1': ['P/P/BP'],
     'Burly 2': ['P/P/BP', 'P/P/P'],
@@ -86,7 +86,7 @@ export default {
     'Death 2': ['M', 'M/BM'],
     'Death 3': ['M', 'M/BM', 'M/M/BM'],
     'Death 4': ['M', 'M/BM', 'M/M/BM', 'M/M/U'],
-    'Death 5': ['M', 'M/BM', 'M/M/BM', 'M/M/U', 'M/M/Di'],
+    'Death 5': ['M', 'M/BM', 'M/M/BM', 'M/M/U', 'M/M/DID'],
 
     'Demonic 1': ['M/M/BM'],
     'Demonic 2': ['M/M/BM', 'M/M/M'],
@@ -98,10 +98,10 @@ export default {
     'Aquatic 3': ['M/M/C', 'BM/BM/C', 'M/M/BM/BM'],
     'Aquatic 4': ['M/M/C', 'BM/BM/C', 'M/M/BM/BM', 'M/M/M/C/C'],
 
-    'Electrical 1': ['M/Di'],
-    'Electrical 2': ['M/Di', 'M/U'],
-    'Electrical 3': ['M/Di', 'M/U', 'M/M/Di'],
-    'Electrical 4': ['M/Di', 'M/U', 'M/M/Di', 'M/M/U'],
+    'Electrical 1': ['M/DID'],
+    'Electrical 2': ['M/DID', 'M/U'],
+    'Electrical 3': ['M/DID', 'M/U', 'M/M/DID'],
+    'Electrical 4': ['M/DID', 'M/U', 'M/M/DID', 'M/M/U'],
 
     'Ghoulish 1': ['M/M'],
     'Ghoulish 2': ['M/M', 'M/M/M/BP'],
@@ -125,9 +125,9 @@ export default {
     'Rage 4': ['P/P/U', 'P/P/P/-H', 'P/P/P/-H', 'P/P/P/P/-H'],
 
     'Sorcery 1': ['M/M/HID'],
-    'Sorcery 2': ['M/M/HID', 'M/M/Di'],
-    'Sorcery 3': ['M/M/HID', 'M/M/Di', 'M/M/M/CoID'],
-    'Sorcery 4': ['M/M/HID', 'M/M/Di', 'M/M/M/CoID', 'M/M/M/M'],
+    'Sorcery 2': ['M/M/HID', 'M/M/DID'],
+    'Sorcery 3': ['M/M/HID', 'M/M/DID', 'M/M/M/CoID'],
+    'Sorcery 4': ['M/M/HID', 'M/M/DID', 'M/M/M/CoID', 'M/M/M/M'],
 
     'Venom 1': ['P/P'],
     'Venom 2': ['P/P', 'P/P/U'],
@@ -249,10 +249,10 @@ export default {
       sets: ['Armed 5', 'Rage 2', 'Irritable 4'],
       traits: ['Fury'],
     },
-    'One-Headed Monkey': {
-      health: 6,
-      sets: ['Feral 3', 'Irritable 3', 'Pickpocket 3'],
-    },
+    //'One-Headed Monkey': {
+    //  health: 6,
+    //  sets: ['Feral 3', 'Irritable 3', 'Pickpocket 3'],
+    //},
     // Cove - 2
     'Cabin Boy': {
       health: 7,
@@ -299,16 +299,16 @@ export default {
       sets: ['Armed 2', 'Rage 4'],
       traits: ['Fury', 'Aggressive', 'Crewmate'],
     },
-    'Cranky Parrot': {
-      health: 9,
-      sets: ['Feral 5', 'Pickpocket 2', 'Nature 1', 'Stupidity 2'],
-      traits: ['Ferocious'],
-    },
-    'First Mate': {
-      health: 9,
-      sets: ['Armed 2', 'Burly 3', 'Gunnery 2', 'Irritable 3', 'Pickpocket 2'],
-      traits: ['Crewmate'],
-    },
+    //'Cranky Parrot': {
+    //  health: 9,
+    //  sets: ['Feral 5', 'Pickpocket 2', 'Nature 1', 'Stupidity 2'],
+    //  traits: ['Ferocious'],
+    //},
+    //'First Mate': {
+    //  health: 9,
+    //  sets: ['Armed 2', 'Burly 3', 'Gunnery 2', 'Irritable 3', 'Pickpocket 2'],
+    //  traits: ['Crewmate'],
+    //},
     //'Flaming Gallah': {
     //  health: 9,
     //  sets: ['Flame 4', 'Feral 5', 'Rage 1', 'Nature 1', 'Pickpocket 3'],
@@ -328,11 +328,11 @@ export default {
       health: 10,
       sets: ['Feral 3', 'Irritable 2', 'Aquatic 4'],
     },
-    'Pirate': {
-      health: 8,
-      sets: ['Armed 3', 'Rage 2', 'Pickpocket 1'],
-      traits: ['Aggressive', 'Rum', 'Crewmate'],
-    },
+    //'Pirate': {
+    //  health: 8,
+    //  sets: ['Armed 3', 'Rage 2', 'Pickpocket 1'],
+    //  traits: ['Aggressive', 'Rum', 'Crewmate'],
+    //},
     //'Ships Cook': {
     //  health: 9,
     //  sets: ['Pickpocket 3', 'Rage 2', 'Irritable 2', 'Burly 2'],
@@ -349,11 +349,11 @@ export default {
       traits: ['Tough'],
     },
     // Cove - 4
-    'Bullseye Bill': {
-      health: 12,
-      sets: ['Irritable 5', 'Burly 3', 'Gunnery 2', 'Armed 2', 'Pickpocket 2'],
-      traits: ['Bulwark', 'Crewmate'],
-    },
+    //'Bullseye Bill': {
+    //  health: 12,
+    //  sets: ['Irritable 5', 'Burly 3', 'Gunnery 2', 'Armed 2', 'Pickpocket 2'],
+    //  traits: ['Bulwark', 'Crewmate'],
+    //},
     //'Captain Rosalita': {
     //  health: 14,
     //  sets: ['Rage 2', 'Irritable 4', 'Pickpocket 4', 'Armed 4'],
@@ -388,11 +388,11 @@ export default {
       sets: ['Aquatic 3', 'Armed 5', 'Spooky 2', 'Nature 1'],
       traits: ['Aggressive', 'Decay'],
     },
-    'Skeleton Pirate': {
-      health: 15,
-      sets: ['Death 2', 'Spooky 2', 'Ghoulish 3', 'Pickpocket 1'],
-      traits: ['Brittle', 'Aggressive', 'Crewmate'],
-    },
+    //'Skeleton Pirate': {
+    //  health: 15,
+    //  sets: ['Death 2', 'Spooky 2', 'Ghoulish 3', 'Pickpocket 1'],
+    //  traits: ['Brittle', 'Aggressive', 'Crewmate'],
+    //},
     // Final
     'Angry Bunny': {
       health: 14,

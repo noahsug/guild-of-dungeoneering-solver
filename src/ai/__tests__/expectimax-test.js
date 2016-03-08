@@ -3,7 +3,7 @@ import _ from '../../utils/common';
 
 jest.dontMock('../expectimax');
 
-xdescribe('expectimax', () => {
+describe('expectimax', () => {
   const Expectimax = require('../expectimax');
   const NodeFactory = require('../node-factory');
   const tree = [[
