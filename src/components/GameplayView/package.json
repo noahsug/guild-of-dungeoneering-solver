@@ -1,6 +1,0 @@
-{
-  "name": "GameplayView",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./GameplayView.js"
-}
