@@ -1,14 +1,14 @@
 import _ from '../../../utils/common';
 
 jest.dontMock('../game-state-cache');
-jest.dontMock('../game-engine/game-state-accessor');
-jest.dontMock('../game-engine/game-state-player-accessor');
-jest.dontMock('../game-engine/card');
+jest.dontMock('../../game-engine/game-state-accessor');
+jest.dontMock('../../game-engine/game-state-player-accessor');
+jest.dontMock('../../game-engine/card');
 jest.dontMock('../../game-data');
 
 describe('Game state cache', () => {
   const GameStateCache = require('../game-state-cache');
-  const GameStateAccessor = require('../game-engine/game-state-accessor');
+  const GameStateAccessor = require('../../game-engine/game-state-accessor');
 
   function createState(values = {}, result) {
     const state = GameStateAccessor.create(_.defaults(values, {

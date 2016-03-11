@@ -4,12 +4,11 @@ import Node from './node';
 import _ from '../../utils/common';
 
 export default class GameStateCache {
-  constructor({debug = false} = {}) {
+  constructor() {
     this.cache_ = {};
     this.hintCache_ = {};
     this.nodeCache_ = {};
     this.accessor_ = new GameStateAccessor();
-    this.debug = debug;
 
     this.hashes_ = {};
     const numCards = Card.list.length;
@@ -31,7 +30,7 @@ export default class GameStateCache {
   hash(node) {
     if (node.__id === undefined) {
       node.__id = this.hashGameState_(node.gameState.state);
-      //this.checkHashFunction_(node);
+      //this.validateHashFunction_(node);
     }
     return node.__id;
   }
@@ -39,9 +38,6 @@ export default class GameStateCache {
   cacheResult(node) {
     this.cache_[this.hash(node)] = node.result;
     //this.cacheHint_(node);
-    //if (this.debug && !this.nodeCache_[this.hash(node)]) {
-    //  this.nodeCache_[this.hash(node)] = node;
-    //}
   }
 
   cacheHint_(node) {
@@ -93,12 +89,6 @@ export default class GameStateCache {
     const len = cards.length;
     for (let i = 0; i < len; i++) {
       result += hashes[cards[i]];
-      //let cardId = cardCache.list[cards[i]];
-      //if (!cardId) {
-      //  cardId = ++cardCache.index;
-      //  cardCache.list[cards[i]] = cardId;
-      //}
-      //result += Math.pow(cardId, 5);
     }
     return result;
   }
@@ -119,7 +109,7 @@ export default class GameStateCache {
         this.accessor_.enemy.rum * this.hashes_.stats[10];
   }
 
-  checkHashFunction_(node) {
+  validateHashFunction_(node) {
     const {player, enemy} = this.accessor_;
     const clone = {
       v1: player.deck.sort(),

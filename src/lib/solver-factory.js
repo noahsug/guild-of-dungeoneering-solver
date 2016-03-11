@@ -1,22 +1,21 @@
 import GameStateAccessor from './game-engine/game-state-accessor';
 import Simulator from './game-engine/simulator';
 import Card from './game-engine/card';
-import NodeFactory from './game-tree/node-factory';
-import Expectimax from './game-tree/expectimax';
+import NodeFactory from './tree-search/node-factory';
+import Expectimax from './tree-search/expectimax';
 import gameData from './game-data';
 import _ from '../utils/common';
 
 export default class SolverFactory {
-  create(player, enemy, runOptions) {
+  create(player, enemy) {
     const initialState = this.getInitialState_(player, enemy);
-    return this.createFromState_(initialState, runOptions);
+    return this.createFromState_(initialState);
   }
 
-  createFromState_(gameState, {iteration = 15000000, debug = false} = {}) {
+  createFromState_(gameState) {
     const simulator = new Simulator();
     const nodeFactory = new NodeFactory(simulator);
-    const expectimax = new Expectimax({
-      nodeFactory, runUntil: {iteration}, debug});
+    const expectimax = new Expectimax(nodeFactory);
     expectimax.setState(gameState);
     return expectimax;
   }

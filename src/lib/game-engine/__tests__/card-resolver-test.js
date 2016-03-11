@@ -3,7 +3,7 @@ jest.dontMock('../player-card-resolver');
 jest.dontMock('../game-state-accessor');
 jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../card');
-jest.dontMock('../game-data');
+jest.dontMock('../../game-data');
 
 describe('card resolver resolves', () => {
   const CardResolver = require('../card-resolver');
