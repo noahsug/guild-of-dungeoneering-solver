@@ -338,5 +338,9 @@ export default class PlayerCardResolver {
     if (this.initial_.spellsword && this.enemy_.magicDmgTakenFromEnemy_) {
       this.state_.physicalNextEffect += 1;
     }
+    // Showoff
+    if (this.initial_.showoff && !this.dmgTaken_) {
+      this.state_.physicalNextEffect += 1;
+    }
   }
 }

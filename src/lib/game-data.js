@@ -219,6 +219,7 @@ export default {
     'Barbarian': {
       sets: ['Barbarian'],
       health: 5,
+      situationalTraits: ['Deathwish'],
     },
     'Ranger': {
       sets: ['Ranger'],
@@ -319,7 +320,8 @@ export default {
     'Buccaneer': {
       health: 9,
       sets: ['Armed 2', 'Rage 4'],
-      traits: ['Fury', 'Aggressive', 'Crewmate'],
+      traits: ['Fury', 'Aggressive'],
+      situationalTraits: ['Crewmate', 'Crewmate x2', 'Crewmate x3', 'Crewmate x4', 'Crewmate x5'],
     },
     'Cranky Parrot': {
       health: 9,
@@ -329,7 +331,7 @@ export default {
     'First Mate': {
       health: 9,
       sets: ['Armed 2', 'Burly 3', 'Gunnery 2', 'Irritable 3', 'Pickpocket 2'],
-      traits: ['Crewmate'],
+      situationalTraits: ['Crewmate', 'Crewmate x2', 'Crewmate x3', 'Crewmate x4', 'Crewmate x5'],
     },
     'Flaming Gallah': {
       health: 9,
@@ -353,7 +355,8 @@ export default {
     'Pirate': {
       health: 8,
       sets: ['Armed 3', 'Rage 2', 'Pickpocket 1'],
-      traits: ['Aggressive', 'Rum', 'Crewmate'],
+      traits: ['Aggressive', 'Rum'],
+      situationalTraits: ['Crewmate', 'Crewmate x2', 'Crewmate x3', 'Crewmate x4', 'Crewmate x5'],
     },
     'Ships Cook': {
       health: 9,
@@ -374,12 +377,14 @@ export default {
     'Bullseye Bill': {
       health: 12,
       sets: ['Irritable 5', 'Burly 3', 'Gunnery 2', 'Armed 2', 'Pickpocket 2'],
-      traits: ['Bulwark', 'Crewmate'],
+      traits: ['Bulwark'],
+      situationalTraits: ['Crewmate', 'Crewmate x2', 'Crewmate x3', 'Crewmate x4', 'Crewmate x5'],
     },
     'Captain Rosalita': {
       health: 14,
       sets: ['Rage 2', 'Irritable 4', 'Pickpocket 4', 'Armed 4'],
-      traits: ['Skilled', 'Crewmate'],
+      traits: ['Skilled'],
+      situationalTraits: ['Crewmate', 'Crewmate x2', 'Crewmate x3', 'Crewmate x4', 'Crewmate x5'],
     },
     'Cleaver Joe': {
       health: 13,
@@ -389,7 +394,8 @@ export default {
     'Crab King': {
       health: 12,
       sets: ['Spooky 4', 'Armed 5', 'Nature 1'],
-      traits: ['Tough', 'Spikey', 'Leader'],
+      traits: ['Tough', 'Spikey'],
+      situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     },
     'Fishbone': {
       health: 15,
@@ -413,7 +419,8 @@ export default {
     'Skeleton Pirate': {
       health: 15,
       sets: ['Death 2', 'Spooky 2', 'Ghoulish 3', 'Pickpocket 1'],
-      traits: ['Brittle', 'Aggressive', 'Crewmate'],
+      traits: ['Brittle', 'Aggressive'],
+      situationalTraits: ['Crewmate', 'Crewmate x2', 'Crewmate x3', 'Crewmate x4', 'Crewmate x5'],
     },
     // Final
     'Angry Bunny': {
@@ -430,7 +437,7 @@ export default {
     'Fire Imp': {
       health: 5,
       sets: ['Flame 3', 'Stupidity 1'],
-      traits: ['Night Owl'],
+      situationalTraits: ['Night Owl'],
     },
     'Giant Bat': {
       health: 4,
@@ -459,7 +466,8 @@ export default {
     'Ghost': {
       health: 5,
       sets: ['Death 3', 'Spooky 4'],
-      traits: ['Tenacious', 'Night Owl'],
+      traits: ['Tenacious'],
+      situationalTraits: ['Night Owl'],
     },
     'Gnoll': {
       health: 6,
@@ -521,7 +529,8 @@ export default {
     'Shade': {
       health: 7,
       sets: ['Death 5', 'Spooky 4'],
-      traits: ['Tenacious', 'Night Owl'],
+      traits: ['Tenacious'],
+      situationalTraits: ['Night Owl'],
     },
     'Sorceress': {
       health: 7,
@@ -561,7 +570,7 @@ export default {
     'Rat King': {
       health: 7,
       sets: ['Armed 3', 'Irritable 3', 'Feral 3'],
-      traits: ['Leader'],
+      situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     },
     // Jungle - 1
     //'Bloodstarved Bat': {
@@ -577,7 +586,7 @@ export default {
     'Jungle Warrior': {
       health: 6,
       sets: ['Burly 2', 'Nature 3'],
-      traits: ['Leader'],
+      situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     },
     'Leggy Spider': {
       health: 7,
@@ -607,7 +616,7 @@ export default {
     'Lizardman': {
       health: 8,
       sets: ['Burly 2', 'Nature 3'],
-      traits: ['Night Owl'],
+      situationalTraits: ['Night Owl'],
     },
     'Maneating Plant': {
       health: 8,
@@ -642,7 +651,7 @@ export default {
     //'Jungle Shaman': {
     //  health: 8,
     //  sets: ['Flame 3', 'Sorcery 3'],
-    //  traits: ['Leader'],
+    //  situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     //},
     'Owl Bear': {
       health: 8,
@@ -652,7 +661,8 @@ export default {
     'Worm': {
       health: 9,
       sets: ['Ghoulish 2', 'Venom 3', 'Stupidity 2'],
-      traits: ['Tenacious', 'Night Owl'],
+      traits: ['Tenacious'],
+      situationalTraits: ['Night Owl'],
     },
     // Jungle - 4
     'Chimera': {
@@ -672,7 +682,7 @@ export default {
     'Medusa': {
       health: 8,
       sets: ['Venom 3', 'Demonic 2', 'Ghoulish 2'],
-      traits: ['Night Owl'],
+      situationalTraits: ['Night Owl'],
     },
     //'Ogre': {
     //  health: 13,
@@ -683,12 +693,14 @@ export default {
     'Albino Goblin': {
       health: 8,
       sets: ['Ghoulish 2', 'Rage 2', 'Irritable 1'],
-      traits: ['Tenacious', 'Night Owl'],
+      traits: ['Tenacious'],
+      situationalTraits: ['Night Owl'],
     },
     'Digger': {
       health: 8,
       sets: ['Burly 3', 'Rage 2'],
-      traits: ['Brittle', 'Leader'],
+      traits: ['Brittle'],
+      situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     },
     'Dwarven Explosives': {
       health: 7,
@@ -703,7 +715,8 @@ export default {
     'Miner': {
       health: 6,
       sets: ['Burly 3', 'Rage 2'],
-      traits: ['Fury', 'Leader'],
+      traits: ['Fury'],
+      situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     },
     'Rust Monster': {
       health: 6,
@@ -714,7 +727,8 @@ export default {
     'Blind Worm': {
       health: 11,
       sets: ['Stupidity 1', 'Demonic 2', 'Ghoulish 3'],
-      traits: ['Sluggish', 'Night Owl'],
+      traits: ['Sluggish'],
+      situationalTraits: ['Night Owl'],
     },
     'Clattering Bones': {
       health: 10,
@@ -770,7 +784,7 @@ export default {
     'Vampire': {
       health: 9,
       sets: ['Demonic 3', 'Ghoulish 3'],
-      traits: ['Leader'],
+      situationalTraits: ['Leader', 'Leader x2', 'Leader x3', 'Leader x4', 'Leader x5'],
     },
     // Mines - 4
     'Cyclops': {
@@ -1381,8 +1395,52 @@ export default {
     },
     'Deathwish': {
       health: 2,
-      for: 'player',
-      type: 'Barbarian',
+    },
+    'Night Owl': {
+      health: -1,
+    },
+    'Loner': {
+      health: -1,
+    },
+    'Crewmate': {
+      health: 1,
+      type: 'crewmate',
+    },
+    'Crewmate x2': {
+      health: 2,
+      type: 'crewmate',
+    },
+    'Crewmate x3': {
+      health: 3,
+      type: 'crewmate',
+    },
+    'Crewmate x4': {
+      health: 4,
+      type: 'crewmate',
+    },
+    'Crewmate x5': {
+      health: 5,
+      type: 'crewmate',
+    },
+    'Leader': {
+      health: 1,
+      type: 'leader',
+    },
+    'Leader x2': {
+      health: 2,
+      type: 'leader',
+    },
+    'Leader x3': {
+      health: 3,
+      type: 'leader',
+    },
+    'Leader x4': {
+      health: 4,
+      type: 'leader',
+    },
+    'Leader x5': {
+      health: 5,
+      type: 'leader',
     },
     'Wise': {
       extraHandSize: 1,

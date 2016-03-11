@@ -341,6 +341,13 @@ export class GameStatePlayerAccessor {
   set spellsword(value) {
     this.state.playerSpellsword = value;
   }
+
+  get showoff() {
+    return this.state.playerShowoff || 0;
+  }
+  set showoff(value) {
+    this.state.playerShowoff = value;
+  }
 }
 
 // Copied from above, but 'player' replaced by 'enemy'.
@@ -684,5 +691,12 @@ export class GameStateEnemyAccessor {
   }
   set spellsword(value) {
     this.state.enemySpellsword = value;
+  }
+
+  get showoff() {
+    return this.state.enemyShowoff || 0;
+  }
+  set showoff(value) {
+    this.state.enemyShowoff = value;
   }
 }

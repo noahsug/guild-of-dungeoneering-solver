@@ -26,7 +26,7 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Chump',
+        name: 'Barbarian',
         items: [],
         traits: [],
         level: 0,
@@ -64,9 +64,9 @@ export default class Simulator extends Component {
   render() {
     const {players, enemies, items} = this.renderInfo_;
     const playerTraits = this.filterTraits_(
-        this.renderInfo_.playerTraits, this.state.player.traits);
+        this.renderInfo_.playerTraits, this.state.player);
     const enemyTraits = this.filterTraits_(
-        this.renderInfo_.enemyTraits, this.state.enemy.traits);
+        this.renderInfo_.enemyTraits, this.state.enemy);
 
     return (
       <Card className={style.content}>
@@ -82,7 +82,7 @@ export default class Simulator extends Component {
         </CardText>
         <CardActions className={style['card-actions']}>
           {this.state.running ? (
-            <Button label="Stop"
+            <Button label="Stop (this may take a while...)"
                     onClick={this.stopRunning_.bind(this)} />
           ) : this.state.result ? (
             <span>
@@ -95,22 +95,28 @@ export default class Simulator extends Component {
           )}
         </CardActions>
         {this.state.running ? (
-            <ProgressBar type="linear" mode="indeterminate" />) : ''}
+          <ProgressBar type="linear" mode="indeterminate" />
+        ) : ''}
       </Card>
     );
   }
 
   // Removes traits of the same type, e.g. can't select a level twice.
   filterTraits_(traits, selected) {
-    const types = _.createSet(selected.map((trait) => {
+    const types = _.createSet(selected.traits.map((trait) => {
       return gameData.traits[trait].type;
     }));
-    return traits.filter((trait) => {
-      if (selected.includes(trait)) return true;
+    traits = traits.filter((trait) => {
+      if (selected.traits.includes(trait)) return true;
       const type = gameData.traits[trait].type;
-      if (type == 'Barbarian' && this.state.player.name != type) return false;
       return !type || !types[type];
     });
+    if (selected.name) {
+      const player = gameData.players[selected.name] ||
+            gameData.enemies[selected.name];
+      traits = traits.concat(player.situationalTraits || []);
+    }
+    return traits;
   }
 
   renderInput_(label, player, type, source, {multiple = false} = {}) {
@@ -156,6 +162,7 @@ export default class Simulator extends Component {
     this.incrementSolve_(20000);
     const result = this.solver_.rootNode.result;
     if (result) {
+      console.log(Object.keys(this.solver_.cache_.cache_).length);
       this.time_ = Date.now() - this.time_;
       this.setState({result, running: false});
       this.props.onSimulationFinish();
