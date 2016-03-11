@@ -1,14 +1,14 @@
 import Node from '../node';
-import _ from '../../utils/common';
+import _ from '../../../utils/common';
 
-jest.dontMock('../game-state-accessor');
-jest.dontMock('../game-state-player-accessor');
+jest.dontMock('../game-engine/game-state-accessor');
+jest.dontMock('../game-engine/game-state-player-accessor');
 jest.dontMock('../node-factory');
 
 describe('node factory', () => {
   const NodeFactory = require('../node-factory');
   const Simulator = require('../simulator');
-  const GameStateAccessor = require('../game-state-accessor');
+  const GameStateAccessor = require('../game-engine/game-state-accessor');
   let factory;
   let sim;
   beforeEach(() => {

@@ -1,14 +1,14 @@
 jest.autoMockOff();
 
-describe('God solver', () => {
-  const GodSolverFactory = require('../god-solver-factory');
-  const GameStateAccessor = require('../game-state-accessor');
-  const Card = require('../Card');
+describe('solver', () => {
+  const SolverFactory = require('../solver-factory');
+  const GameStateAccessor = require('../game-engine/game-state-accessor');
+  const Card = require('../game-engine/card');
   const gameData = require('../game-data');
   const root = new GameStateAccessor();
 
   function getSolver(player, enemy) {
-    const solver = new GodSolverFactory().create(player, enemy);
+    const solver = new SolverFactory().create(player, enemy);
     root.setState(solver.rootNode.gameState.state);
     return solver;
   }

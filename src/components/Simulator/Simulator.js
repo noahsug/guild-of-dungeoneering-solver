@@ -4,8 +4,8 @@ import ProgressBar from 'react-toolbox/lib/progress_bar';
 import Button from 'react-toolbox/lib/button';
 import { Card, CardText, CardActions, CardTitle } from 'react-toolbox/lib/card';
 import style from './Simulator.scss';
-import GodSolverFactory from '../../ai/god-solver-factory';
-import gameData from '../../ai/game-data';
+import SolverFactory from '../../lib/solver-factory';
+import gameData from '../../lib/game-data';
 import _ from '../../utils/common';
 
 export default class Simulator extends Component {
@@ -138,7 +138,7 @@ export default class Simulator extends Component {
   }
 
   solve_() {
-    this.solver_ = new GodSolverFactory().create(
+    this.solver_ = new SolverFactory().create(
         this.state.player, this.state.enemy);
     this.incrementSolve_(2);
     this.time_ = Date.now();

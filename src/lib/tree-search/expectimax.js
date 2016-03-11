@@ -1,8 +1,8 @@
 import GameStateCache from './game-state-cache';
 import Node from './node';
-import GameStateAccessor from './game-state-accessor';
+import GameStateAccessor from '../game-engine/game-state-accessor';
 import Card from './card';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export default class Expectimax {
   constructor({nodeFactory, runUntil = {}, debug = false} = {}) {

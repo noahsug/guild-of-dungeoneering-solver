@@ -1,15 +1,24 @@
-import GameStateAccessor from './game-state-accessor';
-import NodeFactory from './node-factory';
-import Simulator from './simulator';
-import Expectimax from './expectimax';
-import Card from './card';
+import GameStateAccessor from './game-engine/game-state-accessor';
+import Simulator from './game-engine/simulator';
+import Card from './game-engine/card';
+import NodeFactory from './game-tree/node-factory';
+import Expectimax from './game-tree/expectimax';
 import gameData from './game-data';
 import _ from '../utils/common';
 
-export default class GodSolverFactory {
+export default class SolverFactory {
   create(player, enemy, runOptions) {
     const initialState = this.getInitialState_(player, enemy);
-    return this.createCustom(initialState, runOptions);
+    return this.createFromState_(initialState, runOptions);
+  }
+
+  createFromState_(gameState, {iteration = 15000000, debug = false} = {}) {
+    const simulator = new Simulator();
+    const nodeFactory = new NodeFactory(simulator);
+    const expectimax = new Expectimax({
+      nodeFactory, runUntil: {iteration}, debug});
+    expectimax.setState(gameState);
+    return expectimax;
   }
 
   getInitialState_(playerInfo, enemyInfo) {
@@ -93,14 +102,5 @@ export default class GodSolverFactory {
       traits[traitName]++;
     });
     return traits;
-  }
-
-  createCustom(gameState, {iteration = 15000000, debug = false} = {}) {
-    const simulator = new Simulator();
-    const nodeFactory = new NodeFactory(simulator);
-    const expectimax = new Expectimax({
-      nodeFactory, runUntil: {iteration}, debug});
-    expectimax.setState(gameState);
-    return expectimax;
   }
 }

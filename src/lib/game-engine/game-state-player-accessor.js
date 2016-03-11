@@ -1,4 +1,4 @@
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export class GameStatePlayerAccessor {
   constructor() {

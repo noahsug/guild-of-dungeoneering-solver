@@ -1,7 +1,7 @@
 import PlayerCardResolver from './player-card-resolver';
 import GameStateAccessor from './game-state-accessor';
 import Card from './card';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export default class CardResolver {
   constructor() {

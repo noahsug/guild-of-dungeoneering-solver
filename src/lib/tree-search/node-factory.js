@@ -1,6 +1,6 @@
 import Node from './node';
-import GameStateAccessor from './game-state-accessor';
-import _ from '../utils/common';
+import GameStateAccessor from '../game-engine/game-state-accessor';
+import _ from '../../utils/common';
 
 export default class NodeFactory {
   constructor(simulator) {

@@ -1,5 +1,5 @@
 import GameStateAccessor from './game-state-accessor';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export default class Simulator {
   constructor() {

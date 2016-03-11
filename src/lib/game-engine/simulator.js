@@ -1,7 +1,7 @@
 import CardResolver from './card-resolver';
 import GameStateAccessor from './game-state-accessor';
 import GameStateEnumerator from './game-state-enumerator';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 const STARTING_HAND_SIZE = 3;
 

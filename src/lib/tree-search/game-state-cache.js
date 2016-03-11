@@ -1,7 +1,7 @@
-import GameStateAccessor from './game-state-accessor';
-import Card from './card';
+import GameStateAccessor from '../game-engine/game-state-accessor';
+import Card from '../game-engine/card';
 import Node from './node';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export default class GameStateCache {
   constructor({debug = false} = {}) {

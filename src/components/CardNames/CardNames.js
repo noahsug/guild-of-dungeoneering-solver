@@ -1,8 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import style from './CardNames.scss';
-import GameStateAccessor from '../../ai/game-state-accessor';
-import GameCard from '../../ai/card';
-import gameData from '../../ai/game-data';
+import GameStateAccessor from '../../lib/game-engine/game-state-accessor';
+import GameCard from '../../lib/game-engine/card';
+import gameData from '../../lib/game-data';
 import _ from '../../utils/common';
 
 export default class CardNames extends Component {

@@ -1,5 +1,5 @@
 import {GameStatePlayerAccessor, GameStateEnemyAccessor} from './game-state-player-accessor';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export default class GameStateAccessor {
   constructor() {

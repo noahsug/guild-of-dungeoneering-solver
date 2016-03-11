@@ -1,14 +1,13 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDOM from 'react-dom';
 import style from './Playthrough.scss';
-import GodSolverFactory from '../../ai/god-solver-factory';
 import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox';
 import { Card, CardText, CardActions, CardTitle } from 'react-toolbox/lib/card';
 import {Button, IconButton} from 'react-toolbox/lib/button';
-import GameStateAccessor from '../../ai/game-state-accessor';
-import GameCard from '../../ai/card';
-import Node from '../../ai/node';
-import gameData from '../../ai/game-data';
+import GameStateAccessor from '../../lib/game-engine/game-state-accessor';
+import GameCard from '../../lib//game-engine/card';
+import Node from '../../lib/tree-search/node';
+import gameData from '../../lib/game-data';
 import _ from '../../utils/common';
 
 export default class Playthrough extends Component {

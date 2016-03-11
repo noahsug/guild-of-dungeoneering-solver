@@ -1,5 +1,5 @@
 import Card from './card';
-import _ from '../utils/common';
+import _ from '../../utils/common';
 
 export default class PlayerCardResolver {
   constructor(state) {

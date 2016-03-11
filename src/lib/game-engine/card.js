@@ -1,5 +1,5 @@
-import gameData from './game-data.js';
-import _ from '../utils/common.js';
+import gameData from '../game-data.js';
+import _ from '../../utils/common.js';
 
 export default class Card {
   constructor(desc) {

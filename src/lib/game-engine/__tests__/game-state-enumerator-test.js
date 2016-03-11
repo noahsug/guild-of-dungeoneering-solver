@@ -1,4 +1,4 @@
-import _ from '../../utils/common';
+import _ from '../../../utils/common';
 
 jest.dontMock('../game-state-accessor');
 jest.dontMock('../game-state-player-accessor');

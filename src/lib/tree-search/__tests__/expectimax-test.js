@@ -1,5 +1,5 @@
 import Node from '../node';
-import _ from '../../utils/common';
+import _ from '../../../utils/common';
 
 jest.dontMock('../expectimax');
 
