@@ -6,11 +6,11 @@ describe('game state accessor', () => {
   const accessor = new GameStateAccessor();
 
   it('can access deck, hand and discardPile', () => {
-    const state = {
+    const state = GameStateAccessor.create({
       playerDeck: [1, 2, 3],
       enemyHand: [4, 5],
       playerDiscardPile: [8],
-    };
+    });
     const {player, enemy} = accessor.setState(state);
     expect(player.deck).toEqual(state.playerDeck);
     expect(enemy.hand).toEqual(state.enemyHand);
@@ -18,10 +18,10 @@ describe('game state accessor', () => {
   });
 
   it('can draw a card', () => {
-    const state = {
+    const state = GameStateAccessor.create({
       playerDeck: [1, 2, 3],
       playerHand: [4, 5],
-    };
+    });
     const {player} = accessor.setState(state);
     player.draw(0);
     expect(state.playerDeck).toEqualValues([2, 3]);
@@ -29,10 +29,10 @@ describe('game state accessor', () => {
   });
 
   it('can discard a card', () => {
-    const state = {
+    const state = GameStateAccessor.create({
       playerHand: [4, 5],
       playerDiscardPile: [],
-    };
+    });
     const {player} = accessor.setState(state);
     player.discard(0);
     expect(state.playerHand).toEqual([5]);
@@ -40,10 +40,10 @@ describe('game state accessor', () => {
   });
 
   it('can discard multiple cards', () => {
-    const state = {
+    const state = GameStateAccessor.create({
       playerHand: [1, 2, 3, 4],
       playerDiscardPile: [],
-    };
+    });
     const {player} = accessor.setState(state);
     player.discardMultiple([0, 2]);
     expect(state.playerHand).toEqualValues([2, 4]);
@@ -51,11 +51,11 @@ describe('game state accessor', () => {
   });
 
   it('can draw discard pile if deck is empty', () => {
-    const state = {
+    const state = GameStateAccessor.create({
       playerDeck: [1],
       playerHand: [],
       playerDiscardPile: [2, 3],
-    };
+    });
     const {player} = accessor.setState(state);
     player.prepDraw();
     expect(state.playerDeck).toEqual([1]);
@@ -67,5 +67,15 @@ describe('game state accessor', () => {
     expect(state.playerDeck).toEqual([3]);
     expect(state.playerHand).toEqualValues([2, 1]);
     expect(state.playerDiscardPile).toEqual([]);
+  });
+
+  it('can steal cards', () => {
+    const state = GameStateAccessor.create({
+      playerHand: [1],
+    });
+    const {player, enemy} = accessor.setState(state);
+    enemy.steal(0);
+    expect(state.playerHand).toEqual([]);
+    expect(state.enemyDeck).toEqual([1]);
   });
 });

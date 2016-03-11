@@ -28,7 +28,12 @@ export default class CardResolver {
     this.enemy_.resolveBurnDmg();
     if (this.player_.dead || this.enemy_.dead) return true;
 
-    if (this.player_.quick && !this.enemy_.survivedQuick()) {
+    if (this.player_.quick && !this.enemy_.quick &&
+        !this.enemy_.survivedQuick()) {
+      return true;
+    }
+    if (this.enemy_.quick && !this.player_.quick &&
+        !this.player_.survivedQuick()) {
       return true;
     }
     this.resolveCombat_();

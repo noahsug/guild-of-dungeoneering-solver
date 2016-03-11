@@ -33,6 +33,7 @@ export default class GameStateAccessor {
     clone.playerDiscardEffect = this.state.playerDiscardEffect;
     clone.playerDrawEffect = this.state.playerDrawEffect;
     clone.playerCycleEffect = this.state.playerCycleEffect;
+    // clone.playerCloneEffect = this.state.playerCloneEffect;
 
     clone.enemyStealEffect = this.state.enemyStealEffect;
     return clone;

@@ -45,8 +45,9 @@ export default class Simulator {
   getPossibleStates_(clonedState, move) {
     const {player, enemy} = this.accessor_;
     this.stateEnumerator_.setClonedState(clonedState);
+    // TODO: Implement clone.
     this.stateEnumerator_.putInPlay(move);
-    // TODO: Implement steal and clone.
+    this.stateEnumerator_.steal(enemy.stealEffect);
     this.stateEnumerator_.cycle(player.cycleEffect);
     this.stateEnumerator_.draw(player.drawEffect);
     // TODO: Implement enemyDiscardEffect, the card not discarded is played next

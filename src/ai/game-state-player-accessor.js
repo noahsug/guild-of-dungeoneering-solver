@@ -103,7 +103,7 @@ export class GameStatePlayerAccessor {
   }
 
   steal(index) {
-    const card = this.enemy.hand.splice(index, 1)[index];
+    const card = this.state.enemyHand.splice(index, 1)[index];
     this.state.playerDeck.push(card);
     return card;
   }
@@ -192,6 +192,13 @@ export class GameStatePlayerAccessor {
   }
   set withstandEffect(value) {
     this.state.playerWithstandEffect = value;
+  }
+
+  get cloneEffect() {
+    return this.state.playerCloneEffect || 0;
+  }
+  set cloneEffect(value) {
+    this.state.playerCloneEffect = value;
   }
 
   // Traits
@@ -440,7 +447,7 @@ export class GameStateEnemyAccessor {
   }
 
   steal(index) {
-    const card = this.enemy.hand.splice(index, 1)[index];
+    const card = this.state.playerHand.splice(index, 1)[0];
     this.state.enemyDeck.push(card);
     return card;
   }
@@ -529,6 +536,13 @@ export class GameStateEnemyAccessor {
   }
   set withstandEffect(value) {
     this.state.enemyWithstandEffect = value;
+  }
+
+  get cloneEffect() {
+    return this.state.enemyCloneEffect || 0;
+  }
+  set cloneEffect(value) {
+    this.state.enemyCloneEffect = value;
   }
 
   // Traits

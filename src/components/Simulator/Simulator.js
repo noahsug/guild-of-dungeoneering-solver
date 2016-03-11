@@ -26,13 +26,13 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Apprentice',
+        name: 'Chump',
         items: [],
         traits: [],
         level: 0,
       },
       enemy: {
-        name: 'Rat King',
+        name: 'One-Headed Monkey',
         traits: [],
       },
       result: 0,

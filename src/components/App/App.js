@@ -11,7 +11,10 @@ import _ from '../../utils/common';
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {results: [], showPlaythrough: false};
+    this.state = {
+      results: [],
+      playthroughSimulation: null,
+    };
   }
 
   render() {
@@ -21,11 +24,11 @@ export default class App extends Component {
         <Simulator onSimulationStart={this.onSimulationStart_.bind(this)}
                    onSimulationFinish={this.onSimulationFinish_.bind(this)}
                    openPlaythrough={this.openPlaythrough_.bind(this)} />
-        {this.state.showPlaythrough ? (
+        {this.state.playthroughSimulation ? (
             <span>
-              <Playthrough simulation={this.simulation_}
+              <Playthrough simulation={this.state.playthroughSimulation}
                            close={this.closePlaythrough_.bind(this)} />
-              <CardNames simulation={this.simulation_} />
+              <CardNames simulation={this.state.playthroughSimulation} />
             </span>
         ) : ''}
         <Results results={this.state.results} />
@@ -44,12 +47,14 @@ export default class App extends Component {
   }
 
   openPlaythrough_() {
-    // Trigger playthrough to be re-rendered.
-    this.setState({showPlaythrough: false});
-    setTimeout(() => this.setState({showPlaythrough: true}), 1);
+    // Force playthrough to be reloaded.
+    this.setState({playthroughSimulation: null});
+    setTimeout(() => {
+      this.setState({playthroughSimulation: this.simulation_});
+    }, 0);
   }
 
   closePlaythrough_() {
-    this.setState({showPlaythrough: false});
+    this.setState({playthroughSimulation: null});
   }
 }

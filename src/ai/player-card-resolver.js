@@ -304,7 +304,7 @@ export default class PlayerCardResolver {
   }
 
   resolveIfDmg_(dmg) {
-    //this.state_.stealEffect += this.card_.stealIfDmg;
+    this.state_.stealEffect += this.card_.stealIfDmg;
     //this.state_concealEffect += this.card_.concealIfDmg;
     this.heal_ += this.card_.healIfDmg;
     this.heal_ += dmg * this.card_.healPerDmg;
@@ -316,7 +316,7 @@ export default class PlayerCardResolver {
   }
 
   resolveIfBlock_(block) {
-    //this.enemy_.state.stealEffect += block * defender.card_.stealPerBlock;
+    this.state_.stealEffect += block * this.card_.stealPerBlock;
     this.heal_ += block * this.card_.healPerBlock;
   }
 
@@ -327,7 +327,7 @@ export default class PlayerCardResolver {
       this.state_.drawEffect += 1;
     }
     if (this.card_.cardStorm) this.state_.discardEffect += 4;
-    //this.state_.stealEffect += this.card_.steal;
+    this.state_.stealEffect += this.card_.steal;
     //this.state_.concealEffect += this.card_.conceal;
     this.state_.physicalNextEffect += this.card_.physicalNext;
     this.state_.magicNextEffect += this.card_.magicNext;

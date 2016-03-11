@@ -122,6 +122,20 @@ export default class Simulator {
     this.playerDraw_(player, count);
   }
 
+  steal(count) {
+    if (!count) return;
+    const {player, enemy} = this.accessor_.setState(this.states_[0]);
+    count = Math.min(count, player.hand.length);
+    if (!count) return;
+
+    const numChoices = player.hand.length;
+    this.states_.length *= _.factorial(numChoices) /
+        _.factorial(numChoices - count);
+    for (let i = 0; i < count; i++) {
+      this.forEachStateCallNTimes_(enemy.steal.bind(enemy), numChoices - i);
+    }
+  }
+
   forEachState_(changeStateFn) {
     const numStates = this.states_.length;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
