@@ -39,7 +39,8 @@ export default class Simulator {
     // Shortcut: If the game is over, don't generate states.
     if (gameOver) return [state];
 
-    return this.getPossibleStates_(state, move);
+    const states = this.getPossibleStates_(state, move);
+    return states;
   }
 
   getPossibleStates_(clonedState, move) {
@@ -50,6 +51,7 @@ export default class Simulator {
     this.stateEnumerator_.steal(enemy.stealEffect);
     this.stateEnumerator_.cycle(player.cycleEffect);
     this.stateEnumerator_.draw(player.drawEffect);
+    this.stateEnumerator_.setClonedState(clonedState);
     // TODO: Implement enemyDiscardEffect, the card not discarded is played next
     // by the enemy (put into enemy hand).
     this.stateEnumerator_.discard(player.discardEffect);

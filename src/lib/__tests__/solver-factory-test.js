@@ -23,7 +23,7 @@ describe('solver', () => {
   it('supports +HP traits', () => {
     const solver = getSolver(
         {name: 'Chump', traits: ['Level 3']}, {name: 'Gray Ooze'});
-    expect(root.player.health).toBe(gameData.players.Chump.health + 3);
+    expect(root.player.health).toBe(gameData.players.Chump.health + 2);
   });
 
   it('supports Warriors Might trinket', () => {

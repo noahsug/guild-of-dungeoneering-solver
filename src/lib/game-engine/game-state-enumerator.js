@@ -53,7 +53,7 @@ export default class Simulator {
   playerDrawOne_(player) {
     player.state = this.states_[0];
     player.prepDraw();
-    const numChoices = player.deck.length;
+     const numChoices = player.deck.length;
     if (numChoices == 0) return;
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;

@@ -40,7 +40,7 @@ export default {
     // Player sets
     'Chump': ['P', 'P', 'P', 'P/P', 'B', 'B'],
     'Cat Burglar': ['PN', 'PN', 'P/U', 'P/Q', 'P/P', 'P/P'],
-    'Bruiser': ['P', 'P', 'BP/BP', 'P/BP', 'P/U', 'BM', 'BM'],
+    'Bruiser': ['P', 'P', 'BP/BP', 'P/BP', 'P/U', 'BM/BM'],
     'Apprentice': ['M/BM', 'M/BM', 'D/D', 'M/U', 'M/U', 'M/Q'],
     'Shapeshifter': ['H/H', 'M/U', 'P/P', 'P/P', 'M/BM/BM', 'BP/BP/BP'],
     'Alchemist': ['M/M', 'M/M', 'H', 'H', 'M/Q', 'BM/BM/MN/MN'],
@@ -215,6 +215,7 @@ export default {
     // Tier 2
     'Alchemist': {
       traits: ['Blessing'],
+      health: 4,
     },
     'Barbarian': {
       sets: ['Barbarian'],
@@ -235,19 +236,19 @@ export default {
     //},
     'Cartomancer': {
       sets: ['Cartomancer'],
-      health: 5,
+      health: 6,
       traits: ['Rules Lawyer'],
     },
     //'Mathemagician': {
     //},
     'Most Holy Grail Knight': {
       sets: ['Most Holy Grail Knight'],
-      health: 5,
+      health: 7,
       traits: ['Retribution'],
     },
     'Troubador': {
       sets: ['Troubador'],
-      health: 5,
+      health: 6,
       traits: ['Spellsword'],
     },
   },
@@ -831,114 +832,114 @@ export default {
     // Body - C1
     'Straightjacket': {
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C1',
     },
     'Ruffled Shirt': {
       sets: ['Swift 1'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C1',
     },
     'Barrel': {
       sets: ['Stupidity 1'],
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C1',
     },
     'Tattered Mail': {
       sets: ['Armour 1', 'Stupidity 1'],
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C2',
     },
     'Shimmering Cloak': {
       sets: ['Arcane 1', 'Fire 1'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C2',
     },
     'Red Mail': {
       sets: ['Armour 1'],
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C3',
     },
     'Bone Armour': {
       sets: ['Arcane 1'],
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'C3',
     },
     'Sash': {
       sets: ['Swift 1', 'Growth 1'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'U1',
     },
     'Mage Robes': {
       sets: ['Fire 1', 'Arcane 1', 'Holy 1'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'U2',
     },
     'Corset': {
       sets: ['Armour 1', 'Growth 1'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'U2',
     },
     'Wolf Pelt': {
       sets: ['Growth 2'],
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'U3',
     },
     'Scale Mail': {
       sets: ['Armour 1'],
       traits: ['+2HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'U3',
     },
     'Bark Vest': {
       sets: ['Growth 1', 'Stupidity 1'],
       traits: ['Tenacious'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'R1',
     },
     'Fish Scale Cowl': {
       sets: ['Arcane 1'],
       traits: ['+1HP'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'R1',
     },
     'Seafarers Brace': {
       sets: ['Armour 1', 'Arcane 1'],
       traits: ['Retribution'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'R2',
     },
     'Doom Plate': {
       sets: ['Armour 1'],
       traits: ['Bulwark'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'R3',
     },
     'Padded Vest': {
       sets: ['Arcane 2', 'Armour 1'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'R3',
     },
     'Dragon Scale': {
       sets: ['Armour 3', 'Fire 2'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'E3',
     },
     'Coat Of Thorns': {
       sets: ['Armour 2', 'Growth 1'],
       traits: ['Spikey'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'E3',
     },
     'Long Coat': {
       sets: ['Swift 2'],
       traits: ['Showoff'],
-      slot: 'Head',
+      slot: 'Body',
       rarity: 'E3',
     },
 
@@ -1353,28 +1354,23 @@ export default {
   },
 
   traits: {
-    'Level 1': {
+    'Level 2': {
       health: 1,
       for: 'player',
       type: 'level',
     },
-    'Level 2': {
+    'Level 3': {
       health: 2,
       for: 'player',
       type: 'level',
     },
-    'Level 3': {
+    'Level 4': {
       health: 3,
       for: 'player',
       type: 'level',
     },
-    'Level 4': {
-      health: 4,
-      for: 'player',
-      type: 'level',
-    },
     'Level 5': {
-      health: 5,
+      health: 4,
       for: 'player',
       type: 'level',
     },

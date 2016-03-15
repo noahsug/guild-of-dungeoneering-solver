@@ -73,7 +73,7 @@ export default class GameStateCache {
   hashGameState_(state) {
     this.accessor_.setState(state);
     const {player, enemy} = this.accessor_;
-    return this.hashCards_(player.deck, this.hashes_.playerDeck) +
+    const hash = this.hashCards_(player.deck, this.hashes_.playerDeck) +
         this.hashCards_(player.hand, this.hashes_.playerHand) +
         this.hashCards_(player.discardPile,
                         this.hashes_.playerDiscardPile) +
@@ -82,6 +82,7 @@ export default class GameStateCache {
         this.hashCards_(enemy.discardPile,
                         this.hashes_.enemyDiscardPile) +
         this.hashStats_();
+    return hash;
   }
 
   hashCards_(cards, hashes) {

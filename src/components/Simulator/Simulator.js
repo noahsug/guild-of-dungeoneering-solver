@@ -26,13 +26,13 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Barbarian',
-        items: [],
-        traits: [],
+        name: 'Apprentice',
+        items: ['Shimmering Cloak'],
+        traits: ['Crones Discipline'],
         level: 0,
       },
       enemy: {
-        name: 'One-Headed Monkey',
+        name: 'Rat King',
         traits: [],
       },
       result: 0,
@@ -144,6 +144,12 @@ export default class Simulator extends Component {
   }
 
   solve_() {
+    window.stats = {
+      total: 0,
+    };
+    window.winners = {
+    };
+    window.hints = {};
     this.solver_ = new SolverFactory().create(
         this.state.player, this.state.enemy);
     this.incrementSolve_(2);
@@ -159,10 +165,31 @@ export default class Simulator extends Component {
   }
 
   solveLoop_() {
+    const a = performance.now();
     this.incrementSolve_(20000);
+    const b = performance.now();
+    window.stats.total += b - a;
     const result = this.solver_.rootNode.result;
     if (result) {
-      console.log(Object.keys(this.solver_.cache_.cache_).length);
+      console.log('STATS:', window.stats.total);
+      //console.log('WINNERS:', window.winners);
+      //_.each(window.winners, (v, hash) => {
+      //  if (v.wins &&
+      //      v.wins / v.losses > 300 &&
+      //      v.wins / v.meh > 50) {
+      //    console.log('Winner:', hash, v.wins, v.losses, v.meh);
+      //  }
+      //  if (v.losses &&
+      //      v.losses / v.wins > 300 &&
+      //      v.losses / v.meh > 50) {
+      //    console.log('Loser:', hash, v.wins, v.losses, v.meh);
+      //  }
+      //});
+      //console.log('HINTS:', window.hints);
+      //_.each(window.hints, (v, hash) => {
+      //  console.log(hash, '->', v);
+      //});
+
       this.time_ = Date.now() - this.time_;
       this.setState({result, running: false});
       this.props.onSimulationFinish();

@@ -298,11 +298,16 @@ describe('card resolver resolves', () => {
   });
 
   it('spikey', () => {
-    const [state, player, enemy] = useState(5, {enemySpikey: 1});
+    const [state, player, enemy] = useState(10, {enemySpikey: 1});
     resolver.resolve(state, Card.create('P/P'), Card.create('BP/B'));
-    expect(player.health).toBe(4);
+    expect(player.health).toBe(9);
     resolver.resolve(state, Card.create('P/P'), Card.create('BM/B'));
-    expect(player.health).toBe(4);
+    expect(player.health).toBe(9);
+    resolver.resolve(state, Card.create('P/PRID'), Card.create('?'));
+    expect(player.health).toBe(9);
+    // Spikey doesn't check burn dmg.
+    resolver.resolve(state, Card.create('M/M'), Card.create('BM/BM'));
+    expect(player.health).toBe(8);
   });
 
   it('rum', () => {
