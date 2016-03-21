@@ -12,16 +12,16 @@ describe('remove', () => {
   });
 });
 
-describe('arrayCombinations', () => {
+describe('numArrayCombinations', () => {
   it('returns the number of combinations from arrays', () => {
     const arrays = [[1, 2, 3], [5, 6], [8]];
-    expect(_.arrayCombinations(...arrays)).toBe(6);
+    expect(_.numArrayCombinations(...arrays)).toBe(6);
   });
 });
 
-describe('arrayCombinate', () => {
+describe('tuplesCombinationsGenerator', () => {
   it('iterates through all possible combinations of values from arrays', () => {
-    const combinator = _.arrayCombinate([1, 2, 3], [5, 6]);
+    const combinator = _.tuplesCombinationsGenerator([1, 2, 3], [5, 6]);
     const expected = [[1, 5], [1, 6], [2, 5], [2, 6], [3, 5], [3, 6]];
     expected.forEach((value) => {
       expect(combinator.next().value).toEqual(value);
@@ -29,9 +29,9 @@ describe('arrayCombinate', () => {
   });
 });
 
-describe('combinate', () => {
+describe('combinationsGenerator', () => {
   it('iterates through all possible combinations of values', () => {
-    const combinator = _.combinate([1, 2, 3], 2);
+    const combinator = _.combinationsGenerator([1, 2, 3], 2);
     expect(Array.from(combinator)).toEqual([[1, 2], [1, 3], [2, 3]]);
   });
 });

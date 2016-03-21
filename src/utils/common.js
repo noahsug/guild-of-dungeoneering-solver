@@ -84,7 +84,7 @@ _.mixin({
     return array2;
   },
 
-  copyWithValue: (array, value) => {
+  cloneAndPush: (array, value) => {
     const len = array.length;
     const array2 = new Array(len + 1);
     for (let i = 0; i < len; i++) {
@@ -98,8 +98,8 @@ _.mixin({
     obj[key] = (obj[key] || 0) + value;
   },
 
-  // [1, 2, 3], [5, 6] => [[1, 5], [1, 6], [2, 5], ...]
-  arrayCombinate: (...arrays) => {
+  // [1, 2, 3], [5, 6], [9] => [[1, 5, 9], [1, 6, 9], [2, 5, 9], ...]
+  tuplesCombinationsGenerator: (...arrays) => {
     const result = [];
     function* combinate(i) {
       for (let v = 0; v < arrays[i].length; v++) {
@@ -115,14 +115,14 @@ _.mixin({
   },
 
   // [1, 2, 3], [5, 6] => 6
-  arrayCombinations: (...arrays) => {
+  numArrayCombinations: (...arrays) => {
     return arrays.reduce((prev, current) => {
       return prev * current.length;
     }, 1);
   },
 
   // [1, 2, 3], 2 => [[1, 2], [1, 3], [2, 3]]
-  combinate: (array, size) => {
+  combinationsGenerator: (array, size) => {
     const result = [];
     function* combinate(i, r) {
       if (size >= array.length) {
@@ -139,6 +139,30 @@ _.mixin({
       }
     }
     return combinate(0, 0);
+  },
+
+  // Iterates through every permutation of an array (order matters).
+  // Note: The yielded result should NOT be modified.
+  permutate: (array) => {
+    function* p(array, index) {
+      if (index == array.length - 1) {
+        yield array;
+      } else {
+        p(array, index + 1);
+        for (let i = index + 1; i < array.length; i++) {
+          _.swap(array, i, index);
+          yield* p(array, index + 1);
+          _.swap(array, i, index);
+        }
+      }
+    }
+    return p(array, 0);
+  },
+
+  swap: (list, index1, index2) => {
+    const temp = list[index1];
+    list[index1] = list[index2];
+    list[index2] = temp;
   },
 
   binomialCoefficient: (n, k) => {

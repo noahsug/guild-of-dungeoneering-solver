@@ -3,8 +3,6 @@ import GameStateAccessor from './game-state-accessor';
 import GameStateEnumerator from './game-state-enumerator';
 import _ from '../../utils/common';
 
-const STARTING_HAND_SIZE = 3;
-
 export default class Simulator {
   constructor() {
     this.cardResolver_ = new CardResolver();
@@ -18,7 +16,7 @@ export default class Simulator {
     const state = this.cloneState(initialState);
 
     this.stateEnumerator_.setClonedState(state);
-    this.stateEnumerator_.draw(STARTING_HAND_SIZE +
+    this.stateEnumerator_.draw(GameStateAccessor.STARTING_HAND_SIZE +
                                player.extraHandSizeEffect, 1);
     return this.stateEnumerator_.getStates();
   }
@@ -39,8 +37,7 @@ export default class Simulator {
     // Shortcut: If the game is over, don't generate states.
     if (gameOver) return [state];
 
-    const states = this.getPossibleStates_(state, move);
-    return states;
+    return this.getPossibleStates_(state, move);
   }
 
   getPossibleStates_(clonedState, move) {
@@ -51,7 +48,6 @@ export default class Simulator {
     this.stateEnumerator_.steal(enemy.stealEffect);
     this.stateEnumerator_.cycle(player.cycleEffect);
     this.stateEnumerator_.draw(player.drawEffect);
-    this.stateEnumerator_.setClonedState(clonedState);
     // TODO: Implement enemyDiscardEffect, the card not discarded is played next
     // by the enemy (put into enemy hand).
     this.stateEnumerator_.discard(player.discardEffect);

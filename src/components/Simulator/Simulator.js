@@ -8,6 +8,8 @@ import SolverFactory from '../../lib/solver-factory';
 import gameData from '../../lib/game-data';
 import _ from '../../utils/common';
 
+import GameStateEvaluator from '../../lib/evaluation/game-state-evaluator';
+
 export default class Simulator extends Component {
   constructor(props) {
     super(props);
@@ -62,6 +64,9 @@ export default class Simulator extends Component {
   }
 
   render() {
+    const evaluator = new GameStateEvaluator();
+    evaluator.evaluate(this.state.player, this.state.enemy);
+
     const {players, enemies, items} = this.renderInfo_;
     const playerTraits = this.filterTraits_(
         this.renderInfo_.playerTraits, this.state.player);

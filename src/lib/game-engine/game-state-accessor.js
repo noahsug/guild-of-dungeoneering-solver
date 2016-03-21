@@ -9,6 +9,8 @@ export default class GameStateAccessor {
     this.enemy.enemy = this.player;
   }
 
+  static STARTING_HAND_SIZE = 3;
+
   setState(state) {
     this.state = this.player.state = this.enemy.state = state;
     return this;
