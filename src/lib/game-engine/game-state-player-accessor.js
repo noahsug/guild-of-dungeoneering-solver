@@ -44,6 +44,14 @@ export class GameStatePlayerAccessor {
     return this.state.playerDeck.splice(index, 1)[0];
   }
 
+  indicateDraw(index) {
+    this.state.playerDraw = index;
+  }
+
+  get toBeDrawn() {
+    return this.state.playerDraw;
+  }
+
   drawAll() {
     const originalHandLen = this.state.playerHand.length;
     if (!originalHandLen) {
@@ -393,6 +401,14 @@ export class GameStateEnemyAccessor {
     this.prepDraw();
     this.state.enemyHand.push(this.state.enemyDeck[index]);
     return this.state.enemyDeck.splice(index, 1)[0];
+  }
+
+  indicateDraw(index) {
+    this.state.enemyDraw = index;
+  }
+
+  get toBeDrawn() {
+    return this.state.enemyDraw;
   }
 
   drawAll() {

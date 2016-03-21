@@ -4,7 +4,7 @@ describe('solver', () => {
   const SolverFactory = require('../solver-factory');
   const GameStateAccessor = require('../game-engine/game-state-accessor');
   const Card = require('../game-engine/card');
-  const gameData = require('../game-data');
+  const gameData = require('../game-engine/game-data');
   const root = new GameStateAccessor();
 
   function getSolver(player, enemy) {

@@ -70,6 +70,7 @@ describe('game state enumerator', () => {
     const states = enumerator.getStates();
     expect(states.length).toBe(2);
     const {player, enemy} = GameStateAccessor.instance.setState(states[0]);
+    GameStateAccessor.instance.drawForNextTurn();
     expect(player.deck).toEqual([]);
     expect(player.hand).toEqualValues([2, 3, 4]);
     expect(player.discardPile).toEqual([1]);

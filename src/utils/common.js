@@ -96,6 +96,7 @@ _.mixin({
 
   increment: (obj, key, value = 1) => {
     obj[key] = (obj[key] || 0) + value;
+    return obj[key];
   },
 
   // [1, 2, 3], [5, 6], [9] => [[1, 5, 9], [1, 6, 9], [2, 5, 9], ...]

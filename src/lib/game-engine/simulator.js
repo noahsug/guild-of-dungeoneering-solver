@@ -13,7 +13,7 @@ export default class Simulator {
   getInitialStates(initialState) {
     this.cardResolver_.setInitialState(initialState);
     const player = this.accessor_.setState(initialState).player;
-    const state = this.cloneState(initialState);
+    const state = this.accessor_.clone();
 
     this.stateEnumerator_.setClonedState(state);
     this.stateEnumerator_.draw(GameStateAccessor.STARTING_HAND_SIZE +
@@ -22,12 +22,28 @@ export default class Simulator {
   }
 
   getMoves(state) {
-    return _.unique(state.playerHand);
+    const visited = {};
+    const moves = [];
+    if (state.playerDraw != undefined) {
+      const card = state.playerDeck[state.playerDraw];
+      if (!visited[card]) {
+        visited[card] = true;
+        moves.push(card);
+      }
+    }
+    const len = state.playerHand.length;
+    for (let i = 0; i < len; i++) {
+      const card = state.playerHand[i];
+      if (!visited[card]) {
+        visited[card] = true;
+        moves.push(card);
+      }
+    }
+    return moves;
   }
 
   getStates(state, move) {
-    this.accessor_.setState(state);
-    state = this.accessor_.newTurnClone();
+    state = this.accessor_.setState(state).newTurnClone();
     this.accessor_.setState(state);
 
     // TODO: Implement conceal.
@@ -57,9 +73,5 @@ export default class Simulator {
 
   getResult(state) {
     return GameStateAccessor.instance.setState(state).result;
-  }
-
-  cloneState(state) {
-    return GameStateAccessor.clone(state);
   }
 }

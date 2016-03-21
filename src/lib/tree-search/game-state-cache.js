@@ -18,7 +18,7 @@ export default class GameStateCache {
     this.hashes_.enemyDeck = this.getHashes_(numCards);
     this.hashes_.enemyHand = this.getHashes_(numCards);
     this.hashes_.enemyDiscardPile = this.getHashes_(numCards);
-    this.hashes_.stats = this.getHashes_(20);
+    this.hashes_.stats = this.getHashes_(30);
   }
 
   getHashes_(len) {
@@ -71,17 +71,25 @@ export default class GameStateCache {
   }
 
   hashGameState_(state) {
-    this.accessor_.setState(state);
-    const {player, enemy} = this.accessor_;
-    return this.hashCards_(player.deck, this.hashes_.playerDeck) +
-        this.hashCards_(player.hand, this.hashes_.playerHand) +
-        this.hashCards_(player.discardPile,
+    let hash = this.hashCards_(state.playerDeck, this.hashes_.playerDeck) +
+        this.hashCards_(state.playerHand, this.hashes_.playerHand) +
+        this.hashCards_(state.playerDiscardPile,
                         this.hashes_.playerDiscardPile) +
-        this.hashCards_(enemy.deck, this.hashes_.enemyDeck) +
-        this.hashCards_(enemy.hand, this.hashes_.enemyHand) +
-        this.hashCards_(enemy.discardPile,
+        this.hashCards_(state.enemyDeck, this.hashes_.enemyDeck) +
+        this.hashCards_(state.enemyHand, this.hashes_.enemyHand) +
+        this.hashCards_(state.enemyDiscardPile,
                         this.hashes_.enemyDiscardPile) +
-        this.hashStats_();
+        this.hashStats_(state);
+
+    if (state.playerDraw != undefined) {
+      const playerCard = state.playerDeck[state.playerDraw];
+      const enemyCard = state.enemyDeck[state.enemyDraw];
+      hash += this.hashes_.playerHand[playerCard] -
+          this.hashes_.playerDeck[playerCard] +
+          this.hashes_.enemyHand[enemyCard] -
+          this.hashes_.enemyDeck[enemyCard];
+    }
+    return hash;
   }
 
   hashCards_(cards, hashes) {
@@ -93,20 +101,20 @@ export default class GameStateCache {
     return result;
   }
 
-  hashStats_() {
+  hashStats_(state) {
     // TODO: Implement conceal and predictable.
-    return this.accessor_.player.health * this.hashes_.stats[0] +
-        this.accessor_.enemy.health * this.hashes_.stats[1] +
-        this.accessor_.player.magicNextEffect * this.hashes_.stats[2] +
-        this.accessor_.player.physicalNextEffect * this.hashes_.stats[3] +
-        this.accessor_.player.magicRoundEffect * this.hashes_.stats[4] +
-        this.accessor_.player.physicalRoundEffect * this.hashes_.stats[5] +
-        this.accessor_.player.withstandEffect * this.hashes_.stats[11] +
-        this.accessor_.enemy.magicNextEffect * this.hashes_.stats[6] +
-        this.accessor_.enemy.magicNextEffect * this.hashes_.stats[7] +
-        this.accessor_.enemy.magicRoundEffect * this.hashes_.stats[8] +
-        this.accessor_.enemy.physicalRoundEffect * this.hashes_.stats[9] +
-        this.accessor_.enemy.rum * this.hashes_.stats[10];
+    return state.playerHealth * this.hashes_.stats[0] +
+        state.enemyHealth * this.hashes_.stats[1] +
+        (state.playerMagicNextEffect || 0) * this.hashes_.stats[2] +
+        (state.playerPhysicalNextEffect || 0) * this.hashes_.stats[3] +
+        (state.playerMagicRoundEffect || 0) * this.hashes_.stats[4] +
+        (state.playerPhysicalRoundEffect || 0) * this.hashes_.stats[5] +
+        (state.playerWithstandEffect || 0) * this.hashes_.stats[11] +
+        (state.enemyMagicNextEffect || 0) * this.hashes_.stats[6] +
+        (state.enemyMagicNextEffect || 0) * this.hashes_.stats[7] +
+        (state.enemyMagicRoundEffect || 0) * this.hashes_.stats[8] +
+        (state.enemyPhysicalRoundEffect || 0) * this.hashes_.stats[9] +
+        (state.enemyRum || 0) * this.hashes_.stats[10];
   }
 
   validateHashFunction_(node) {

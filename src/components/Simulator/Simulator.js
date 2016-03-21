@@ -5,7 +5,7 @@ import Button from 'react-toolbox/lib/button';
 import { Card, CardText, CardActions, CardTitle } from 'react-toolbox/lib/card';
 import style from './Simulator.scss';
 import SolverFactory from '../../lib/solver-factory';
-import gameData from '../../lib/game-data';
+import gameData from '../../lib/game-engine/game-data';
 import _ from '../../utils/common';
 
 import GameStateEvaluator from '../../lib/evaluation/game-state-evaluator';
@@ -28,13 +28,17 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Apprentice',
-        items: ['Shimmering Cloak'],
+        name: 'Chump',
+        items: [],
+        //traits: [],
+        //name: 'Apprentice',
+        //items: ['Shimmering Cloak'],
         traits: ['Crones Discipline'],
         level: 0,
       },
       enemy: {
-        name: 'Rat King',
+        //name: 'Rat King',
+        name: 'Gray Ooze',
         traits: [],
       },
       result: 0,
@@ -64,8 +68,8 @@ export default class Simulator extends Component {
   }
 
   render() {
-    const evaluator = new GameStateEvaluator();
-    evaluator.evaluate(this.state.player, this.state.enemy);
+    //const evaluator = new GameStateEvaluator();
+    //evaluator.evaluate(this.state.player, this.state.enemy);
 
     const {players, enemies, items} = this.renderInfo_;
     const playerTraits = this.filterTraits_(

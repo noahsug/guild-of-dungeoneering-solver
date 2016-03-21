@@ -4,6 +4,8 @@ import _ from '../../utils/common';
 export default class Simulator {
   constructor() {
     this.accessor_ = new GameStateAccessor();
+    this.player_ = this.accessor_.player;
+    this.enemy_ = this.accessor_.enemy;
   }
 
   setState(state) {
@@ -21,8 +23,8 @@ export default class Simulator {
 
   putInPlay(playerCard) {
     this.accessor_.setState(this.states_[0]);
-    this.playerPlay_(this.accessor_.player, playerCard);
-    this.playerPlay_(this.accessor_.enemy, this.accessor_.enemy.hand[0]);
+    this.playerPlay_(this.player_, playerCard);
+    this.playerPlay_(this.enemy_, this.enemy_.hand[0]);
   }
 
   playerPlay_(player, card) {
@@ -31,45 +33,42 @@ export default class Simulator {
   }
 
   endTurn() {
-    this.playerEndTurn_(this.accessor_.player);
-    this.playerEndTurn_(this.accessor_.enemy);
-  }
-
-  playerEndTurn_(player) {
-    const numStates = this.states_.actualLen;
+    const numStates = this.states_.length;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
-      player.state = this.states_[stateIndex];
-      player.removeFromPlay(player.inPlay);
+      this.accessor_.setState(this.states_[stateIndex]);
+      this.player_.removeFromPlay(this.player_.inPlay);
+      this.player_.prepDraw();
+      this.enemy_.removeFromPlay(this.enemy_.inPlay);
+      this.enemy_.prepDraw();
     }
-    this.playerDrawOne_(player);
-    delete player.inPlay;
+    delete this.player_.inPlay;
+    delete this.enemy_.inPlay;
+    this.playerDrawAtEndOfTurn_(this.player_);
+    this.playerDrawAtEndOfTurn_(this.enemy_);
   }
 
-  draw(playerCount, enemyCount = 0) {
-    if (playerCount) this.playerDraw_(this.accessor_.player, playerCount);
-    if (enemyCount) this.playerDraw_(this.accessor_.enemy, enemyCount);
-  }
-
-  playerDrawOne_(player) {
+  playerDrawAtEndOfTurn_(player) {
     player.state = this.states_[0];
-    player.prepDraw();
     const numChoices = player.deck.length;
     if (numChoices == 0) return;
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+      this.accessor_.setState(this.states_[stateIndex]);
+      player.indicateDraw(0);
       for (let i = 1; i < numChoices; i++) {
-        this.accessor_.setState(this.states_[stateIndex]);
-        player.state = this.accessor_.clone();
-        player.draw(i);
+        player.state = this.accessor_.shallowClone();
+        player.indicateDraw(i);
         this.states_[lastStateIndex + i] = player.state;
       }
       lastStateIndex += numChoices - 1;
-      player.state = this.states_[stateIndex];
-      player.draw(0);
     }
-    this.states_.actualLen = this.states_.length;
+  }
+
+  draw(playerCount, enemyCount = 0) {
+    if (playerCount) this.playerDraw_(this.player_, playerCount);
+    if (enemyCount) this.playerDraw_(this.enemy_, enemyCount);
   }
 
   playerDraw_(player, count) {
@@ -97,7 +96,7 @@ export default class Simulator {
 
   discard(count) {
     if (!count) return;
-    const player = this.accessor_.player;
+    const player = this.player_;
     player.state = this.states_[0];
     if (player.hand.length <= count) {
       if (!player.hand.length) return;
@@ -115,7 +114,7 @@ export default class Simulator {
 
   cycle(count) {
     if (!count) return;
-    const player = this.accessor_.player;
+    const player = this.player_;
     player.state = this.states_[0];
     count = Math.min(count, player.hand.length);
     this.discard(count);

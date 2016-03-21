@@ -1,6 +1,6 @@
 import GameStateAccessor from './game-engine/game-state-accessor';
 import Card from './game-engine/card';
-import gameData from './game-data';
+import gameData from './game-engine/game-data';
 import _ from '../utils/common';
 
 export default class GameStateFactory {

@@ -7,7 +7,7 @@ import {Button, IconButton} from 'react-toolbox/lib/button';
 import GameStateAccessor from '../../lib/game-engine/game-state-accessor';
 import GameCard from '../../lib//game-engine/card';
 import Node from '../../lib/tree-search/node';
-import gameData from '../../lib/game-data';
+import gameData from '../../lib/game-engine/game-data';
 import _ from '../../utils/common';
 
 export default class Playthrough extends Component {
@@ -29,6 +29,7 @@ export default class Playthrough extends Component {
 
   render() {
     this.accessor_.setState(this.state.node.children[0].gameState.state);
+    this.accessor_.setState(this.accessor_.newTurnClone());
     const {player, enemy} = this.accessor_;
 
     const title = this.props.simulation.player.name +
@@ -77,6 +78,11 @@ export default class Playthrough extends Component {
   renderMoves_() {
     const moves = {};
     this.state.node.children.forEach((child) => {
+      const {player, enemy} = this.accessor_.setState(child.gameState.state);
+      this.accessor_.setState(this.accessor_.newTurnClone());
+      player.hand.sort();
+      const hand = this.getReadableCards_(player.hand);
+
       // Select player card.
       if (this.state.node.type == Node.Type.CHANCE) {
         const card = this.getReadableCards_([child.gameState.move]);
@@ -88,9 +94,6 @@ export default class Playthrough extends Component {
 
       // Select player starting hand.
       else if (!this.state.selectedPlayerHand) {
-        const {player} = this.accessor_.setState(child.gameState.state);
-        player.hand.sort();
-        const hand = this.getReadableCards_(player.hand);
         const onClick = this.selectPlayerHand_.bind(this, hand);
 
         // Average the win rate between all cards.
@@ -108,9 +111,6 @@ export default class Playthrough extends Component {
 
       // Select enemy card.
       else {
-        const {player, enemy} = this.accessor_.setState(child.gameState.state);
-        player.hand.sort();
-        const hand = this.getReadableCards_(player.hand);
         if (hand != this.state.selectedPlayerHand) return;
         const card = this.getReadableCards_(enemy.hand);
         const onClick = this.selectNode_.bind(this, child);

@@ -63,32 +63,7 @@ export default class NodeFactory {
       type,
       parent,
       gameState,
-      //uid: _.uid(),
       result,
     };
-  }
-
-  playout(node) {
-    let state = this.simulator.cloneState(node.gameState.state);
-    if (node.type == Node.Type.PLAYER) {
-      state = this.simulator.play(state, node.gameState.move);
-    }
-    while (!state.result) {
-      const moves = this.simulator.getMoves(state);
-      state = this.simulator.play(state, _.sample(moves));
-    }
-    return state;
-  }
-
-  playOnce(node) {
-    let result;
-    const state = this.simulator.cloneState(node.gameState.state);
-    if (node.type == Node.Type.PLAYER) {
-      this.simulator.play(state, node.gameState.move);
-    } else {
-      const moves = this.simulator.getMoves(state);
-      this.simulator.play(state, _.sample(moves));
-    }
-    return state;
   }
 }

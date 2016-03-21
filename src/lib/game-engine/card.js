@@ -1,4 +1,4 @@
-import gameData from '../game-data.js';
+import gameData from './game-data.js';
 import _ from '../../utils/common.js';
 
 export default class Card {

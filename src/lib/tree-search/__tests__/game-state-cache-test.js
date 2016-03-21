@@ -4,7 +4,7 @@ jest.dontMock('../game-state-cache');
 jest.dontMock('../../game-engine/game-state-accessor');
 jest.dontMock('../../game-engine/game-state-player-accessor');
 jest.dontMock('../../game-engine/card');
-jest.dontMock('../../game-data');
+jest.dontMock('../../game-engine/game-data');
 
 describe('Game state cache', () => {
   const GameStateCache = require('../game-state-cache');

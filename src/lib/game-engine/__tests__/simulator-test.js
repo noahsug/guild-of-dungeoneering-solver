@@ -31,6 +31,7 @@ describe('simulator', () => {
     });
     const states = sim.getStates(state, 4);
     expect(states.length).toBe(3);
+    GameStateAccessor.instance.setState(states[0]).drawForNextTurn();
     expect(states[0]).toContainKVs({playerHealth: 5, enemyHealth: 1});
     expect(states[0].playerDeck).toEqual([]);
     expect(states[0].playerHand).toEqualValues([1, 2, 3, 4]);
@@ -65,6 +66,7 @@ describe('simulator', () => {
     });
 
     const states = sim.getStates(state, 1);
+    GameStateAccessor.instance.setState(states[0]).drawForNextTurn();
     expect(states.length).toBe(18);
     expect(states[0].playerHand.length).toBe(2);
   });
@@ -81,6 +83,7 @@ describe('simulator', () => {
     });
 
     const states = sim.getStates(state, 5);
+    GameStateAccessor.instance.setState(states[0]).drawForNextTurn();
     expect(states.length).toBe(24);
     expect(states[0].playerHand.length).toBe(3);
   });

@@ -4,7 +4,7 @@ jest.autoMockOff();
 
 describe('Game data', () => {
   const Card = require('../game-engine/card');
-  const gameData = require('../game-data');
+  const gameData = require('../game-engine/game-data');
 
   it('each player is valid', function() {
     _.each(gameData.enemies, (player) => {
