@@ -14,7 +14,9 @@ export default class Simulator {
     this.initialState_ = state;
     this.accessor_.setState(state);
     const complexity = this.player_.cards.length * this.enemy_.cards.length;
-    if (complexity > 65) {
+    if (complexity > 69) {
+      this.accuracyFactor_ = 2;
+    } else if (complexity > 65) {
       this.accuracyFactor_ = 3;
     } else if (complexity > 55) {
       this.accuracyFactor_ = 4;
@@ -25,8 +27,6 @@ export default class Simulator {
     } else {
       this.accuracyFactor_ = 30;
     }
-    this.accuracyFactor_ = 2;
-    this.accuracyFactor_ = 30;
     console.log('complexity', complexity, ', speed', this.accuracyFactor_);
   }
 

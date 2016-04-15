@@ -28,19 +28,19 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Chump',
+        //name: 'Chump',
         //name: 'Apprentice',
-        //name: 'Cartomancer',
-        items: [],
-        //items: ['Shimmering Cloak'],
+        name: 'Cartomancer',
+        //items: [],
+        items: ['Shimmering Cloak'],
         traits: ['Crones Discipline'],
         //traits: [],
         level: 2,
       },
       enemy: {
-        //name: 'Rat King',
-        name: 'Gray Ooze',
-        traits: [],
+        name: 'Rat King',
+        //name: 'Gray Ooze',
+        traits: ['Leader x3'],
       },
       result: 0,
       running: false,
