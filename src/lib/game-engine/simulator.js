@@ -15,6 +15,7 @@ export default class Simulator {
     const player = this.accessor_.setState(initialState).player;
     const state = this.accessor_.clone();
 
+    this.stateEnumerator_.setInitialState(initialState);
     this.stateEnumerator_.setClonedState(state);
     this.stateEnumerator_.draw(GameStateAccessor.STARTING_HAND_SIZE +
                                player.extraHandSizeEffect, 1);
@@ -42,7 +43,7 @@ export default class Simulator {
     return moves;
   }
 
-  getStates(state, move) {
+  getStates(state, move, optimize) {
     state = this.accessor_.setState(state).newTurnClone();
     this.accessor_.setState(state);
 
@@ -53,11 +54,12 @@ export default class Simulator {
     // Shortcut: If the game is over, don't generate states.
     if (gameOver) return [state];
 
-    return this.getPossibleStates_(state, move);
+    return this.getPossibleStates_(state, move, optimize);
   }
 
-  getPossibleStates_(clonedState, move) {
+  getPossibleStates_(clonedState, move, optimize) {
     const {player, enemy} = this.accessor_;
+    this.stateEnumerator_.optimize = optimize;
     this.stateEnumerator_.setClonedState(clonedState);
     // TODO: Implement clone.
     this.stateEnumerator_.putInPlay(move);

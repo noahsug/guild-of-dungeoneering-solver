@@ -110,6 +110,10 @@ export class GameStatePlayerAccessor {
     });
   }
 
+  get cards() {
+    return this.hand.concat(this.deck).concat(this.discardPile);
+  }
+
   steal(index) {
     const card = this.state.enemyHand.splice(index, 1)[index];
     this.state.playerDeck.push(card);
@@ -467,6 +471,10 @@ export class GameStateEnemyAccessor {
       }
       return true;
     });
+  }
+
+  get cards() {
+    return this.hand.concat(this.deck).concat(this.discardPile);
   }
 
   steal(index) {

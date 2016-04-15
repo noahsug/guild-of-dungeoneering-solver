@@ -1,10 +1,10 @@
-import _ from '../../utils/common';
+import _ from '../../../utils/common';
 
 jest.autoMockOff();
 
 describe('Game data', () => {
-  const Card = require('../game-engine/card');
-  const gameData = require('../game-engine/game-data');
+  const Card = require('../card');
+  const gameData = require('../game-data');
 
   it('each player is valid', function() {
     _.each(gameData.enemies, (player) => {

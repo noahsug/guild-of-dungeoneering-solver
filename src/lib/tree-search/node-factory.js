@@ -17,8 +17,9 @@ export default class NodeFactory {
   createChildren(node) {
     if (node.children && node.children.length) return node.children;
     if (node.type == Node.Type.PLAYER) {
+      const optimize = node.parent && node.parent.parent;
       const states = this.simulator.getStates(
-          node.gameState.state, node.gameState.move);
+          node.gameState.state, node.gameState.move, optimize);
       node.children = this.getChildrenForStates_(states, node);
     }
 

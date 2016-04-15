@@ -23,6 +23,12 @@ export default class Expectimax {
     this.node_ = this.rootNode;
     this.node_.winRate = this.node_.type == Node.Type.CHANCE ? -Infinity : 1;
     this.node_.pruneCutoff = this.node_.index = 0;
+    if (this.node_.type == Node.Type.ROOT) {
+      this.node_.winRate = 1;
+    } else {
+      this.cache_.markAsVisited(this.node_);
+      this.node_.winRate = -Infinity;
+    }
     this.depth_ = 0;
   }
 
@@ -36,6 +42,7 @@ export default class Expectimax {
   }
 
   next() {
+    this.node_.uid = this.node_.uid || _.uid();
     if (this.node_.result) {
       this.updateParentResult_(this.node_);
       if (this.node_.type == Node.Type.CHANCE) {
@@ -45,9 +52,13 @@ export default class Expectimax {
       this.node_ = this.node_.parent;
       this.depth_--;
     } else {
-      //if (this.depth_ > 5) {
+      //if (this.depth_ > 25) {
       //  const state = this.node_.gameState.state;
-      //  this.node_.result = state.playerHealth > state.enemyHealth || -1;
+      //  const playerLifePercent = state.playerHealth /
+      //      this.rootNode.gameState.state.playerHealth;
+      //  const enemyLifePercent = state.enemyHealth /
+      //      this.rootNode.gameState.state.enemyHealth;
+      //  this.node_.result = playerLifePercent > enemyLifePercent || -1;
       //  return;
       //}
       const child = this.selectChildNode_();
@@ -61,6 +72,8 @@ export default class Expectimax {
   cacheResult_() {
     if (this.node_.result != -Infinity) {
       this.cache_.cacheResult(this.node_);
+    } else {
+      this.cache_.markAsUnvisited(this.node_);
     }
 
     //if (!this.node_.children) return;
@@ -190,7 +203,7 @@ export default class Expectimax {
       //      return;
 
       this.node_.wins = this.node_.children.length;
-      this.processFinishedChildren_();
+      this.checkChildrenForCutoffs_();
       if (this.node_.result) return this.node_;
     }
 
@@ -201,21 +214,36 @@ export default class Expectimax {
   }
 
   // Look ahead at each child to see if we can prune early.
-  processFinishedChildren_() {
+  checkChildrenForCutoffs_() {
     if (this.node_.type == Node.Type.CHANCE) {
       // TODO: Check hints?
       return;
     }
-    const len = this.node_.children.length;
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < this.node_.children.length; i++) {
       const child = this.node_.children[i];
+      const index = this.node_.index;
       child.result = child.result || this.cache_.getResult(child);
       if (child.result) {
-        this.node_.index++;
+        this.node_.index = index + 1;
         this.updateParentResult_(child);
         if (this.node_.result) return;
-        this.node_.children[i] = this.node_.children[this.node_.index - 1];
-        this.node_.children[this.node_.index - 1] = child;
+        this.node_.children[i] = this.node_.children[index];
+        this.node_.children[index] = child;
+      } else if (this.cache_.hasVisitedWithNoResult(child)) {
+        if (this.node_.children.length == 1) {
+          this.node_.result = -Infinity;
+          return;
+        }
+        this.node_.children[i] =
+            this.node_.children[this.node_.children.length - 1];
+        this.node_.children.length--;
+        i--;
+        this.node_.wins--;
+        this.node_.winRate = this.node_.wins / this.node_.children.length;
+        if (this.node_.children.length == index) {
+          this.node_.result = this.node_.winRate || -1;
+          return;
+        }
       }
     }
   }
@@ -223,21 +251,17 @@ export default class Expectimax {
   initNode_(node) {
     if (node.result) return;
     if (node.type == Node.Type.CHANCE) {
-      if (this.cache_.hasVisitedWithNoResult(node)) {
-        // There's a loop!
-        node.result = -Infinity;
-        return;
-      }
       node.result = this.cache_.getResult(node);
       if (node.result) {  // cached
         return;
       }
       node.winRate = -Infinity;
+      this.cache_.markAsVisited(node);
     } else {
       node.winRate = 1;
     }
-    node.pruneCutoff = this.getPruneCutoff_(node);
     node.index = 0;
+    node.pruneCutoff = this.getPruneCutoff_(node);
   }
 
   getPruneCutoff_(node) {

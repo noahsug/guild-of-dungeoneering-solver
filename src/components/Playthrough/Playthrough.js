@@ -14,7 +14,10 @@ export default class Playthrough extends Component {
   constructor(props) {
     super(props);
     this.accessor_ = new GameStateAccessor();
-    let node = props.simulation.solver.rootNode;
+    this.solver_ = this.props.simulation.solver;
+    this.nodeFactory_ = this.solver_.nodeFactory;
+
+    let node = this.solver_.rootNode;
     while (node.parent) node = node.parent;
     this.state = {
       node,
@@ -28,6 +31,10 @@ export default class Playthrough extends Component {
   }
 
   render() {
+    // CREATE CHILDREN, add ones optimized out, mark as pruned.
+    if (!this.state.node.children) {
+      this.nodeFactory_.createChildren(this.state.node);
+    }
     this.accessor_.setState(this.state.node.children[0].gameState.state);
     this.accessor_.setState(this.accessor_.newTurnClone());
     const {player, enemy} = this.accessor_;
@@ -92,7 +99,7 @@ export default class Playthrough extends Component {
         moves[card] = this.getSortableMoveItem_(child, card, onClick, pruned);
       }
 
-      // Select player starting hand.
+      // Select starting hand.
       else if (!this.state.selectedPlayerHand) {
         const onClick = this.selectPlayerHand_.bind(this, hand);
 
@@ -138,19 +145,15 @@ export default class Playthrough extends Component {
     let winRate = child.result < 0 ? 0 : child.result;
     if (isFinite(opt_winRate)) winRate = opt_winRate;
     let legend = _.percent(winRate) + '% win rate';
-    let listItemClass = '';
 
     if (opt_winRate == 'pruned') {
       legend = 'pruned';
-      listItemClass = style.pruned;
-      onClick = _.emptyFn;
       winRate = -1;
     }
 
     const element = (
       <ListItem caption={cards}
                 key={cards}
-                className={listItemClass}
                 legend={legend}
                 onClick={onClick} />
     );
@@ -168,7 +171,7 @@ export default class Playthrough extends Component {
   selectNode_(node) {
     let selectedPlayerHand = this.state.selectedPlayerHand;
     if (node.type == Node.Type.CHANCE) {
-      node = this.props.simulation.solver.setState(node.gameState.state)
+      node = this.solver_.setState(node.gameState.state)
           .solve();
       selectedPlayerHand = '';
     }

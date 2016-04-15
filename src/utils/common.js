@@ -251,6 +251,17 @@ _.mixin({
   },
 
   emptyFn: () => {},
+
+  shuffleFirstN: (list, n) => {
+    if (list.length <= n) return list;
+    for (let i = 0; i < n; i++) {
+      const swapIndex = Math.floor(Math.random() * (n - i)) + i;
+      const temp = list[i];
+      list[i] = list[swapIndex];
+      list[swapIndex] = temp;
+    }
+    return list;
+  },
 });
 
 export default _;

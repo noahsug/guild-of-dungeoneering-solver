@@ -6,6 +6,28 @@ export default class Simulator {
     this.accessor_ = new GameStateAccessor();
     this.player_ = this.accessor_.player;
     this.enemy_ = this.accessor_.enemy;
+    this.accuracyFactor_ = 30;
+    this.optimize = false;
+  }
+
+  setInitialState(state) {
+    this.initialState_ = state;
+    this.accessor_.setState(state);
+    const complexity = this.player_.cards.length * this.enemy_.cards.length;
+    if (complexity > 65) {
+      this.accuracyFactor_ = 3;
+    } else if (complexity > 55) {
+      this.accuracyFactor_ = 4;
+    } else if (complexity > 50) {
+      this.accuracyFactor_ = 5;
+    } else if (complexity > 47) {
+      this.accuracyFactor_ = 12;
+    } else {
+      this.accuracyFactor_ = 30;
+    }
+    this.accuracyFactor_ = 2;
+    this.accuracyFactor_ = 30;
+    console.log('complexity', complexity, ', speed', this.accuracyFactor_);
   }
 
   setState(state) {
@@ -49,7 +71,9 @@ export default class Simulator {
 
   playerDrawAtEndOfTurn_(player) {
     player.state = this.states_[0];
-    const numChoices = player.deck.length;
+    const numChoices = this.optimize ?
+          Math.min(player.deck.length, this.accuracyFactor_) :
+          player.deck.length;
     if (numChoices == 0) return;
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;

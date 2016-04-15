@@ -29,12 +29,13 @@ export default class Simulator extends Component {
     return {
       player: {
         name: 'Chump',
-        items: [],
-        //traits: [],
         //name: 'Apprentice',
+        //name: 'Cartomancer',
+        items: [],
         //items: ['Shimmering Cloak'],
         traits: ['Crones Discipline'],
-        level: 0,
+        //traits: [],
+        level: 2,
       },
       enemy: {
         //name: 'Rat King',

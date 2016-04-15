@@ -42,8 +42,9 @@ describe('card resolver resolves', () => {
   });
 
   it('quick attacks', () => {
-    const [state, player, enemy] = useState(1);
-    resolver.resolve(state, Card.create('Q/P'), Card.create('P/P/P'));
+    const [state, player, enemy] = useState(2);
+    resolver.resolve(state, Card.create('Q/P/P/U'),
+                     Card.create('-H/P/P/BP/BP'));
     expect(player.dead).toBe(false);
     expect(enemy.dead).toBe(true);
   });
