@@ -27,6 +27,7 @@ export default class Simulator {
     } else {
       this.accuracyFactor_ = 30;
     }
+    //this.accuracyFactor_ = 300;
     console.log('complexity', complexity, ', speed', this.accuracyFactor_);
   }
 
@@ -71,19 +72,20 @@ export default class Simulator {
 
   playerDrawAtEndOfTurn_(player) {
     player.state = this.states_[0];
+    const deckLen = player.deck.length;
     const numChoices = this.optimize ?
-          Math.min(player.deck.length, this.accuracyFactor_) :
-          player.deck.length;
+        Math.min(deckLen, this.accuracyFactor_) : deckLen;
     if (numChoices == 0) return;
+    const startingIndex = Math.floor(Math.random() * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
     for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
       this.accessor_.setState(this.states_[stateIndex]);
-      player.indicateDraw(0);
+      player.indicateDraw(startingIndex);
       for (let i = 1; i < numChoices; i++) {
         player.state = this.accessor_.shallowClone();
-        player.indicateDraw(i);
+        player.indicateDraw((startingIndex + i) % deckLen);
         this.states_[lastStateIndex + i] = player.state;
       }
       lastStateIndex += numChoices - 1;

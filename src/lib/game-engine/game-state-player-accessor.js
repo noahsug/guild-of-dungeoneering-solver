@@ -360,6 +360,13 @@ export class GameStatePlayerAccessor {
   set showoff(value) {
     this.state.playerShowoff = value;
   }
+
+  get punchDrunk() {
+    return this.state.playerPunchDrunk || 0;
+  }
+  set punchDrunk(value) {
+    this.state.playerPunchDrunk = value;
+  }
 }
 
 // Copied from above, but 'player' replaced by 'enemy'.
@@ -722,5 +729,12 @@ export class GameStateEnemyAccessor {
   }
   set showoff(value) {
     this.state.enemyShowoff = value;
+  }
+
+  get punchDrunk() {
+    return this.state.enemyPunchDrunk || 0;
+  }
+  set punchDrunk(value) {
+    this.state.enemyPunchDrunk = value;
   }
 }

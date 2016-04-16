@@ -7,7 +7,6 @@ export default class GameStateCache {
   constructor() {
     this.cache_ = {};
     this.healthCache_ = {};
-    //this.hintCache_ = {};
     this.accessor_ = new GameStateAccessor();
 
     this.hashes_ = {};
@@ -36,14 +35,6 @@ export default class GameStateCache {
     return hashes;
   }
 
-  hash(node) {
-    if (node.__id === undefined) {
-      node.__id = this.hashGameState_(node.gameState.state);
-      //this.validateHashFunction_(node);
-    }
-    return node.__id;
-  }
-
   cacheResult(node) {
     let id = this.hash(node);
     this.cache_[id] = node.result;
@@ -66,21 +57,7 @@ export default class GameStateCache {
       this.healthCache_[id][0] = state.playerHealth;
       this.healthCache_[id][1] = state.enemyHealth;
     }
-    //this.cacheHint_(node);
   }
-
-  //cacheHint_(node) {
-  //  const parent = node.parent;
-  //  if (parent.type == Node.Type.ROOT) return;
-  //  this.accessor_.enemy.state = parent.gameState.state;
-  //  const hash = parent.gameState.move +
-  //          1000 * this.accessor_.enemy.hand[0];
-  //  if (!this.hintCache_[hash]) {
-  //    this.hintCache_[hash] = {count: 0, results: 0};
-  //  }
-  //  this.hintCache_[hash].count++;
-  //  this.hintCache_[hash].results += node.result;
-  //}
 
   getResult(node) {
     const id = this.hash(node);
@@ -111,14 +88,23 @@ export default class GameStateCache {
   }
 
   markAsUnvisited(node) {
-    this.cache_[this.hash(node)] = undefined;
+    this.cache_[node.__id] = undefined;
   }
 
   hasVisitedWithNoResult(node) {
     return this.cache_[this.hash(node)] === 0;
   }
 
+  hash(node) {
+    if (node.__id === undefined) {
+      node.__id = this.hashGameState_(node.gameState.state);
+      //this.validateHashFunction_(node);
+    }
+    return node.__id;
+  }
+
   hashGameState_(state) {
+    const a = performance.now();
     let hash = this.hashCards_(state.playerDeck, this.hashes_.playerDeck) +
         this.hashCards_(state.playerHand, this.hashes_.playerHand) +
         this.hashCards_(state.playerDiscardPile,
@@ -137,6 +123,8 @@ export default class GameStateCache {
           this.hashes_.enemyHand[enemyCard] -
           this.hashes_.enemyDeck[enemyCard];
     }
+    const b = performance.now();
+    window.stats.hash += b - a;
     return hash;
   }
 
@@ -164,26 +152,4 @@ export default class GameStateCache {
         (state.enemyPhysicalRoundEffect || 0) * this.hashes_.stats[9] +
         (state.enemyRum || 0) * this.hashes_.stats[10];
   }
-
-  //validateHashFunction_(node) {
-  //  const {player, enemy} = this.accessor_;
-  //  const clone = {
-  //    v1: player.deck.sort(),
-  //    v2: player.hand.sort(),
-  //    v3: player.discardPile.sort(),
-  //    v4: enemy.deck.sort(),
-  //    v5: enemy.hand.sort(),
-  //    v6: enemy.discardPile.sort(),
-  //    v7: enemy.health,
-  //    v8: player.health,
-  //  };
-  //  const testId = JSON.stringify(clone);
-  //  if (!this.testCache_) this.testCache_ = {};
-  //  if (this.testCache_[node.__id] != this.testCache_[testId]) {
-  //    console.log(node, this.testCache_[node.__id], this.testCache_[testId]);
-  //    _.fail();
-  //  }
-  //  this.testCache_[node.__id] = node;
-  //  this.testCache_[testId] = node;
-  //}
 }

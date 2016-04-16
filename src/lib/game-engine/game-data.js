@@ -1441,5 +1441,109 @@ export default {
     'Wise': {
       extraHandSize: 1,
     },
+
+    // Battle scars
+    'Hard-headed Early': {
+      health: 1,
+      extraHandSize: -1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Hard-headed Final': {
+      health: 2,
+      extraHandSize: -1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Punch Drunk Early': {
+      stupidity: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Punch Drunk Final': {
+      stupidity: 1,
+      punchDrunk: true,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Hulking Early': {
+      health: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Hulking Final': {
+      health: 1,
+      stupidity: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Flesh Wound Early': {
+      health: -1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Flesh Wound Final': {
+      health: -1,
+      tenacious: true,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Hubris Final': {
+      health: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Pyromaniac Early': {
+      fire: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Pyromaniac Final': {
+      fire: 1,
+      burn: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Paranoid Early': {
+      armour: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Paranoid Final': {
+      armour: 1,
+      stupidity: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Veteran': {
+      blade: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Scarred': {
+      crush: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Zealot': {
+      holy: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Mystical': {
+      arcane: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Naturist': {
+      growth: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
+    'Agile': {
+      swift: 1,
+      for: 'player',
+      type: 'battle scar',
+    },
   },
 };

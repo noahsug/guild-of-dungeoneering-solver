@@ -4,6 +4,8 @@ import _ from '../../utils/common';
 export default class PlayerCardResolver {
   constructor(state) {
     this.state_ = state;
+    this.STUPIDITY_ = Card.get('?');
+    this.BLOCK_ = Card.get('B');
   }
 
   set initialState(initialState) {
@@ -23,6 +25,11 @@ export default class PlayerCardResolver {
   }
 
   init(card) {
+    // Punch drunk
+    if (this.initial_.punchDrunk && this.card == this.STUPIDITY_) {
+      card = this.BLOCK_;
+    }
+
     this.card_ = card;
     this.reset_();
 
@@ -149,7 +156,7 @@ export default class PlayerCardResolver {
   resolveDmg_(dmg) {
     // Tenacious
     if (this.initial_.tenacious && this.state_.health > 1 &&
-       this.state_.health <= dmg) {
+        this.state_.health <= dmg) {
       this.state_.health = 1;
     } else {
       this.state_.health -= dmg;

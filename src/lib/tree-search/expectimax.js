@@ -26,7 +26,6 @@ export default class Expectimax {
     if (this.node_.type == Node.Type.ROOT) {
       this.node_.winRate = 1;
     } else {
-      this.cache_.markAsVisited(this.node_);
       this.node_.winRate = -Infinity;
     }
     this.depth_ = 0;
@@ -44,7 +43,10 @@ export default class Expectimax {
   next() {
     this.node_.uid = this.node_.uid || _.uid();
     if (this.node_.result) {
+      const a = performance.now();
       this.updateParentResult_(this.node_);
+      const b = performance.now();
+      window.stats.updateParentResult += b - a;
       if (this.node_.type == Node.Type.CHANCE) {
         this.cacheResult_();
         delete this.node_.children;
