@@ -2,14 +2,14 @@ jest.autoMockOff();
 
 describe('solver', () => {
   const SolverFactory = require('../solver-factory');
-  const GameStateAccessor = require('../game-engine/game-state-accessor');
+  const gs = require('../game-engine/game-state');
   const Card = require('../game-engine/card');
   const gameData = require('../game-engine/game-data');
-  const root = new GameStateAccessor();
+  let root;
 
   function getSolver(player, enemy) {
     const solver = new SolverFactory().create(player, enemy);
-    root.setState(solver.rootNode.gameState.state);
+    root = solver.rootNode.gameState.state;
     return solver;
   }
 
@@ -19,6 +19,12 @@ describe('solver', () => {
     solver.solve();
     expect(solver.rootNode.result).toEqualFloat(0.4176, 0.0001);
   });
+
+  //it('has certain sequence of moves in Chump vs Gray Ooze', function() {
+  //  const solver = getSolver({name: 'Chump', traits: ['Crones Discipline']},
+  //                           {name: 'Gray Ooze'});
+  //  selectChild(hand
+  //});
 
   it('supports +HP traits', () => {
     const solver = getSolver(

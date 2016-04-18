@@ -2,14 +2,14 @@ import Card from './card';
 import _ from '../../utils/common';
 
 export default class PlayerCardResolver {
-  constructor(state) {
-    this.state_ = state;
+  constructor(isPlayer) {
+    this.isPlayer_ = isPlayer;
     this.STUPIDITY_ = Card.get('?');
     this.BLOCK_ = Card.get('B');
   }
 
-  set initialState(initialState) {
-    this.initial_ = initialState;
+  set initial(initial) {
+    this.initial_ = initial;
   }
 
   set enemy(enemy) {
@@ -24,7 +24,9 @@ export default class PlayerCardResolver {
     return this.card_.quick || this.initial_.ranged;
   }
 
-  init(card) {
+  init(player, card) {
+    this.state_ = player;
+
     // Punch drunk
     if (this.initial_.punchDrunk && this.card == this.STUPIDITY_) {
       card = this.BLOCK_;
@@ -338,8 +340,7 @@ export default class PlayerCardResolver {
     //this.state_.concealEffect += this.card_.conceal;
     this.state_.physicalNextEffect += this.card_.physicalNext;
     this.state_.magicNextEffect += this.card_.magicNext;
-    const player = this.state_.type == 'player' ?
-          this.state_ : this.enemy_.state_;
+    const player = this.isPlayer_ ? this.state_ : this.enemy_.state_;
     player.cycleEffect += this.card_.cycle;
     // Spellsword
     if (this.initial_.spellsword && this.enemy_.magicDmgTakenFromEnemy_) {

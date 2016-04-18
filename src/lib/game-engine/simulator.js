@@ -1,5 +1,5 @@
 import CardResolver from './card-resolver';
-import GameStateAccessor from './game-state-accessor';
+import gs from './game-state';
 import GameStateEnumerator from './game-state-enumerator';
 import _ from '../../utils/common';
 
@@ -7,34 +7,31 @@ export default class Simulator {
   constructor() {
     this.cardResolver_ = new CardResolver();
     this.stateEnumerator_ = new GameStateEnumerator();
-    this.accessor_ = new GameStateAccessor();
   }
 
   getInitialStates(initialState) {
     this.cardResolver_.setInitialState(initialState);
-    const player = this.accessor_.setState(initialState).player;
-    const state = this.accessor_.clone();
 
     this.stateEnumerator_.setInitialState(initialState);
-    this.stateEnumerator_.setClonedState(state);
-    this.stateEnumerator_.draw(GameStateAccessor.STARTING_HAND_SIZE +
-                               player.extraHandSizeEffect, 1);
+    this.stateEnumerator_.setState(initialState);
+    this.stateEnumerator_.draw(
+        gs.STARTING_HAND_SIZE + initialState.player.extraHandSizeEffect, 1);
     return this.stateEnumerator_.getStates();
   }
 
   getMoves(state) {
     const visited = {};
     const moves = [];
-    if (state.playerDraw != undefined) {
-      const card = state.playerDeck[state.playerDraw];
+    if (state.playerDraw != -1) {
+      const card = state.player.deck[state.playerDraw];
       if (!visited[card]) {
         visited[card] = true;
         moves.push(card);
       }
     }
-    const len = state.playerHand.length;
+    const len = state.player.hand.length;
     for (let i = 0; i < len; i++) {
-      const card = state.playerHand[i];
+      const card = state.player.hand[i];
       if (!visited[card]) {
         visited[card] = true;
         moves.push(card);
@@ -44,13 +41,12 @@ export default class Simulator {
   }
 
   getStates(state, move, optimize) {
-    state = this.accessor_.setState(state).newTurnClone();
-    this.accessor_.setState(state);
+    state = gs.newTurnClone(state);
 
     // TODO: Implement conceal.
     const a = performance.now();
     const gameOver = this.cardResolver_.resolve(
-        state, move, this.accessor_.enemy.hand[0]);
+        state, move, state.enemy.hand[0]);
     const b = performance.now();
     window.stats.resolve += b - a;
 
@@ -62,7 +58,8 @@ export default class Simulator {
 
   getPossibleStates_(clonedState, move, optimize) {
     const a = performance.now();
-    const {player, enemy} = this.accessor_;
+    const player = clonedState.player;
+    const enemy = clonedState.enemy;
     this.stateEnumerator_.optimize = optimize;
     this.stateEnumerator_.setClonedState(clonedState);
     // TODO: Implement clone.
@@ -77,9 +74,5 @@ export default class Simulator {
     const b = performance.now();
     window.stats.enumerate += b - a;
     return this.stateEnumerator_.getStates();
-  }
-
-  getResult(state) {
-    return GameStateAccessor.instance.setState(state).result;
   }
 }

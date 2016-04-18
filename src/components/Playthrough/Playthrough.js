@@ -4,7 +4,7 @@ import style from './Playthrough.scss';
 import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox';
 import { Card, CardText, CardActions, CardTitle } from 'react-toolbox/lib/card';
 import {Button, IconButton} from 'react-toolbox/lib/button';
-import GameStateAccessor from '../../lib/game-engine/game-state-accessor';
+import gs from '../../lib/game-engine/game-state';
 import GameCard from '../../lib//game-engine/card';
 import Node from '../../lib/tree-search/node';
 import gameData from '../../lib/game-engine/game-data';
@@ -13,7 +13,6 @@ import _ from '../../utils/common';
 export default class Playthrough extends Component {
   constructor(props) {
     super(props);
-    this.accessor_ = new GameStateAccessor();
     this.solver_ = this.props.simulation.solver;
     this.nodeFactory_ = this.solver_.nodeFactory;
 
@@ -35,25 +34,24 @@ export default class Playthrough extends Component {
     if (!this.state.node.children) {
       this.nodeFactory_.createChildren(this.state.node);
     }
-    this.accessor_.setState(this.state.node.children[0].gameState.state);
-    this.accessor_.setState(this.accessor_.newTurnClone());
-    const {player, enemy} = this.accessor_;
+    const gameState =
+        gs.newTurnClone(this.state.node.children[0].gameState.state);
 
     const title = this.props.simulation.player.name +
         ' vs ' +
         this.props.simulation.enemy.name;
 
     const subtitle = this.props.simulation.player.name + ': ' +
-        player.health + 'hp, ' +
+        gameState.player.health + 'hp, ' +
         this.props.simulation.enemy.name + ': ' +
-        enemy.health + 'hp';
+        gameState.enemy.health + 'hp';
 
     return (
       <Card className={style.content} raised>
         <CardTitle title={title} subtitle={subtitle} />
-        {this.accessor_.result ? '' : (
+        {gs.result(gameState) ? '' : (
           <List selectable ripple>
-            <ListSubHeader caption={this.getMoveType_()} />
+            <ListSubHeader caption={this.getMoveType_(gameState)} />
             {this.renderMoves_()}
           </List>
         )}
@@ -67,14 +65,14 @@ export default class Playthrough extends Component {
     );
   }
 
-  playthroughIsOver_() {
+  playthroughIsOver_(state) {
     return !this.state.node.children;
   }
 
-  getMoveType_() {
+  getMoveType_(gameState) {
     if (this.state.node.type == Node.Type.CHANCE) {
       return 'Play a card, enemy is playing ' +
-          this.getReadableCards_(this.accessor_.enemy.hand);
+          this.getReadableCards_(gameState.enemy.hand);
     }
     if (!this.state.selectedPlayerHand) {
       return 'Select your hand';
@@ -85,8 +83,7 @@ export default class Playthrough extends Component {
   renderMoves_() {
     const moves = {};
     this.state.node.children.forEach((child) => {
-      const {player, enemy} = this.accessor_.setState(child.gameState.state);
-      this.accessor_.setState(this.accessor_.newTurnClone());
+      const {player, enemy} = gs.newTurnClone(child.gameState.state);
       player.hand.sort();
       const hand = this.getReadableCards_(player.hand);
 
@@ -171,8 +168,7 @@ export default class Playthrough extends Component {
   selectNode_(node) {
     let selectedPlayerHand = this.state.selectedPlayerHand;
     if (node.type == Node.Type.CHANCE) {
-      node = this.solver_.setState(node.gameState.state)
-          .solve();
+      node = this.solver_.setState(node.gameState.state).solve();
       selectedPlayerHand = '';
     }
     node.parent = this.state.node;

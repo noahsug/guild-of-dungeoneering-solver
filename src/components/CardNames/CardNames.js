@@ -1,6 +1,5 @@
 import React, { PropTypes, Component } from 'react';
 import style from './CardNames.scss';
-import GameStateAccessor from '../../lib/game-engine/game-state-accessor';
 import GameCard from '../../lib/game-engine/card';
 import gameData from '../../lib/game-engine/game-data';
 import _ from '../../utils/common';
@@ -21,8 +20,8 @@ export default class CardNames extends Component {
 
   renderCardNames_(rootNode) {
     while (rootNode.parent) rootNode = rootNode.parent;
-    const {player, enemy} = GameStateAccessor.instance.setState(
-        rootNode.gameState.state);
+    const player = rootNode.gameState.state.player;
+    const enemy = rootNode.gameState.state.player;
 
     return _.chain(player.deck.concat(enemy.deck))
       .map(cardIndex => GameCard.list[cardIndex].desc)

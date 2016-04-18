@@ -1,11 +1,5 @@
 import _ from '../common';
 
-describe('capitalize', () => {
-  it('capitalizes the first letter of a string', () => {
-    expect(_.capitalize('hey')).toBe('Hey');
-  });
-});
-
 describe('remove', () => {
   it('removes first instance of each value', () => {
     expect(_.remove([1, 2, 1], 1)).toEqual([2, 1]);

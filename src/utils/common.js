@@ -34,10 +34,6 @@ _.mixin({
     return _.isDef(value) ? value : valueWhenUndefined;
   },
 
-  capitalize: (string) => {
-    return string.charAt(0).toUpperCase() + string.substring(1);
-  },
-
   // Like _.without, but only removes the first instance of an element.
   // [1, 2, 1], 1 => [2, 1]
   remove: (array, ...values) => {

@@ -28,7 +28,7 @@ export default class Expectimax {
     } else {
       this.node_.winRate = -Infinity;
     }
-    this.depth_ = 0;
+    //this.depth_ = 0;
   }
 
   get done() {
@@ -41,7 +41,6 @@ export default class Expectimax {
   }
 
   next() {
-    this.node_.uid = this.node_.uid || _.uid();
     if (this.node_.result) {
       const a = performance.now();
       this.updateParentResult_(this.node_);
@@ -52,7 +51,7 @@ export default class Expectimax {
         delete this.node_.children;
       }
       this.node_ = this.node_.parent;
-      this.depth_--;
+      //this.depth_--;
     } else {
       //if (this.depth_ > 25) {
       //  const state = this.node_.gameState.state;
@@ -63,11 +62,11 @@ export default class Expectimax {
       //  this.node_.result = playerLifePercent > enemyLifePercent || -1;
       //  return;
       //}
-      const child = this.selectChildNode_();
-      if (this.node_ != child) {
-        this.node_ = child;
-        this.depth_++;
-      }
+      this.node_ = this.selectChildNode_();
+      //if (this.node_ != child) {
+      //  this.node_ = child;
+      //  this.depth_++;
+      //}
     }
   }
 

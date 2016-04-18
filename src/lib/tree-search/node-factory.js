@@ -1,5 +1,5 @@
 import Node from './node';
-import GameStateAccessor from '../game-engine/game-state-accessor';
+import gs from '../game-engine/game-state';
 import _ from '../../utils/common';
 
 export default class NodeFactory {
@@ -8,10 +8,10 @@ export default class NodeFactory {
     this.visited_ = {};
   }
 
-  createRootNode(gameState) {
-    const type = GameStateAccessor.isInitialGameState(gameState) ?
+  createRootNode(state) {
+    const type = gs.isInitialGameState(state) ?
         Node.Type.ROOT : Node.Type.CHANCE;
-    return this.createNode(gameState, type);
+    return this.createNode(state, type);
   }
 
   createChildren(node) {
@@ -19,7 +19,7 @@ export default class NodeFactory {
     if (node.type == Node.Type.PLAYER) {
       const optimize = node.parent && node.parent.parent;
       const states = this.simulator.getStates(
-          node.gameState.state, node.gameState.move, optimize);
+        node.gameState.state, node.gameState.move, optimize);
       node.children = this.getChildrenForStates_(states, node);
     }
 
@@ -59,12 +59,13 @@ export default class NodeFactory {
     } else {
       gameState = {state: value};
     }
-    const result = this.simulator.getResult(gameState.state);
+    const result = gs.result(gameState.state);
     return {
       type,
       parent,
       gameState,
       result,
+      id: -1,  // Set by game_state_cache.js
     };
   }
 }

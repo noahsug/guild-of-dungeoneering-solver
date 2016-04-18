@@ -1,4 +1,4 @@
-import GameStateAccessor from './game-engine/game-state-accessor';
+import gs from './game-engine/game-state';
 import Card from './game-engine/card';
 import gameData from './game-engine/game-data';
 import _ from '../utils/common';
@@ -8,34 +8,59 @@ export default class GameStateFactory {
     return new GameStateFactory().create(player, enemy);
   }
 
-  create(player, enemy) {
-    const state = {};
-    Object.assign(state, this.getInitialStateForPlayer_('player', player));
-    Object.assign(state, this.getInitialStateForPlayer_('enemy', enemy));
-    return GameStateAccessor.create(state);
+  create(playerDesc, enemyDesc) {
+    const player = this.createInitialState_(playerDesc, gameData.players);
+    const enemy = this.createInitialState_(enemyDesc, gameData.enemies);
+    return gs.create(player, enemy);
   }
 
-  getInitialStateForPlayer_(name, info) {
-    const player = gameData[name == 'player' ? 'players' : 'enemies'][info.name];
-    _.assert(player, 'invalid name: ' + info.name);
-    let sets = player.sets.concat(info.sets || []);
-    const traits = (player.traits || []).concat(info.traits || []);
+  createInitialState_(desc, playerList) {
+    const player = playerList[desc.name];
+    _.assert(player, 'invalid name: ' + desc.name);
+    let sets = player.sets.concat(desc.sets || []);
+    const traits = (player.traits || []).concat(desc.traits || []);
 
-    (info.items || []).forEach((i) => {
+    (desc.items || []).forEach((i) => {
       const item = gameData.items[i];
       sets.push(...(item.sets || []));
       traits.push(...(item.traits || []));
     });
 
-    const state = {};
-    state[name + 'Health'] = player.health;
-
-    const traitSets = this.resolveSituationalTraits_(name, state, traits);
+    const state = {health: player.health};
+    const traitSets = this.resolveSituationalTraits_(state, traits);
     sets = sets.concat(traitSets);
-    Object.assign(state, this.getTraits_(name, traits));
-
-    state[name + 'Deck'] = this.getDeck_(sets);
+    Object.assign(state, this.getTraits_(traits));
+    state.deck = this.getDeck_(sets);
     return state;
+  }
+
+  resolveSituationalTraits_(state, traits) {
+    const setNames = ['fire', 'armour', 'blade', 'crush', 'holy', 'arcane',
+                      'growth', 'swift', 'stupidity'];
+    const sets = [];
+    traits.forEach((trait) => {
+      const desc = gameData.traits[trait];
+      if (!desc) return;
+      _.increment(state, 'health', desc.health || 0);
+      _.increment(state, 'physicalNextEffect', desc.physicalNext || 0);
+      _.increment(state, 'extraHandSizeEffect', desc.extraHandSize || 0);
+      _.increment(state, 'tenacious', desc.tenacious || 0);
+      _.increment(state, 'punchDrunk', desc.punchDrunk || 0);
+      _.increment(state, 'burn', desc.burn || 0);
+      setNames.forEach(set => {
+        if (desc[set]) sets.push(_.s.capitalize(set) + ' ' + desc[set]);
+      });
+    });
+    return sets;
+  }
+
+  getTraits_(traitList) {
+    const traits = {};
+    traitList.forEach((trait) => {
+      const traitName = _.s.decapitalize(trait.replace(' ', ''));
+      _.increment(traits, traitName);
+    });
+    return traits;
   }
 
   getDeck_(sets) {
@@ -70,38 +95,5 @@ export default class GameStateFactory {
       }
     });
     return mergedSets;
-  }
-
-  resolveSituationalTraits_(name, state, traits) {
-    const player = GameStateAccessor.instance.setState(state)[name];
-    const setNames = ['fire', 'armour', 'blade', 'crush', 'holy', 'arcane',
-                      'growth', 'swift', 'stupidity'];
-    const sets = [];
-    traits.forEach((trait) => {
-      const info = gameData.traits[trait];
-      if (!info) return;
-      _.increment(state, name + 'Health', info.health || 0);
-      _.increment(state, name + 'PhysicalNextEffect', info.physicalNext || 0);
-      _.increment(state, name + 'ExtraHandSizeEffect', info.extraHandSize || 0);
-      _.increment(state, name + 'Tenacious', info.tenacious || 0);
-      _.increment(state, name + 'PunchDrunk', info.punchDrunk || 0);
-      _.increment(state, name + 'Burn', info.burn || 0);
-      setNames.forEach(name => {
-        if (info[name]) {
-          sets.push(_.capitalize(name) + ' ' + info[name]);
-        }
-      });
-    });
-    return sets;
-  }
-
-  getTraits_(name, traitList) {
-    const traits = {};
-    traitList.forEach((trait) => {
-      const traitName = name + trait.replace(' ', '');
-      if (!traits[traitName]) traits[traitName] = 0;
-      traits[traitName]++;
-    });
-    return traits;
   }
 }

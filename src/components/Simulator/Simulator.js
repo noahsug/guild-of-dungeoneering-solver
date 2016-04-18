@@ -8,7 +8,7 @@ import SolverFactory from '../../lib/solver-factory';
 import gameData from '../../lib/game-engine/game-data';
 import _ from '../../utils/common';
 
-import GameStateEvaluator from '../../lib/evaluation/game-state-evaluator';
+//import GameStateEvaluator from '../../lib/evaluation/game-state-evaluator';
 
 export default class Simulator extends Component {
   constructor(props) {
@@ -28,18 +28,18 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        //name: 'Chump',
-        name: 'Apprentice',
+        name: 'Chump',
+        //name: 'Apprentice',
         //name: 'Cartomancer',
-        //items: [],
-        items: ['Shimmering Cloak'],
-        //traits: ['Crones Discipline'],
-        traits: [],
+        items: [],
+        //items: ['Shimmering Cloak'],
+        traits: ['Crones Discipline'],
+        //traits: [],
       },
       enemy: {
         //name: 'Rat King',
-        //name: 'Gray Ooze',
-        name: 'Ghost',
+        name: 'Gray Ooze',
+        //name: 'Ghost',
         traits: [],
         //traits: ['Leader x3'],
       },

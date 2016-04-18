@@ -1,28 +1,25 @@
 import PlayerCardResolver from './player-card-resolver';
-import GameStateAccessor from './game-state-accessor';
+import GameStateAccessor from './game-state';
 import Card from './card';
 import _ from '../../utils/common';
 
 export default class CardResolver {
   constructor() {
-    this.accessor_ = new GameStateAccessor();
-    this.player_ = new PlayerCardResolver(this.accessor_.player);
-    this.enemy_ = new PlayerCardResolver(this.accessor_.enemy);
+    this.player_ = new PlayerCardResolver(true /* is player */);
+    this.enemy_ = new PlayerCardResolver(false /* is player */);
     this.player_.enemy = this.enemy_;
     this.enemy_.enemy = this.player_;
   }
 
   // Used to keep track of starting HP and persistant traits.
   setInitialState(initialState) {
-    const initialStateAccessor = new GameStateAccessor().setState(initialState);
-    this.player_.initialState = initialStateAccessor.player;
-    this.enemy_.initialState = initialStateAccessor.enemy;
+    this.player_.initial = initialState.player;
+    this.enemy_.initial = initialState.enemy;
   }
 
   resolve(state, playerCardId, enemyCardId) {
-    this.accessor_.setState(state);
-    this.player_.init(Card.list[playerCardId]);
-    this.enemy_.init(Card.list[enemyCardId]);
+    this.player_.init(state.player, Card.list[playerCardId]);
+    this.enemy_.init(state.enemy, Card.list[enemyCardId]);
 
     this.player_.resolveBurnDmg();
     this.enemy_.resolveBurnDmg();

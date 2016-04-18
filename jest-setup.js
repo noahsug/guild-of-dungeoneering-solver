@@ -13,6 +13,8 @@ jasmine.getEnv().beforeEach(function() {
     now: function() { return Date.now(); },
   };
 
+  window.stats = {};
+
   this.addMatchers({
     toContainKeys: function(keys) {
       var diff = _.difference(keys, Object.keys(this.actual));
