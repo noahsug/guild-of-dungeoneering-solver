@@ -152,7 +152,7 @@ class GameState {
 
   // Returns 1, -1 or 0 if player won, lost or neither.
   result(state) {
-    return (state.player.health <= 0) * -1 || state.enemy.health <= 0 * 1;
+    return (state.player.health <= 0) * -1 || (state.enemy.health <= 0) * 1;
   }
 
   cards(player) {

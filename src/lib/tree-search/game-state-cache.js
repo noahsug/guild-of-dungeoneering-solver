@@ -37,6 +37,8 @@ export default class GameStateCache {
     let id = this.hash(node);
     this.cache_[id] = node.result;
 
+    // TODO: Fix game state cache so it tracks losing states AND winning states,
+    // currently it only tracks 1 or the other.
     if (node.result != 1 || node.result != -1) return;
     const state = node.gameState.state;
     id -= state.player.health * this.hashes_.stats[0] +
@@ -86,7 +88,7 @@ export default class GameStateCache {
   }
 
   markAsUnvisited(node) {
-    this.cache_[node.id] = -1;
+    this.cache_[node.id] = undefined;
   }
 
   hasVisitedWithNoResult(node) {
