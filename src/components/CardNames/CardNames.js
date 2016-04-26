@@ -21,7 +21,7 @@ export default class CardNames extends Component {
   renderCardNames_(rootNode) {
     while (rootNode.parent) rootNode = rootNode.parent;
     const player = rootNode.gameState.state.player;
-    const enemy = rootNode.gameState.state.player;
+    const enemy = rootNode.gameState.state.enemy;
 
     return _.chain(player.deck.concat(enemy.deck))
       .map(cardIndex => GameCard.list[cardIndex].desc)

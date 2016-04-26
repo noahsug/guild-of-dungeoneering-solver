@@ -39,46 +39,46 @@ export default class GameStateCache {
 
     // TODO: Fix game state cache so it tracks losing states AND winning states,
     // currently it only tracks 1 or the other.
-    if (node.result != 1 || node.result != -1) return;
-    const state = node.gameState.state;
-    id -= state.player.health * this.hashes_.stats[0] +
-        state.enemy.health * this.hashes_.stats[1];
-    if (!this.healthCache_[id]) {
-      this.healthCache_[id] =
-          [state.player.health, state.enemy.health, node.result];
-    } else if (node.result == 1) {
-      if (this.healthCache_[id][0] <= state.player.health &&
-          this.healthCache_[id][1] >= state.enemy.health) {
-        this.healthCache_[id][0] = state.player.health;
-        this.healthCache_[id][1] = state.enemy.health;
-      }
-    } else if (this.healthCache_[id][0] >= state.player.health &&
-          this.healthCache_[id][1] <= state.enemy.health) {
-      this.healthCache_[id][0] = state.player.health;
-      this.healthCache_[id][1] = state.enemy.health;
-    }
+    //if (node.result != 1 || node.result != -1) return;
+    //const state = node.gameState.state;
+    //id -= state.player.health * this.hashes_.stats[0] +
+    //    state.enemy.health * this.hashes_.stats[1];
+    //if (!this.healthCache_[id]) {
+    //  this.healthCache_[id] =
+    //      [state.player.health, state.enemy.health, node.result];
+    //} else if (node.result == 1) {
+    //  if (this.healthCache_[id][0] >= state.player.health &&
+    //      this.healthCache_[id][1] <= state.enemy.health) {
+    //    this.healthCache_[id][0] = state.player.health;
+    //    this.healthCache_[id][1] = state.enemy.health;
+    //  }
+    //} else if (this.healthCache_[id][0] <= state.player.health &&
+    //      this.healthCache_[id][1] >= state.enemy.health) {
+    //  this.healthCache_[id][0] = state.player.health;
+    //  this.healthCache_[id][1] = state.enemy.health;
+    //}
   }
 
   getResult(node) {
     const id = this.hash(node);
-    if (!this.cache_[id]) {
-      const state = node.gameState.state;
-      const healthId = id - state.player.health * this.hashes_.stats[0] -
-          state.enemy.health * this.hashes_.stats[1];
-      const healthInfo = this.healthCache_[healthId];
-      if (healthInfo) {
-        if (healthInfo[2] == 1 &&
-            healthInfo[0] <= state.player.health &&
-            healthInfo[1] >= state.enemy.health) {
-          this.cache_[id] = 1;
-        }
-        if (healthInfo[2] == -1 &&
-            healthInfo[0] >= state.player.health &&
-            healthInfo[1] <= state.enemy.health) {
-          this.cache_[id] = -1;
-        }
-      }
-    }
+    //if (!this.cache_[id]) {
+    //  const state = node.gameState.state;
+    //  const healthId = id - state.player.health * this.hashes_.stats[0] -
+    //      state.enemy.health * this.hashes_.stats[1];
+    //  const healthInfo = this.healthCache_[healthId];
+    //  if (healthInfo) {
+    //    if (healthInfo[2] == 1 &&
+    //        healthInfo[0] <= state.player.health &&
+    //        healthInfo[1] >= state.enemy.health) {
+    //      this.cache_[id] = 1;
+    //    }
+    //    if (healthInfo[2] == -1 &&
+    //        healthInfo[0] >= state.player.health &&
+    //        healthInfo[1] <= state.enemy.health) {
+    //      this.cache_[id] = -1;
+    //    }
+    //  }
+    //}
 
     return this.cache_[id] || 0;
   }
@@ -103,7 +103,7 @@ export default class GameStateCache {
   }
 
   hashGameState_(state) {
-    const a = performance.now();
+    //const a = performance.now();
     let hash = this.hashCards_(state.player.deck, this.hashes_.playerDeck) +
         this.hashCards_(state.player.hand, this.hashes_.playerHand) +
         this.hashCards_(state.player.discard, this.hashes_.playerDiscard) +
@@ -120,8 +120,8 @@ export default class GameStateCache {
           this.hashes_.enemyHand[enemyCard] -
           this.hashes_.enemyDeck[enemyCard];
     }
-    const b = performance.now();
-    window.stats.hash += b - a;
+    //const b = performance.now();
+    //window.stats.hash += b - a;
     return hash;
   }
 

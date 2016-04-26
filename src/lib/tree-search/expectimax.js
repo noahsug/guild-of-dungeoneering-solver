@@ -42,10 +42,10 @@ export default class Expectimax {
 
   next() {
     if (this.node_.result) {
-      const a = performance.now();
+      //const a = performance.now();
       this.updateParentResult_(this.node_);
-      const b = performance.now();
-      window.stats.updateParentResult += b - a;
+      //const b = performance.now();
+      //window.stats.updateParentResult += b - a;
       if (this.node_.type == Node.Type.CHANCE) {
         this.cacheResult_();
         delete this.node_.children;

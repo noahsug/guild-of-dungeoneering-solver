@@ -28,18 +28,18 @@ export default class Simulator extends Component {
   getInitialState_() {
     return {
       player: {
-        name: 'Chump',
-        //name: 'Apprentice',
+        //name: 'Chump',
+        name: 'Apprentice',
         //name: 'Cartomancer',
-        items: [],
-        //items: ['Shimmering Cloak'],
-        traits: ['Crones Discipline'],
-        //traits: [],
+        //items: [],
+        items: ['Shimmering Cloak'],
+        //traits: ['Crones Discipline'],
+        traits: [],
       },
       enemy: {
         //name: 'Rat King',
-        name: 'Gray Ooze',
-        //name: 'Ghost',
+        //name: 'Gray Ooze',
+        name: 'Ghost',
         traits: [],
         //traits: ['Leader x3'],
       },
@@ -178,10 +178,10 @@ export default class Simulator extends Component {
   }
 
   solveLoop_() {
-    const a = performance.now();
+    //const a = performance.now();
     this.incrementSolve_(20000);
-    const b = performance.now();
-    window.stats.total += b - a;
+    //const b = performance.now();
+    //window.stats.total += b - a;
     const result = this.solver_.rootNode.result;
     if (result) {
       console.log('STATS:', window.stats);

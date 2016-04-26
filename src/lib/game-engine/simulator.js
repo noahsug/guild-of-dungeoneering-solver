@@ -44,11 +44,11 @@ export default class Simulator {
     state = gs.newTurnClone(state);
 
     // TODO: Implement conceal.
-    const a = performance.now();
+    //const a = performance.now();
     const gameOver = this.cardResolver_.resolve(
         state, move, state.enemy.hand[0]);
-    const b = performance.now();
-    window.stats.resolve += b - a;
+    //const b = performance.now();
+    //window.stats.resolve += b - a;
 
     // Shortcut: If the game is over, don't generate states.
     if (gameOver) return [state];
@@ -57,7 +57,7 @@ export default class Simulator {
   }
 
   getPossibleStates_(clonedState, move, optimize) {
-    const a = performance.now();
+    //const a = performance.now();
     const player = clonedState.player;
     const enemy = clonedState.enemy;
     this.stateEnumerator_.optimize = optimize;
@@ -71,8 +71,8 @@ export default class Simulator {
     // by the enemy (put into enemy hand).
     this.stateEnumerator_.discard(player.discardEffect);
     this.stateEnumerator_.endTurn();
-    const b = performance.now();
-    window.stats.enumerate += b - a;
+    //const b = performance.now();
+    //window.stats.enumerate += b - a;
     return this.stateEnumerator_.getStates();
   }
 }

@@ -135,7 +135,41 @@ class GameState {
   }
 
   newTurnClone(state) {
-    const clone = this.clone(state);
+    const clone = {
+      player: {
+        health: state.player.health,
+        deck: _.clone(state.player.deck),
+        hand: _.clone(state.player.hand),
+        discard: _.clone(state.player.discard),
+
+        magicNextEffect: state.player.magicNextEffect,
+        physicalNextEffect: state.player.physicalNextEffect,
+        magicRoundEffect: state.player.magicRoundEffect,
+        physicalRoundEffect: state.player.physicalRoundEffect,
+        withstandEffect: state.player.withstandEffect,
+
+        discardEffect: 0,
+        drawEffect: 0,
+        cycleEffect: 0,
+      },
+      enemy: {
+        health: state.enemy.health,
+        deck: _.clone(state.enemy.deck),
+        hand: _.clone(state.enemy.hand),
+        discard: _.clone(state.enemy.discard),
+
+        magicNextEffect: state.enemy.magicNextEffect,
+        physicalNextEffect: state.enemy.physicalNextEffect,
+        magicRoundEffect: state.enemy.magicRoundEffect,
+        physicalRoundEffect: state.enemy.physicalRoundEffect,
+        withstandEffect: state.player.withstandEffect,
+        rum: state.enemy.rum,
+
+        stealEffect: 0,
+      },
+      playerDraw: -1,
+      enemyDraw: -1,
+    };
     if (state.playerDraw != -1) {
       // Perform player and enemy draw.
       clone.player.hand.push(clone.player.deck.splice(state.playerDraw, 1)[0]);

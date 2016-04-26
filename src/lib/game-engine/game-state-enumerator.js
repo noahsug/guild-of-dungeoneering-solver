@@ -24,7 +24,7 @@ export default class Simulator {
     } else {
       this.accuracyFactor_ = 30;
     }
-    this.accuracyFactor_ = 300;
+    //this.accuracyFactor_ = 300;
     console.log('complexity', complexity, ', speed', this.accuracyFactor_);
   }
 
