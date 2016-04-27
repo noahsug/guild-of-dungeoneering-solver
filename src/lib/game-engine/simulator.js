@@ -44,11 +44,11 @@ export default class Simulator {
     state = gs.newTurnClone(state);
 
     // TODO: Implement conceal.
-    //const a = performance.now();
+    const a = performance.now();
     const gameOver = this.cardResolver_.resolve(
         state, move, state.enemy.hand[0]);
-    //const b = performance.now();
-    //window.stats.resolve += b - a;
+    const b = performance.now();
+    window.stats.resolve += b - a;
 
     // Shortcut: If the game is over, don't generate states.
     if (gameOver) return [state];

@@ -1,7 +1,6 @@
 jest.dontMock('../card-resolver');
 jest.dontMock('../player-card-resolver');
 jest.dontMock('../game-state');
-jest.dontMock('../game-state-player-accessor');
 jest.dontMock('../card');
 jest.dontMock('../game-data');
 

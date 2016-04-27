@@ -9,7 +9,7 @@ describe('solver', () => {
 
   function getSolver(player, enemy) {
     const solver = new SolverFactory().create(player, enemy);
-    root = solver.rootNode.gameState.state;
+    root = solver.rootNode.state;
     return solver;
   }
 

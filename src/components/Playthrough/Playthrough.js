@@ -35,7 +35,7 @@ export default class Playthrough extends Component {
       this.nodeFactory_.createChildren(this.state.node);
     }
     const gameState =
-        gs.newTurnClone(this.state.node.children[0].gameState.state);
+        gs.newTurnClone(this.state.node.children[0].state);
 
     const title = this.props.simulation.player.name +
         ' vs ' +
@@ -83,13 +83,13 @@ export default class Playthrough extends Component {
   renderMoves_() {
     const moves = {};
     this.state.node.children.forEach((child) => {
-      const {player, enemy} = gs.newTurnClone(child.gameState.state);
+      const {player, enemy} = gs.newTurnClone(child.state);
       player.hand.sort();
       const hand = this.getReadableCards_(player.hand);
 
       // Select player card.
       if (this.state.node.type == Node.Type.CHANCE) {
-        const card = this.getReadableCards_([child.gameState.move]);
+        const card = this.getReadableCards_([child.move]);
         const onClick = this.selectNode_.bind(this, child);
         if (moves[card]) return;
         const pruned = _.isUndefined(child.winRate) ? 'pruned' : undefined;
@@ -168,7 +168,7 @@ export default class Playthrough extends Component {
   selectNode_(node) {
     let selectedPlayerHand = this.state.selectedPlayerHand;
     if (node.type == Node.Type.CHANCE) {
-      node = this.solver_.setState(node.gameState.state).solve();
+      node = this.solver_.setState(node.state).solve();
       selectedPlayerHand = '';
     }
     node.parent = this.state.node;

@@ -34,13 +34,13 @@ export default class GameStateCache {
   }
 
   cacheResult(node) {
-    let id = this.hash(node);
+    const id = this.hash(node);
     this.cache_[id] = node.result;
 
     // TODO: Fix game state cache so it tracks losing states AND winning states,
     // currently it only tracks 1 or the other.
     //if (node.result != 1 || node.result != -1) return;
-    //const state = node.gameState.state;
+    //const state = node.state;
     //id -= state.player.health * this.hashes_.stats[0] +
     //    state.enemy.health * this.hashes_.stats[1];
     //if (!this.healthCache_[id]) {
@@ -62,7 +62,7 @@ export default class GameStateCache {
   getResult(node) {
     const id = this.hash(node);
     //if (!this.cache_[id]) {
-    //  const state = node.gameState.state;
+    //  const state = node.state;
     //  const healthId = id - state.player.health * this.hashes_.stats[0] -
     //      state.enemy.health * this.hashes_.stats[1];
     //  const healthInfo = this.healthCache_[healthId];
@@ -97,7 +97,7 @@ export default class GameStateCache {
 
   hash(node) {
     if (node.id === -1) {
-      node.id = this.hashGameState_(node.gameState.state);
+      node.id = this.hashGameState_(node.state);
     }
     return node.id;
   }

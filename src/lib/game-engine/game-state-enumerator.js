@@ -11,7 +11,9 @@ export default class Simulator {
     this.initialState_ = state;
     const complexity = gs.cards(state.player).length *
           gs.cards(state.enemy).length;
-    if (complexity > 69) {
+    if (complexity > 75) {
+      this.accuracyFactor_ = 1;
+    } else if (complexity > 69) {
       this.accuracyFactor_ = 2;
     } else if (complexity > 65) {
       this.accuracyFactor_ = 3;

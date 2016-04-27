@@ -3,6 +3,7 @@ import s from 'underscore.string';
 import './factorial';
 
 let uid = 0;
+let seed = 0;
 
 _.s = s;
 
@@ -257,6 +258,12 @@ _.mixin({
       list[swapIndex] = temp;
     }
     return list;
+  },
+
+  sudoRandom: () => {
+    const x = Math.sin(seed) * 10000;
+    seed += 13.3;
+    return x - Math.floor(x);
   },
 });
 

@@ -24,7 +24,7 @@ describe('Game state cache', () => {
       health: 3,
     });
     const state = gs.create(player, enemy);
-    return {gameState: {state}, result, id: -1};
+    return {state, result, id: -1};
   }
 
   beforeEach(() => {

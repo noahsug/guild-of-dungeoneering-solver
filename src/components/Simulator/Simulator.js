@@ -32,14 +32,17 @@ export default class Simulator extends Component {
         name: 'Apprentice',
         //name: 'Cartomancer',
         //items: [],
-        items: ['Shimmering Cloak'],
+        //items: ['Shimmering Cloak'],
+        items: ['Shimmering Cloak', 'Straightjacket', 'Ruffled Shirt'],
         //traits: ['Crones Discipline'],
-        traits: [],
+        //traits: [],
+        traits: ['Level 3'],
       },
       enemy: {
         //name: 'Rat King',
         //name: 'Gray Ooze',
-        name: 'Ghost',
+        //name: 'Ghost',
+        name: 'Embro',
         traits: [],
         //traits: ['Leader x3'],
       },
@@ -165,7 +168,7 @@ export default class Simulator extends Component {
     };
     this.solver_ = new SolverFactory().create(
         this.state.player, this.state.enemy);
-    this.incrementSolve_(2);
+    this.solver_.solve(2);
     this.time_ = Date.now();
     this.props.onSimulationStart({
       player: this.state.player,
@@ -178,10 +181,10 @@ export default class Simulator extends Component {
   }
 
   solveLoop_() {
-    //const a = performance.now();
-    this.incrementSolve_(20000);
-    //const b = performance.now();
-    //window.stats.total += b - a;
+    const a = performance.now();
+    this.solver_.solve(30000);
+    const b = performance.now();
+    window.stats.total += b - a;
     const result = this.solver_.rootNode.result;
     if (result) {
       console.log('STATS:', window.stats);
@@ -190,13 +193,7 @@ export default class Simulator extends Component {
       this.setState({result, running: false});
       this.props.onSimulationFinish();
     } else if (this.state.running) {
-      setTimeout(this.solveLoop_.bind(this), 5);
-    }
-  }
-
-  incrementSolve_(iterations) {
-    for (let i = 0; i < iterations && !this.solver_.rootNode.result; i++) {
-      this.solver_.next();
+      setTimeout(this.solveLoop_.bind(this), 1);
     }
   }
 
