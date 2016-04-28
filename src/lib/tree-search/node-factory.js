@@ -18,6 +18,34 @@ export default class NodeFactory {
     };
   }
 
+  rootCreateChildren(node) {
+    const states = this.simulator.getInitialStates(node.state);
+    node.children = this.getChildrenForStates_(states, node);
+  }
+
+  chanceCreateChildren(node) {
+    // Simulator is responsible for removing duplicate moves.
+    const moves = this.simulator.getMoves(node.state);
+    const len = moves.length;
+    for (let i = 0; i < len; i++) {
+      moves[i] = {
+        type: Node.Type.PLAYER,
+        parent: node,
+        state: node.state,
+        move: moves[i],
+        result: node.result,
+      };
+    }
+    node.children = moves;
+  }
+
+  playerCreateChildren(node) {
+    const optimize = node.parent && node.parent.parent;
+    const states = this.simulator.getStates(
+      node.state, node.move, optimize);
+    node.children = this.getChildrenForStates_(states, node);
+  }
+
   createChildren(node) {
     if (node.type == Node.Type.PLAYER) {
       const optimize = node.parent && node.parent.parent;

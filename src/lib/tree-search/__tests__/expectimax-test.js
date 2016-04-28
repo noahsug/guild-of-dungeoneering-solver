@@ -20,14 +20,17 @@ describe('expectimax', () => {
     nodeFactory.createRootNode.mockImpl((state) => {
       return {state, type: Node.Type.ROOT};
     });
-    nodeFactory.createChildren.mockImpl((node) => {
+
+    const createChildren = (node) => {
       node.children = node.state.map((s) => {
         const type = node.type == Node.Type.CHANCE ?
             Node.Type.PLAYER : Node.Type.CHANCE;
         const result = _.isArray(s) ? 0 : s;
         return {type, state: s, result, parent: node};
       });
-    });
+    };
+    nodeFactory.createChildren.mockImpl(createChildren);
+    nodeFactory.rootCreateChildren.mockImpl(createChildren);
 
     expectimax = new Expectimax();
     expectimax.nodeFactory = nodeFactory;
@@ -152,7 +155,7 @@ describe('expectimax', () => {
         1,
       ],
     ]];
-    expectimax.setState(tree, {newGame: true});
+    expectimax.setState(tree);
     expectimax.next();  // 0
     expectimax.next();  // 0 -> 0
     expectimax.next();  // 0 -> 0 (result = 0.5)

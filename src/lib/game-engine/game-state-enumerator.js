@@ -75,7 +75,9 @@ export default class Simulator {
     const numChoices = this.optimize ?
         Math.min(deckLen, this.accuracyFactor_) : deckLen;
     if (numChoices == 0) return;
-    const startingIndex = Math.floor(Math.random() * deckLen);
+    // FIXME
+    //const startingIndex = Math.floor(Math.random() * deckLen);
+    const startingIndex = Math.floor(_.sudoRandom() * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
@@ -97,7 +99,9 @@ export default class Simulator {
     const numChoices = this.optimize ?
         Math.min(deckLen, this.accuracyFactor_) : deckLen;
     if (numChoices == 0) return;
-    const startingIndex = Math.floor(Math.random() * deckLen);
+    // FIXME
+    //const startingIndex = Math.floor(Math.random() * deckLen);
+    const startingIndex = Math.floor(_.sudoRandom() * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
@@ -135,7 +139,7 @@ export default class Simulator {
       return;
     }
 
-    if (this.accuracyFactor_ < 4 && this.optimize) {
+    if (this.accuracyFactor_ <= 4 && this.optimize) {
       const startingIndex = Math.floor(Math.random() * player.deck.length);
       const numStates = this.states_.length;
       for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
@@ -165,7 +169,7 @@ export default class Simulator {
       return;
     }
 
-    if (this.accuracyFactor_ < 4 && this.optimize) {
+    if (this.accuracyFactor_ <= 4 && this.optimize) {
       const startingIndex = Math.floor(Math.random() * player.hand.length);
       const numStates = this.states_.length;
       for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
@@ -201,7 +205,7 @@ export default class Simulator {
     count = Math.min(count, player.hand.length);
     if (!count) return;
 
-    if (this.accuracyFactor_ < 4 && this.optimize) {
+    if (this.accuracyFactor_ <= 4 && this.optimize) {
       const startingIndex = Math.floor(Math.random() * player.hand.length);
       const numStates = this.states_.length;
       for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {

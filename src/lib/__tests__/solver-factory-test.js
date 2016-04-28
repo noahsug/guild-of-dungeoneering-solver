@@ -20,12 +20,6 @@ describe('solver', () => {
     expect(solver.rootNode.result).toEqualFloat(0.4176, 0.0001);
   });
 
-  //it('has certain sequence of moves in Chump vs Gray Ooze', function() {
-  //  const solver = getSolver({name: 'Chump', traits: ['Crones Discipline']},
-  //                           {name: 'Gray Ooze'});
-  //  selectChild(hand
-  //});
-
   it('supports +HP traits', () => {
     const solver = getSolver(
         {name: 'Chump', traits: ['Level 3']}, {name: 'Gray Ooze'});
