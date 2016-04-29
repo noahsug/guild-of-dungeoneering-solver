@@ -84,7 +84,6 @@ export default class Playthrough extends Component {
     const moves = {};
     this.state.node.children.forEach((child) => {
       const {player, enemy} = gs.newTurnClone(child.state);
-      player.hand.sort();
       const hand = this.getReadableCards_(player.hand);
 
       // Select player card.
@@ -158,7 +157,7 @@ export default class Playthrough extends Component {
   }
 
   getReadableCards_(hand) {
-    return hand.map(card => GameCard.list[card].desc).join(', ');
+    return hand.map(card => GameCard.list[card].desc).sort().join(', ');
   }
 
   selectPlayerHand_(hand) {

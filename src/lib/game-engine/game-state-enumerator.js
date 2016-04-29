@@ -8,7 +8,7 @@ export default class Simulator {
   }
 
   setInitialState(state) {
-    this.initialState_ = state;
+    this.optimize = false;
     const complexity = gs.cards(state.player).length *
           gs.cards(state.enemy).length;
     if (complexity > 75) {
@@ -135,13 +135,24 @@ export default class Simulator {
       return;
     }
 
-    const numChoices = player.deck.length;
-    this.states_.length *= _.factorial(numChoices) /
-        _.factorial(numChoices - count);
-    for (let i = 0; i < count; i++) {
-      this.forEachStateCallNTimes_((state, i) => {
-        gs.draw(state[type], i);
-      }, numChoices - i);
+    if (this.accuracyFactor_ < 4 && this.optimize) {
+      const startingIndex = Math.floor(Math.random() * player.deck.length);
+      const numStates = this.states_.length;
+      for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+        const state = this.states_[stateIndex];
+        for (let i = 0; i < count; i++) {
+          gs.draw(state[type], startingIndex % player.deck.length);
+        }
+      }
+    } else {
+      const numChoices = player.deck.length;
+      this.states_.length *= _.factorial(numChoices) /
+          _.factorial(numChoices - count);
+      for (let i = 0; i < count; i++) {
+        this.forEachStateCallNTimes_((state, i) => {
+          gs.draw(state[type], i);
+        }, numChoices - i);
+      }
     }
   }
 
@@ -154,13 +165,24 @@ export default class Simulator {
       return;
     }
 
-    const numChoices = player.hand.length;
-    this.states_.length *= _.factorial(numChoices) /
-        _.factorial(numChoices - count);
-    for (let i = 0; i < count; i++) {
-      this.forEachStateCallNTimes_((state, i) => {
-        gs.discard(state.player, i);
-      }, numChoices - i);
+    if (this.accuracyFactor_ < 4 && this.optimize) {
+      const startingIndex = Math.floor(Math.random() * player.hand.length);
+      const numStates = this.states_.length;
+      for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+        const state = this.states_[stateIndex];
+        for (let i = 0; i < count; i++) {
+          gs.discard(state.player, startingIndex % player.hand.length);
+        }
+      }
+    } else {
+      const numChoices = player.hand.length;
+      this.states_.length *= _.factorial(numChoices) /
+          _.factorial(numChoices - count);
+      for (let i = 0; i < count; i++) {
+        this.forEachStateCallNTimes_((state, i) => {
+          gs.discard(state.player, i);
+        }, numChoices - i);
+      }
     }
   }
 
@@ -179,13 +201,25 @@ export default class Simulator {
     count = Math.min(count, player.hand.length);
     if (!count) return;
 
-    const numChoices = player.hand.length;
-    this.states_.length *= _.factorial(numChoices) /
-        _.factorial(numChoices - count);
-    for (let i = 0; i < count; i++) {
-      this.forEachStateCallNTimes_((state, i) => {
-        gs.steal(state.enemy, state.player, i);
-      }, numChoices - i);
+    if (this.accuracyFactor_ < 4 && this.optimize) {
+      const startingIndex = Math.floor(Math.random() * player.hand.length);
+      const numStates = this.states_.length;
+      for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+        const state = this.states_[stateIndex];
+        for (let i = 0; i < count; i++) {
+          gs.steal(
+              state.enemy, state.player, startingIndex % player.hand.length);
+        }
+      }
+    } else {
+      const numChoices = player.hand.length;
+      this.states_.length *= _.factorial(numChoices) /
+          _.factorial(numChoices - count);
+      for (let i = 0; i < count; i++) {
+        this.forEachStateCallNTimes_((state, i) => {
+          gs.steal(state.enemy, state.player, i);
+        }, numChoices - i);
+      }
     }
   }
 

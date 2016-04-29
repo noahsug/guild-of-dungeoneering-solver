@@ -21,13 +21,8 @@ export default class Expectimax {
   reset() {
     this.rootNode = this.nodeFactory.createRootNode(this.initState);
     this.node_ = this.rootNode;
-    this.node_.winRate = this.node_.type == Node.Type.CHANCE ? -Infinity : 1;
+    this.node_.winRate = this.node_.type == Node.Type.ROOT ? 1 : -Infinity;
     this.node_.pruneCutoff = this.node_.index = 0;
-    if (this.node_.type == Node.Type.ROOT) {
-      this.node_.winRate = 1;
-    } else {
-      this.node_.winRate = -Infinity;
-    }
     //this.depth_ = 0;
   }
 
@@ -114,7 +109,7 @@ export default class Expectimax {
   // Look ahead at each child to see if we can prune early.
   checkChildrenForCutoffs_() {
     if (this.node_.type == Node.Type.CHANCE) {
-      // TODO: Check hints?
+      // TODO: Check player move hints?
       return;
     }
     for (let i = 0; i < this.node_.children.length; i++) {
@@ -147,10 +142,9 @@ export default class Expectimax {
   }
 
   initNode_(node) {
-    if (node.result) return;
     if (node.type == Node.Type.CHANCE) {
       node.result = this.cache_.getResult(node);
-      if (node.result) return;  // cached
+      if (node.result) return;
       node.winRate = -Infinity;
       this.cache_.markAsVisited(node);
     } else {
