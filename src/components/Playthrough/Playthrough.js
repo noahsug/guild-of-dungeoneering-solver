@@ -91,11 +91,12 @@ export default class Playthrough extends Component {
         const card = this.getReadableCards_([child.move]);
         const onClick = this.selectNode_.bind(this, child);
         if (moves[card]) return;
-        const pruned = _.isUndefined(child.winRate) ? 'pruned' : undefined;
+        let pruned;
+        if (child.winRate == undefined && !child.result) pruned = 'pruned';
         moves[card] = this.getSortableMoveItem_(child, card, onClick, pruned);
       }
 
-      // Select starting hand.
+      // Select hand.
       else if (!this.state.selectedPlayerHand) {
         const onClick = this.selectPlayerHand_.bind(this, hand);
 
@@ -110,6 +111,8 @@ export default class Playthrough extends Component {
         }
         moves[hand] = this.getSortableMoveItem_(child, hand, onClick, winRate);
         moves[hand].count = count;
+        console.log(hand, winRate);
+        window.m = moves;
       }
 
       // Select enemy card.
@@ -167,7 +170,10 @@ export default class Playthrough extends Component {
   selectNode_(node) {
     let selectedPlayerHand = this.state.selectedPlayerHand;
     if (node.type == Node.Type.CHANCE) {
+      //this.solver_.clearCache();
       node = this.solver_.setState(node.state).solve();
+      console.log("SOLVING:", node.result);
+      window.n = node;
       selectedPlayerHand = '';
     }
     node.parent = this.state.node;

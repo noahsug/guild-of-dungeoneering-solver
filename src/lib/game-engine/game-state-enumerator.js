@@ -11,9 +11,7 @@ export default class Simulator {
     this.optimize = false;
     const complexity = gs.cards(state.player).length *
           gs.cards(state.enemy).length;
-    if (complexity > 75) {
-      this.accuracyFactor_ = 1;
-    } else if (complexity > 69) {
+    if (complexity > 69) {
       this.accuracyFactor_ = 2;
     } else if (complexity > 65) {
       this.accuracyFactor_ = 3;
@@ -27,6 +25,7 @@ export default class Simulator {
       this.accuracyFactor_ = 30;
     }
     //this.accuracyFactor_ = 300;
+    //this.accuracyFactor_ = 1;
     console.log('complexity', complexity, ', speed', this.accuracyFactor_);
   }
 

@@ -21,16 +21,14 @@ describe('expectimax', () => {
       return {state, type: Node.Type.ROOT};
     });
 
-    const createChildren = (node) => {
+    nodeFactory.createChildren.mockImpl((node) => {
       node.children = node.state.map((s) => {
         const type = node.type == Node.Type.CHANCE ?
             Node.Type.PLAYER : Node.Type.CHANCE;
         const result = _.isArray(s) ? 0 : s;
         return {type, state: s, result, parent: node};
       });
-    };
-    nodeFactory.createChildren.mockImpl(createChildren);
-    nodeFactory.rootCreateChildren.mockImpl(createChildren);
+    });
 
     expectimax = new Expectimax();
     expectimax.nodeFactory = nodeFactory;
