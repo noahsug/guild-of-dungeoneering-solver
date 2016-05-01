@@ -18,7 +18,14 @@ describe('expectimax', () => {
   beforeEach(() => {
     const nodeFactory = new NodeFactory();
     nodeFactory.createRootNode.mockImpl((state) => {
-      return {state, type: Node.Type.ROOT};
+      return {
+        state,
+        type: Node.Type.ROOT,
+        winRate: 1,
+        pruneCutoff: 0,
+        index: 0,
+        wins: 0,
+      };
     });
 
     nodeFactory.createChildren.mockImpl((node) => {
@@ -26,7 +33,16 @@ describe('expectimax', () => {
         const type = node.type == Node.Type.CHANCE ?
             Node.Type.PLAYER : Node.Type.CHANCE;
         const result = _.isArray(s) ? 0 : s;
-        return {type, state: s, result, parent: node};
+        return {
+          type,
+          winRate: type == Node.Type.CHANCE ? -Infinity : 1,
+          pruneCutoff: 0,
+          index: 0,
+          wins: 0,
+          state: s,
+          result,
+          parent: node,
+        };
       });
     });
 

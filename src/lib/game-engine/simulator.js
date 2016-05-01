@@ -19,6 +19,10 @@ export default class Simulator {
     return this.stateEnumerator_.getStates();
   }
 
+  get accuracy() {
+    return this.stateEnumerator_.accuracyFactor_;
+  }
+
   getMoves(state) {
     const visited = {};
     const moves = [];

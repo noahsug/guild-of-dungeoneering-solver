@@ -23,6 +23,16 @@ describe('game state', () => {
     expect(state.player.discard).toEqual([4]);
   });
 
+  it('can discard all cards', () => {
+    const state = gs.create({
+      hand: [4, 5],
+      discard: [],
+    });
+    gs.discardAll(state.player);
+    expect(state.player.hand).toEqual([]);
+    expect(state.player.discard).toEqual([4, 5]);
+  });
+
   it('can draw discard pile if deck is empty', () => {
     const state = gs.create({
       deck: [1],

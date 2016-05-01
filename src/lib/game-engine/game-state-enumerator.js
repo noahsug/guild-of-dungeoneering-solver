@@ -11,20 +11,15 @@ export default class Simulator {
     this.optimize = false;
     const complexity = gs.cards(state.player).length *
           gs.cards(state.enemy).length;
-    if (complexity > 69) {
-      this.accuracyFactor_ = 2;
-    } else if (complexity > 65) {
-      this.accuracyFactor_ = 3;
-    } else if (complexity > 55) {
-      this.accuracyFactor_ = 4;
-    } else if (complexity > 50) {
-      this.accuracyFactor_ = 5;
-    } else if (complexity > 47) {
+    if (complexity < 55) {
       this.accuracyFactor_ = 12;
+    } else if (complexity < 70) {
+      this.accuracyFactor_ = 3;
     } else {
-      this.accuracyFactor_ = 30;
+      this.accuracyFactor_ = 1;
     }
     //this.accuracyFactor_ = 300;
+    //this.accuracyFactor_ = 3;
     //this.accuracyFactor_ = 1;
     console.log('complexity', complexity, ', speed', this.accuracyFactor_);
   }
@@ -74,9 +69,7 @@ export default class Simulator {
     const numChoices = this.optimize ?
         Math.min(deckLen, this.accuracyFactor_) : deckLen;
     if (numChoices == 0) return;
-    // FIXME
-    //const startingIndex = Math.floor(Math.random() * deckLen);
-    const startingIndex = Math.floor(_.sudoRandom() * deckLen);
+    const startingIndex = Math.floor(Math.random() * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
@@ -98,9 +91,7 @@ export default class Simulator {
     const numChoices = this.optimize ?
         Math.min(deckLen, this.accuracyFactor_) : deckLen;
     if (numChoices == 0) return;
-    // FIXME
-    //const startingIndex = Math.floor(Math.random() * deckLen);
-    const startingIndex = Math.floor(_.sudoRandom() * deckLen);
+    const startingIndex = Math.floor(Math.random() * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
@@ -164,7 +155,10 @@ export default class Simulator {
     const player = this.states_[0].player;
     if (player.hand.length <= count) {
       if (!player.hand.length) return;
-      gs.discardAll(player);
+      const numStates = this.states_.length;
+      for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
+        gs.discardAll(this.states_[stateIndex].player);
+      }
       return;
     }
 

@@ -5,6 +5,7 @@ import Button from 'react-toolbox/lib/button';
 import { Card, CardText, CardActions, CardTitle } from 'react-toolbox/lib/card';
 import style from './Simulator.scss';
 import SolverFactory from '../../lib/solver-factory';
+import Node from '../../lib/tree-search/node';
 import gameData from '../../lib/game-engine/game-data';
 import _ from '../../utils/common';
 
@@ -26,29 +27,58 @@ export default class Simulator extends Component {
   }
 
   getInitialState_() {
+    //return {
+    //  player: {name: 'Chump', items: [], traits: ['Crones Discipline']},
+    //  enemy: {name: 'Gray Ooze', items: [], traits: []},
+    //};
+
+    //return {
+    //  player: {name: 'Chump', items: [], traits: []},
+    //  enemy: {name: 'Embro', items: [], traits: []},
+    //};
+
+    //return {
+    //  player: {name: 'Apprentice', items: ['Shimmering Cloak'], traits: []},
+    //  enemy: {name: 'Ghost', items: [], traits: []},
+    //};
+
+    //return {
+    //  player: {name: 'Apprentice', items: [], traits: []},
+    //  enemy: {name: 'Giant Crab', items: [], traits: []},
+    //};
+
     return {
       player: {
-        //name: 'Chump',
-        name: 'Apprentice',
-        //name: 'Cartomancer',
-        //items: [],
-        items: ['Shimmering Cloak'],
-        //items: ['Shimmering Cloak', 'Straightjacket', 'Ruffled Shirt'],
-        //traits: ['Crones Discipline'],
-        traits: [],
-        //traits: ['Level 3'],
+        name: 'Cartomancer',
+        //items: ['Scroll Of Souls', 'Fez', 'Ocean Staff', 'Bark Vest'],
+        items: [],
+        traits: ['Level 3'],
       },
-      enemy: {
-        //name: 'Rat King',
-        //name: 'Gray Ooze',
-        name: 'Ghost',
-        //name: 'Embro',
-        traits: [],
-        //traits: ['Leader x3'],
-      },
-      result: 0,
-      running: false,
+      enemy: {name: 'Angry Bunny', items: [], traits: []},
     };
+
+    //return {
+    //  player: {
+    //    name: 'Apprentice',
+    //    items: ['Shimmering Cloak', 'Straightjacket', 'Ruffled Shirt'],
+    //    traits: ['Level 3'],
+    //  },
+    //  enemy: {name: 'Embro', items: [], traits: []},
+    //};
+    //
+    //return {
+    //  player: {
+    //    name: 'Chump',
+    //    items: [],
+    //    traits: [],
+    //  },
+    //  enemy: {
+    //    name: 'Gray Ooze',
+    //    traits: [],
+    //  },
+    //  result: undefined,
+    //  running: false,
+    //};
   }
 
   parseGameData_() {
@@ -96,15 +126,14 @@ export default class Simulator extends Component {
                              {multiple: true})}
         </CardText>
         <CardActions className={style['card-actions']}>
+          {this.state.result != undefined ? (
+            <span className={style['win-rate']}>{this.renderWinRate_()}</span>
+          ) : ''}
           {this.state.running ? (
-            <Button label="Stop (this may take a while...)"
-                    onClick={this.stopRunning_.bind(this)} />
-          ) : this.state.result ? (
-            <span>
-              <span className={style['win-rate']}>{this.renderWinRate_()}</span>
-              <Button label="See Breakdown"
-                      onClick={this.openPlaythrough_.bind(this)} />
-            </span>
+            <Button label="Stop" onClick={this.finishedSolving_.bind(this)} />
+          ) : this.state.result != undefined ? (
+            <Button label="See Breakdown"
+                onClick={this.openPlaythrough_.bind(this)} />
           ) : (
             <Button primary label="Solve" onClick={this.solve_.bind(this)} />
           )}
@@ -148,7 +177,7 @@ export default class Simulator extends Component {
       const newState = {[type]: newValue};
       this.setState({
         [player]: _.defaults(newState, this.state[player]),
-        result: 0,
+        result: undefined,
       });
     }
   }
@@ -175,7 +204,7 @@ export default class Simulator extends Component {
       enemy: this.state.enemy,
       solver: this.solver_,
     });
-    this.setState({result: 0, running: true});
+    this.setState({result: undefined, running: true});
 
     setTimeout(this.solveLoop_.bind(this), 5);
   }
@@ -185,27 +214,113 @@ export default class Simulator extends Component {
     this.solver_.solve(30000);
     const b = performance.now();
     window.stats.total += b - a;
-    const result = this.solver_.rootNode.result;
+    let result = this.solver_.rootNode.result;
     if (result) {
-      console.log('STATS:', window.stats);
-
-      this.time_ = Date.now() - this.time_;
-      this.setState({result, running: false});
-      this.props.onSimulationFinish();
+      this.setState({result});
+      if (this.solver_.accuracy == 1) {
+        result = this.improveAccuracy_();
+      } else {
+        this.finishedSolving_();
+      }
     } else if (this.state.running) {
       setTimeout(this.solveLoop_.bind(this), 1);
     }
   }
 
-  stopRunning_() {
+  finishedSolving_() {
+    console.log('STATS:', window.stats);
+    this.time_ = Date.now() - this.time_;
     this.setState({running: false});
+    if (this.state.result != undefined) {
+      this.props.onSimulationFinish();
+    }
+  }
+
+  improveAccuracy_() {
+    const initRootNode = this.solver_.rootNode;
+    const initResult = initRootNode.result;
+    const children = this.getBestChildren_(initRootNode, 15);
+    if (children.length == 0) {
+      this.finishedSolving_();
+      return;
+    }
+
+    let count = 0;
+    let error = 0;
+    let index = 0;
+    const next = () => {
+      const bestChild = children[index++];
+      if (bestChild.result < 0) return;
+      const improvedChanceResult = this.solveNode_(bestChild);
+      let playerNode = this.getBestChildren_(this.solver_.rootNode, 1)[0];
+      const bestChanceNodes = this.getBestChildren_(playerNode, 8);
+      playerNode = playerNode || {};
+      let avg = 0;
+      let count2 = 0;
+      const next2 = () => {
+        if (!this.state.running) return;
+
+        if (count2 < bestChanceNodes.length) {
+          const child = bestChanceNodes[count2++];
+          const result = this.solveNode_(child);
+          avg += result;
+          this.solver_.rootNode = initRootNode;
+          setTimeout(next2, 5);
+          return;
+        }
+
+        playerNode.result = avg / (count2 || 1) || -1;
+        if (playerNode.result < bestChild.result) {
+          count++;
+          error += _.minZero(playerNode.result) / bestChild.result;
+          bestChild.result = playerNode.result;
+          initRootNode.result = initResult * error / count || -1;
+          this.setState({result: _.minZero(initRootNode.result)});
+        }
+
+        if (index < children.length) {
+          this.solver_.rootNode = initRootNode;
+          setTimeout(next, 5);
+        } else {
+          this.solver_.rootNode = initRootNode;
+          this.finishedSolving_();
+        }
+      };
+      this.solver_.rootNode = initRootNode;
+      setTimeout(next2, 5);
+    };
+    next();
+  }
+
+  getBestChildren_(node, n, sampleRatio = 1) {
+    if (!node) return [];
+    let children = node.children ||
+        this.solver_.nodeFactory.createChildren(node);
+    if (node.type != Node.Type.CHANCE) {
+      children = _.uniq(children, false, _.iteratee('id'));
+    }
+    return _.chain(children)
+        .filter((c) => c.result > 0)
+        .sortBy(_.iteratee('result'))
+        .reverse()
+        .first(n)
+        .sample(Math.ceil(n * sampleRatio))
+        .value();
+  }
+
+  solveNode_(node) {
+    this.solver_.clearCache();
+    this.solver_.setState(node.state);
+    this.solver_.solve();
+    return _.minZero(this.solver_.rootNode.result);
   }
 
   renderWinRate_() {
     const percent = _.percent(this.state.result) + '%';
     return (
       <span>
-        win rate: <span className={style.percent}>{percent}</span> ({this.time_ / 1000}s)
+        win rate: <span className={style.percent}>{percent}</span>
+        {!this.state.running ? ' (' + this.time_ / 1000 + 's)' : ''}
       </span>
     );
   }

@@ -30,7 +30,7 @@ export default class Playthrough extends Component {
   }
 
   render() {
-    // CREATE CHILDREN, add ones optimized out, mark as pruned.
+    // Create children, add ones optimized out as pruned.
     if (!this.state.node.children) {
       this.nodeFactory_.createChildren(this.state.node);
     }
@@ -91,8 +91,7 @@ export default class Playthrough extends Component {
         const card = this.getReadableCards_([child.move]);
         const onClick = this.selectNode_.bind(this, child);
         if (moves[card]) return;
-        let pruned;
-        if (child.winRate == undefined && !child.result) pruned = 'pruned';
+        const pruned = child.result ? undefined : 'pruned';
         moves[card] = this.getSortableMoveItem_(child, card, onClick, pruned);
       }
 
@@ -111,8 +110,6 @@ export default class Playthrough extends Component {
         }
         moves[hand] = this.getSortableMoveItem_(child, hand, onClick, winRate);
         moves[hand].count = count;
-        console.log(hand, winRate);
-        window.m = moves;
       }
 
       // Select enemy card.
@@ -129,11 +126,11 @@ export default class Playthrough extends Component {
   }
 
   getSortableMoveItem_(child, cards, onClick, opt_winRate) {
-    if (child.result == -Infinity) {
+    if (!child.result || child.result == -Infinity) {
       // Child was pruned, so we have to calculate win rate manually.
       let total = 0;
       let count = 0;
-      child.children.forEach(node => {
+      (child.children || []).forEach(node => {
         if (!isFinite(node.result)) return;
         count++;
         total += node.result < 0 ? 0 : node.result;
@@ -141,7 +138,7 @@ export default class Playthrough extends Component {
       child.result = count && total / count;
     }
 
-    let winRate = child.result < 0 ? 0 : child.result;
+    let winRate = _.minZero(child.result)
     if (isFinite(opt_winRate)) winRate = opt_winRate;
     let legend = _.percent(winRate) + '% win rate';
 
@@ -170,10 +167,8 @@ export default class Playthrough extends Component {
   selectNode_(node) {
     let selectedPlayerHand = this.state.selectedPlayerHand;
     if (node.type == Node.Type.CHANCE) {
-      //this.solver_.clearCache();
+      this.solver_.clearCache();
       node = this.solver_.setState(node.state).solve();
-      console.log("SOLVING:", node.result);
-      window.n = node;
       selectedPlayerHand = '';
     }
     node.parent = this.state.node;

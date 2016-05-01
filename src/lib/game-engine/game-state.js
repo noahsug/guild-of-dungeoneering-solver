@@ -228,8 +228,7 @@ class GameState {
   }
 
   discard(player, index) {
-    player.discard.push(player.hand[index]);
-    return player.hand.splice(index, 1)[0];
+    player.discard.push(player.hand.splice(index, 1)[0]);
   }
 
   discardAll(player) {

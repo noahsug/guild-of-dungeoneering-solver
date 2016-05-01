@@ -265,6 +265,10 @@ _.mixin({
     seed += 13.3;
     return x - Math.floor(x);
   },
+
+  minZero: (number) => {
+    return Math.max(number, 0);
+  },
 });
 
 export default _;

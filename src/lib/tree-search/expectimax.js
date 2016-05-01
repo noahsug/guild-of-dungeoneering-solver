@@ -31,6 +31,10 @@ export default class Expectimax {
     //this.depth_ = 0;
   }
 
+  get accuracy() {
+    return this.nodeFactory.simulator.accuracy;
+  }
+
   clearCache() {
     this.cache_ = new GameStateCache();
   }
@@ -120,7 +124,16 @@ export default class Expectimax {
   // Look ahead at each child to see if we can prune early.
   checkChildrenForCutoffs_() {
     if (this.node_.type == CHANCE) {
-      // TODO: Check player move hints?
+      // Skip random player nodes if node factory has low accuracy.
+      //const len = this.node_.children.length;
+      //if (len > 1) {
+      //  const skip = Math.floor(Math.random() * len);
+      //  const temp = this.node_.children[0];
+      //  this.node_.children[0] = this.node_.children[skip];
+      //  this.node_.children[skip] = temp;
+      //  this.node_.index++;
+      //}
+      //return;
       return;
     }
     for (let i = 0; i < this.node_.children.length; i++) {
@@ -152,7 +165,6 @@ export default class Expectimax {
     }
   }
 
-  // FIXME: Set these variables in node-factory.
   initNode_(node) {
     if (node.type == Node.Type.CHANCE) {
       // We know node doesn't already have a result because of the
