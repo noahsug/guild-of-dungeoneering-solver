@@ -22,11 +22,11 @@ export default class NodeFactory {
     };
   }
 
-  createChildren(node) {
+  createChildren(node, depth) {
     if (node.type == Node.Type.PLAYER) {
       const optimize = node.parent && node.parent.parent;
       const states = this.simulator.getStates(
-          node.state, node.move, optimize);
+          node.state, node.move, depth, optimize);
       node.children = this.getChildrenForStates_(states, node);
     }
 

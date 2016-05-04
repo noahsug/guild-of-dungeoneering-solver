@@ -214,6 +214,7 @@ export default {
     //},
     // Tier 2
     'Alchemist': {
+      sets: ['Alchemist'],
       traits: ['Blessing'],
       health: 4,
     },

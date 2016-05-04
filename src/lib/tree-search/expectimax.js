@@ -28,7 +28,7 @@ export default class Expectimax {
 
     // Init root node.
     this.cache_.markAsVisited(this.node_);
-    //this.depth_ = 0;
+    this.depth_ = 0;
   }
 
   get accuracy() {
@@ -60,13 +60,10 @@ export default class Expectimax {
         delete this.node_.children;
       }
       this.node_ = this.node_.parent;
-      //this.depth_--;
+      this.depth_--;
     } else {
+      //this.node_ = this.selectChildNode_();
       this.node_ = this.selectChildNode_();
-      //if (this.node_ != child) {
-      //  this.node_ = child;
-      //  this.depth_++;
-      //}
     }
   }
 
@@ -109,7 +106,7 @@ export default class Expectimax {
 
   selectChildNode_() {
     if (!this.node_.children) {
-      this.nodeFactory.createChildren(this.node_);
+      this.nodeFactory.createChildren(this.node_, this.depth_);
       this.node_.wins = this.node_.children.length;
       this.checkChildrenForCutoffs_();
       if (this.node_.result) return this.node_;
@@ -118,6 +115,7 @@ export default class Expectimax {
     const child = this.node_.children[this.node_.index];
     this.node_.index++;
     this.initNode_(child);
+    this.depth_++;
     return child;
   }
 

@@ -4,24 +4,50 @@ import _ from '../../utils/common';
 export default class Simulator {
   constructor() {
     this.accuracyFactor_ = 30;
-    this.optimize = false;
+    this.depth = 0;
+
+    // Used with optimization, controls which cards are chosen based on depth,
+    // essentially fixes the deck order.
+    this.startingIndexes_ = {
+      playerDrawEndTurn: this.getStartingIndexes_(),
+      enemyDrawEndTurn: this.getStartingIndexes_(),
+      draw: {
+        player: this.getStartingIndexes_(),
+        enemy: this.getStartingIndexes_(),
+      },
+      discard: this.getStartingIndexes_(),
+      steal: this.getStartingIndexes_(),
+    };
+  }
+
+  getStartingIndexes_() {
+    return _.range(300).map(i => Math.random());
   }
 
   setInitialState(state) {
-    this.optimize = false;
+    this.depth = 0;
     const complexity = gs.cards(state.player).length *
-          gs.cards(state.enemy).length;
+        gs.cards(state.enemy).length;
     if (complexity < 55) {
-      this.accuracyFactor_ = 12;
+      this.optimizedAccuracyFactor_ = 12;
     } else if (complexity < 70) {
-      this.accuracyFactor_ = 3;
+      this.optimizedAccuracyFactor_ = 3;
     } else {
-      this.accuracyFactor_ = 1;
+      this.optimizedAccuracyFactor_ = 1;
     }
     //this.accuracyFactor_ = 300;
     //this.accuracyFactor_ = 3;
-    //this.accuracyFactor_ = 1;
-    console.log('complexity', complexity, ', speed', this.accuracyFactor_);
+    this.optimizedAccuracyFactor_ = 1;
+    console.log('complexity', complexity,
+                ', accuracy', this.optimizedAccuracyFactor_);
+  }
+
+  set optimize(optimize) {
+    if (optimize) {
+      this.accuracyFactor_ = this.optimizedAccuracyFactor_;
+    } else {
+      this.accuracyFactor_ = 300;
+    }
   }
 
   setState(state) {
@@ -35,6 +61,13 @@ export default class Simulator {
 
   getStates() {
     return this.states_;
+  }
+
+  shuffleDecks() {
+    this.states_.forEach(state => {
+      state.player.deck = _.shuffle(state.player.deck);
+      state.enemy.deck = _.shuffle(state.enemy.deck);
+    });
   }
 
   putInPlay(playerCard) {
@@ -66,10 +99,12 @@ export default class Simulator {
   playerDrawAtEndOfTurn_() {
     const player = this.states_[0].player;
     const deckLen = player.deck.length;
-    const numChoices = this.optimize ?
-        Math.min(deckLen, this.accuracyFactor_) : deckLen;
+    const numChoices = Math.min(deckLen, this.accuracyFactor_);
     if (numChoices == 0) return;
-    const startingIndex = Math.floor(Math.random() * deckLen);
+    // FIXME
+    //const startingIndex = Math.floor(Math.random() * deckLen);
+    const startingIndex = Math.floor(
+        this.startingIndexes_.playerDrawEndTurn[this.depth] * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
@@ -88,10 +123,12 @@ export default class Simulator {
   enemyDrawAtEndOfTurn_() {
     const enemy = this.states_[0].enemy;
     const deckLen = enemy.deck.length;
-    const numChoices = this.optimize ?
-        Math.min(deckLen, this.accuracyFactor_) : deckLen;
+    const numChoices = Math.min(deckLen, this.accuracyFactor_);
     if (numChoices == 0) return;
-    const startingIndex = Math.floor(Math.random() * deckLen);
+    // FIXME
+    //const startingIndex = Math.floor(Math.random() * deckLen);
+    const startingIndex = Math.floor(
+        this.startingIndexes_.enemyDrawEndTurn[this.depth] * deckLen);
     const numStates = this.states_.length;
     let lastStateIndex = numStates - 1;
     this.states_.length *= numChoices;
@@ -129,8 +166,12 @@ export default class Simulator {
       return;
     }
 
-    if (this.accuracyFactor_ <= 4 && this.optimize) {
-      const startingIndex = Math.floor(Math.random() * player.deck.length);
+    if (this.accuracyFactor_ <= 5) {
+      // FIXME
+      //const startingIndex = Math.floor(Math.random() * player.deck.length);
+      const startingIndex = Math.floor(
+          this.startingIndexes_.draw[type][this.depth] *
+          player.deck.length);
       const numStates = this.states_.length;
       for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
         const state = this.states_[stateIndex];
@@ -162,8 +203,11 @@ export default class Simulator {
       return;
     }
 
-    if (this.accuracyFactor_ <= 4 && this.optimize) {
-      const startingIndex = Math.floor(Math.random() * player.hand.length);
+    if (this.accuracyFactor_ <= 5) {
+      // FIXME
+      //const startingIndex = Math.floor(Math.random() * player.hand.length);
+      const startingIndex = Math.floor(
+          this.startingIndexes_.discard[this.depth] * player.hand.length);
       const numStates = this.states_.length;
       for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
         const state = this.states_[stateIndex];
@@ -198,8 +242,11 @@ export default class Simulator {
     count = Math.min(count, player.hand.length);
     if (!count) return;
 
-    if (this.accuracyFactor_ <= 4 && this.optimize) {
-      const startingIndex = Math.floor(Math.random() * player.hand.length);
+    if (this.accuracyFactor_ <= 5) {
+      // FIXME
+      //const startingIndex = Math.floor(Math.random() * player.hand.length);
+      const startingIndex = Math.floor(
+          this.startingIndexes_.steal[this.depth] * player.hand.length);
       const numStates = this.states_.length;
       for (let stateIndex = 0; stateIndex < numStates; stateIndex++) {
         const state = this.states_[stateIndex];

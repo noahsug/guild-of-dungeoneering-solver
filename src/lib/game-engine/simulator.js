@@ -10,12 +10,14 @@ export default class Simulator {
   }
 
   getInitialStates(initialState) {
+    window.d = 0;
     this.cardResolver_.setInitialState(initialState);
 
     this.stateEnumerator_.setInitialState(initialState);
     this.stateEnumerator_.setState(initialState);
     this.stateEnumerator_.draw(
         gs.STARTING_HAND_SIZE + initialState.player.extraHandSizeEffect, 1);
+    this.stateEnumerator_.shuffleDecks();
     return this.stateEnumerator_.getStates();
   }
 
@@ -44,7 +46,7 @@ export default class Simulator {
     return moves;
   }
 
-  getStates(state, move, optimize) {
+  getStates(state, move, depth, optimize) {
     state = gs.newTurnClone(state);
 
     // TODO: Implement conceal.
@@ -57,14 +59,20 @@ export default class Simulator {
     // Shortcut: If the game is over, don't generate states.
     if (gameOver) return [state];
 
-    return this.getPossibleStates_(state, move, optimize);
+    return this.getPossibleStates_(state, move, depth, optimize);
   }
 
-  getPossibleStates_(clonedState, move, optimize) {
+  getPossibleStates_(clonedState, move, depth, optimize) {
     //const a = performance.now();
     const player = clonedState.player;
     const enemy = clonedState.enemy;
     this.stateEnumerator_.optimize = optimize;
+    this.stateEnumerator_.depth = depth;
+    // FIXME
+    if (depth > window.d) {
+      window.d = depth;
+      console.log('best depth:', depth);
+    }
     this.stateEnumerator_.setClonedState(clonedState);
     // TODO: Implement clone.
     this.stateEnumerator_.putInPlay(move);
