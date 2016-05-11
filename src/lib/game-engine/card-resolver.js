@@ -1,5 +1,4 @@
 import PlayerCardResolver from './player-card-resolver';
-import GameStateAccessor from './game-state';
 import Card from './card';
 import _ from '../../utils/common';
 
@@ -23,19 +22,22 @@ export default class CardResolver {
 
     this.player_.resolveBurnDmg();
     this.enemy_.resolveBurnDmg();
-    if (this.player_.dead || this.enemy_.dead) return true;
+    if (this.player_.dead) return 0;
+    if (this.enemy_.dead) return 1;
 
     if (this.player_.quick && !this.enemy_.quick &&
         !this.enemy_.survivedQuick()) {
-      return true;
+      return !this.player_.dead;
     }
     if (this.enemy_.quick && !this.player_.quick &&
         !this.player_.survivedQuick()) {
-      return true;
+      return !this.player_.dead;
     }
     this.resolveCombat_();
 
-    return this.player_.dead || this.enemy_.dead;
+    if (this.player_.dead) return 0;
+    if (this.enemy_.dead) return 1;
+    return undefined;
   }
 
   resolveCombat_() {

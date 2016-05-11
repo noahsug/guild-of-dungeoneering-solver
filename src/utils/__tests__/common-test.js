@@ -91,3 +91,14 @@ describe('expand', () => {
     expect(result).toEqual(['1', '2', '2', '3', '3', '3']);
   });
 });
+
+describe('shuffleRange', () => {
+  it('Shuffles range of values between [startIndex, endIndex)', () => {
+    const a = [1, 2, 3, 4, 5, 6, 7, 8];
+    const shuffled = a.slice();
+    _.shuffleRange(shuffled, 2, 6);  // [3, 4, 5, 6]
+    expect(shuffled.slice(0, 2)).toEqual(a.slice(0, 2));
+    expect(shuffled.slice(2, 6)).toContainValues(a.slice(2, 6));
+    expect(shuffled.slice(6, 8)).toEqual(a.slice(6, 8));
+  });
+});

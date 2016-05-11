@@ -51,13 +51,13 @@ export default class Simulator {
 
     // TODO: Implement conceal.
     const a = performance.now();
-    const gameOver = this.cardResolver_.resolve(
+    const result = this.cardResolver_.resolve(
         state, move, state.enemy.hand[0]);
     const b = performance.now();
     window.stats.resolve += b - a;
 
     // Shortcut: If the game is over, don't generate states.
-    if (gameOver) return [state];
+    if (result != undefined) return [state];
 
     return this.getPossibleStates_(state, move, depth, optimize);
   }
@@ -68,11 +68,6 @@ export default class Simulator {
     const enemy = clonedState.enemy;
     this.stateEnumerator_.optimize = optimize;
     this.stateEnumerator_.depth = depth;
-    // FIXME
-    if (depth > window.d) {
-      window.d = depth;
-      console.log('best depth:', depth);
-    }
     this.stateEnumerator_.setClonedState(clonedState);
     // TODO: Implement clone.
     this.stateEnumerator_.putInPlay(move);

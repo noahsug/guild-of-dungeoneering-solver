@@ -1,6 +1,6 @@
 jest.autoMockOff();
 
-describe('solver', () => {
+xdescribe('solver', () => {
   const SolverFactory = require('../solver-factory');
   const gs = require('../game-engine/game-state');
   const Card = require('../game-engine/card');

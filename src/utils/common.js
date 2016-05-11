@@ -52,6 +52,23 @@ _.mixin({
     });
   },
 
+  // Like _.without, but only removes the first instance of elements.
+  // [1, 2, 1], [1] => [2, 1]
+  removeAll: (array, values) => {
+    const toRemove = {};
+    values.forEach((v) => {
+      if (!toRemove[v]) toRemove[v] = 0;
+      toRemove[v]++;
+    });
+    return array.filter((v) => {
+      if (toRemove[v]) {
+        toRemove[v]--;
+        return false;
+      }
+      return true;
+    });
+  },
+
   fastRemoveAt: (array, index) => {
     const removed = array[index];
     const len = array.length;
@@ -139,6 +156,10 @@ _.mixin({
     return combinate(0, 0);
   },
 
+  choose: (n, k) => {
+    return _.factorial(n) / (_.factorial(k) * _.factorial(n - k));
+  },
+
   // Iterates through every permutation of an array (order matters).
   // Note: The yielded result should NOT be modified.
   permutate: (array) => {
@@ -191,6 +212,7 @@ _.mixin({
     return Math.abs(f1 - f2) < epsilon;
   },
 
+  // Use _.equals for deep obj comparison.
   arrayEquals: (array1, array2) => {
     if (array1.length != array2.length) return false;
     return array1.every((v, i) => {
@@ -198,6 +220,7 @@ _.mixin({
     });
   },
 
+  // Use _.equals for deep obj comparison.
   valuesEqual: (obj1, obj2) => {
     const values1 = _.values(obj1).sort();
     const values2 = _.values(obj2).sort();
@@ -249,15 +272,24 @@ _.mixin({
 
   emptyFn: () => {},
 
-  shuffleFirstN: (list, n) => {
-    if (list.length <= n) return list;
-    for (let i = 0; i < n; i++) {
-      const swapIndex = Math.floor(Math.random() * (n - i)) + i;
-      const temp = list[i];
-      list[i] = list[swapIndex];
+  shuffleInPlace: (list) => {
+    for (let count = list.length - 1; count > 0; count--) {
+      const swapIndex = Math.random() * (count + 1) | 0;
+      const temp = list[count];
+      list[count] = list[swapIndex];
       list[swapIndex] = temp;
     }
-    return list;
+  },
+
+  // Shuffles range of values in place between [startIndex, endIndex);
+  shuffleRange: (list, startIndex, endIndex) => {
+    for (let count = endIndex - startIndex - 1; count > 0; count--) {
+      const index1 = startIndex + count;
+      const index2 = startIndex + Math.random() * (count + 1) | 0;
+      const temp = list[index1];
+      list[index1] = list[index2];
+      list[index2] = temp;
+    }
   },
 
   sudoRandom: () => {
@@ -268,6 +300,13 @@ _.mixin({
 
   minZero: (number) => {
     return Math.max(number, 0);
+  },
+
+  fill: (list, fn) => {
+    const len = list.length;
+    for (let i = 0; i < len; i++) {
+      list[i] = fn(i);
+    }
   },
 });
 

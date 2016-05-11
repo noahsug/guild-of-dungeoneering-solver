@@ -138,7 +138,7 @@ export default class Playthrough extends Component {
       child.result = count && total / count;
     }
 
-    let winRate = _.minZero(child.result)
+    let winRate = _.minZero(child.result);
     if (isFinite(opt_winRate)) winRate = opt_winRate;
     let legend = _.percent(winRate) + '% win rate';
 

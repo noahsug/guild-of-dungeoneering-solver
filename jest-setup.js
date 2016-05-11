@@ -41,5 +41,19 @@ jasmine.getEnv().beforeEach(function() {
     toEqualFloat: function(value, fudge) {
       return Math.abs(this.actual - value) < fudge;
     },
+
+    toEventuallyBe: function(value) {
+      for (let i = 0; i < 1000; i++) {
+        if (this.actual() == value) return true;
+      }
+      return false;
+    },
+
+    toEventuallyEqual: function(value) {
+      for (let i = 0; i < 1000; i++) {
+        if (_.isEqual(this.actual(), value)) return true;
+      }
+      return false;
+    },
   });
 })

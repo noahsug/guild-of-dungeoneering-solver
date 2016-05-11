@@ -4,7 +4,7 @@ jest.dontMock('../simulator');
 jest.dontMock('../game-state');
 jest.dontMock('../game-state-enumerator');
 
-describe('simulator', () => {
+xdescribe('simulator', () => {
   const Simulator = require('../simulator');
   const gs = require('../game-state');
   let sim;
