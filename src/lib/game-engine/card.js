@@ -23,7 +23,7 @@ export default class Card {
 
   static DELIMITER = '/';
 
-  static list = [];
+  static list = [0];
 
   static getSet(set) {
     const indexes = Card.cardIndexesInSets[set];

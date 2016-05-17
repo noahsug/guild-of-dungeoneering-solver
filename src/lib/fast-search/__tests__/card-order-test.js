@@ -10,9 +10,9 @@ describe('card order', () => {
 
   beforeEach(() => {
     order = new CardOrder();
-    order.setInitialState({
+    order.initState = {
       enemy: {deck: enemyCards.slice(), hand: [], discard: []},
-    });
+    };
     order.randomize();
   });
 
@@ -44,5 +44,16 @@ describe('card order', () => {
       return !_.isEqual(draws, order.drawValues);
     }
     expect(drawsAreDifferent).toEventuallyBe(true);
+  });
+
+  it('can mark enemy cards as played', () => {
+    order.enemyPlayed(5);
+    order.randomize();
+    expect(order.enemyDraws[0]).toBe(5);
+
+    order.enemyPlayed(2);
+    order.randomize();
+    expect(order.enemyDraws[0]).toBe(5);
+    expect(order.enemyDraws[1]).toBe(2);
   });
 });

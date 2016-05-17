@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import s from 'underscore.string';
 import './factorial';
+import './simple-moving-average';
 
 let uid = 0;
 let seed = 0;
@@ -141,13 +142,13 @@ _.mixin({
     const result = [];
     function* combinate(i, r) {
       if (size >= array.length) {
-        yield array.slice();
+        yield array;
         return;
       }
       for (let v = i; v < array.length; v++) {
         result[r] = array[v];
         if (r == size - 1) {
-          yield result.slice();
+          yield result;
         } else {
           yield* combinate(v + 1, r + 1);
         }
@@ -302,11 +303,18 @@ _.mixin({
     return Math.max(number, 0);
   },
 
+  // Use array.fill() when filling with a literal value.
   fill: (list, fn) => {
     const len = list.length;
     for (let i = 0; i < len; i++) {
       list[i] = fn(i);
     }
+  },
+
+  mock: (obj, fnName, fn) => {
+    const actual = obj[fnName].bind(obj);
+    obj['actual' + _.s.capitalize(fnName)] = actual;
+    obj[fnName] = fn;
   },
 });
 

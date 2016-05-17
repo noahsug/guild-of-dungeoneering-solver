@@ -26,7 +26,9 @@ describe('tuplesCombinationsGenerator', () => {
 describe('combinationsGenerator', () => {
   it('iterates through all possible combinations of values', () => {
     const combinator = _.combinationsGenerator([1, 2, 3], 2);
-    expect(Array.from(combinator)).toEqual([[1, 2], [1, 3], [2, 3]]);
+    const values = [];
+    for (const value of combinator) values.push(value.slice());
+    expect(values).toEqual([[1, 2], [1, 3], [2, 3]]);
   });
 });
 

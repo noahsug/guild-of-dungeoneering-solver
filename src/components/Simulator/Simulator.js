@@ -29,22 +29,22 @@ export default class Simulator extends Component {
   getInitialState_() {
     //return {
     //  player: {name: 'Chump', items: [], traits: ['Crones Discipline']},
-    //  enemy: {name: 'Gray Ooze', items: [], traits: []},
+    //  enemy: {name: 'Gray Ooze', traits: []},
     //};
 
     //return {
     //  player: {name: 'Chump', items: [], traits: []},
-    //  enemy: {name: 'Embro', items: [], traits: []},
+    //  enemy: {name: 'Embro', traits: []},
     //};
 
     //return {
     //  player: {name: 'Apprentice', items: ['Shimmering Cloak'], traits: []},
-    //  enemy: {name: 'Ghost', items: [], traits: []},
+    //  enemy: {name: 'Ghost', traits: []},
     //};
 
     //return {
     //  player: {name: 'Apprentice', items: [], traits: []},
-    //  enemy: {name: 'Giant Crab', items: [], traits: []},
+    //  enemy: {name: 'Giant Crab', traits: []},
     //};
 
     return {
@@ -54,7 +54,7 @@ export default class Simulator extends Component {
         items: [],
         traits: ['Level 3'],
       },
-      enemy: {name: 'Angry Bunny', items: [], traits: []},
+      enemy: {name: 'Angry Bunny', traits: []},
     };
 
     //return {
@@ -63,7 +63,7 @@ export default class Simulator extends Component {
     //    items: ['Shimmering Cloak', 'Straightjacket', 'Ruffled Shirt'],
     //    traits: ['Level 3'],
     //  },
-    //  enemy: {name: 'Embro', items: [], traits: []},
+    //  enemy: {name: 'Embro', traits: []},
     //};
     //
     //return {

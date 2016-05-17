@@ -1,5 +1,45 @@
 class FastState {
+  // Max possible depth.
+  MAX_DEPTH = 200;
+
   clone(state) {
+    return {
+      player: {
+        health: state.player.health,
+        deck: state.player.deck.slice(),
+        hand: state.player.hand.slice(),
+        discard: state.player.discard.slice(),
+
+        magicNextEffect: state.player.magicNextEffect,
+        physicalNextEffect: state.player.physicalNextEffect,
+        magicRoundEffect: state.player.magicRoundEffect,
+        physicalRoundEffect: state.player.physicalRoundEffect,
+        withstandEffect: state.player.withstandEffect,
+
+        stealEffect: 0,
+        discardEffect: 0,
+        drawEffect: 0,
+        cycleEffect: 0,
+      },
+      enemy: {
+        health: state.enemy.health,
+
+        magicNextEffect: state.enemy.magicNextEffect,
+        physicalNextEffect: state.enemy.physicalNextEffect,
+        magicRoundEffect: state.enemy.magicRoundEffect,
+        physicalRoundEffect: state.enemy.physicalRoundEffect,
+        withstandEffect: state.player.withstandEffect,
+        rum: state.enemy.rum,
+
+        stealEffect: 0,
+        discardEffect: 0,
+        drawEffect: 0,
+      },
+    };
+  }
+
+  // Same as clone, but copies draw / discard / etc effects.
+  incrementalClone(state) {
     return {
       player: {
         health: state.player.health,
@@ -28,16 +68,14 @@ class FastState {
         withstandEffect: state.player.withstandEffect,
         rum: state.enemy.rum,
 
-        stealEffect: state.enemy.stealEffect,
-        discardEffect: state.enemy.discardEffect,
-        drawEffect: state.enemy.drawEffect,
-        cycleEffect: state.enemy.cycleEffect,
+        stealEffect: 0,
+        discardEffect: 0,
+        drawEffect: 0,
       },
-      id: 0,
     };
   }
 
-  // Same as clone but w/o copying deck, hand, discard.
+  // Same as clone but w/o copying deck, hand, discard info.
   cloneStats(state) {
     return {
       player: {
@@ -48,11 +86,6 @@ class FastState {
         magicRoundEffect: state.player.magicRoundEffect,
         physicalRoundEffect: state.player.physicalRoundEffect,
         withstandEffect: state.player.withstandEffect,
-
-        stealEffect: state.player.stealEffect,
-        discardEffect: state.player.discardEffect,
-        drawEffect: state.player.drawEffect,
-        cycleEffect: state.player.cycleEffect,
       },
       enemy: {
         health: state.enemy.health,
@@ -63,13 +96,7 @@ class FastState {
         physicalRoundEffect: state.enemy.physicalRoundEffect,
         withstandEffect: state.player.withstandEffect,
         rum: state.enemy.rum,
-
-        stealEffect: state.enemy.stealEffect,
-        discardEffect: state.enemy.discardEffect,
-        drawEffect: state.enemy.drawEffect,
-        cycleEffect: state.enemy.cycleEffect,
       },
-      id: 0,
     };
   }
 

@@ -37,7 +37,8 @@ export default class Simulator {
     }
     //this.accuracyFactor_ = 300;
     //this.accuracyFactor_ = 3;
-    this.optimizedAccuracyFactor_ = 1;
+    //this.optimizedAccuracyFactor_ = 1;
+    this.optimizedAccuracyFactor_ = 6;
     console.log('complexity', complexity,
                 ', accuracy', this.optimizedAccuracyFactor_);
   }

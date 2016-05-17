@@ -16,6 +16,10 @@ jasmine.getEnv().beforeEach(function() {
   window.stats = {};
 
   this.addMatchers({
+    toBeBetween: function(a, b) {
+      return this.actual >= a && this.actual <= b;
+    },
+
     toContainKeys: function(keys) {
       var diff = _.difference(keys, Object.keys(this.actual));
       if (diff.length) {
@@ -54,6 +58,18 @@ jasmine.getEnv().beforeEach(function() {
         if (_.isEqual(this.actual(), value)) return true;
       }
       return false;
+    },
+
+    toContainValidValue: function(isValid) {
+      return _.some(this.actual, (v, k) => {
+        return isValid(v, k);
+      });
+    },
+
+    toContainOnlyValidValues: function(isValid) {
+      return _.every(this.actual, (v, k) => {
+        return isValid(v, k);
+      });
     },
   });
 })

@@ -1,15 +1,16 @@
+import _ from '../../utils/common';
 import Card from '../game-engine/card';
 
-export default class FastCache {
+export default class FastHash {
   constructor() {
-    this.cache_ = {};
     this.hashes_ = {};
     const numCards = Card.list.length;
     this.hashes_.playerDeck = this.getHashes_(numCards);
     this.hashes_.playerHand = this.getHashes_(numCards);
     this.hashes_.playerDiscard = this.getHashes_(numCards);
-    this.hashes_.playerCard = this.getHashes_(1)[0];
-    this.hashes_.depth = this.getHashes_(1)[0];
+    this.hashes_.playedCard = this.getHashes_(1)[0];
+    this.hashes_.enemyCard = this.getHashes_(1)[0];
+    this.hashes_.enemyDraws = this.getHashes_(numCards);
     this.hashes_.stats = this.getHashes_(30);
   }
 
@@ -19,11 +20,12 @@ export default class FastCache {
     return hashes;
   }
 
-  hash(state) {
+  hash(state, depth) {
     return this.hashCards_(state.player.deck, this.hashes_.playerDeck) +
         this.hashCards_(state.player.hand, this.hashes_.playerHand) +
         this.hashCards_(state.player.discard, this.hashes_.playerDiscard) +
-        this.hashStats_(state);
+        this.hashStats_(state) +
+        this.hashEnemyCards_(depth);
   }
 
   hashCards_(cards, hashes) {
@@ -31,6 +33,14 @@ export default class FastCache {
     const len = cards.length;
     for (let i = 0; i < len; i++) {
       result += hashes[cards[i]];
+    }
+    return result;
+  }
+
+  hashEnemyCards_(depth) {
+    let result = this.hashes_.enemyCard * this.order.enemyDraws[depth];
+    for (let i = 0; i < depth; i++) {
+      result += this.hashes_.enemyDraws[this.order.enemyDraws[i]];
     }
     return result;
   }
@@ -51,18 +61,7 @@ export default class FastCache {
         state.enemy.rum * this.hashes_.stats[10];
   }
 
-  getResult(state, playerCard, depth) {
-    if (depth > 198) return 0;
-    const hash = state.id +
-        this.hashes_.playerCard * playerCard +
-        this.hashes_.depth * depth;
-    return this.cache_[hash];
-  }
-
-  cacheResult(state, playerCard, depth, result) {
-    const hash = state.id +
-        this.hashes_.playerCard * playerCard +
-        this.hashes_.depth * depth;
-    this.cache_[hash] = result;
+  hashMove(hash, playedCard) {
+    return hash + this.hashes_.playedCard * (playedCard + 1);
   }
 }
