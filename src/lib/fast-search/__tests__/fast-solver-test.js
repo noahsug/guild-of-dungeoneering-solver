@@ -95,22 +95,30 @@ describe('fast solver', () => {
     expect(solver.result).toBeBetween(0, 1);
   });
 
-  it.only('can play a card to advance the state', () => {
-    //solver.init({name: 'Apprentice', items: ['Shimmering Cloak']},
-    //            {name: 'Ghost'});
-
+  xit('tests performance', () => {
+    // 5 SECONDS
     solver.init({
       name: 'Cartomancer',
       items: ['Conch', 'Shimmering Cloak', 'Mail Coif', 'Net'],
       traits: [],
     }, {name: 'Angry Bunny'});
 
+    const a = Date.now();
+    for (let i = 0; i < 2000; i++) {
+      solver.next();
+      if (i % 500 == 0) console.log(solver.result);
+    }
+    const b = Date.now();
+    console.log('TIME:', b - a);
+  });
+
+  it.only('tests accuracy', () => {
+    solver.init({name: 'Apprentice', items: ['Shimmering Cloak']},
+                {name: 'Ghost'});
     //solver.init({name: 'Chump', traits: ['Crones Discipline']},
     //            {name: 'Gray Ooze'});
-
     //solver.init({name: 'Chump', traits: ['Crones Discipline', 'Level 2']},
     //            {name: 'Rat King'});
-
     //solver.init({name: 'Cartomancer', traits: ['Level 3']},
     //            {name: 'Angry Bunny'});
 
@@ -136,21 +144,12 @@ describe('fast solver', () => {
     //  }
     //});
 
-    const len = solver.totalIterations() * 4;
-    //const len = 200;
-    const a = Date.now();
-    for (let i = 0; i < 2000; i++) {
+    //solver.record = [];
+    for (let i = 0; i < 20000; i++) {
       solver.next();
       if (i % 500 == 0) console.log(solver.result);
     }
-    const b = Date.now();
-    console.log('TIME:', b - a);
-    //solver.record = [];
-    //for (let i = 0; i < 20000; i++) {
-    //  solver.next();
-    //  if (i % 500 == 0) console.log(solver.result);
-    //}
-    //console.log('RESULT', solver.result);
+    console.log('RESULT', solver.result);
     //inspect(solver);
 
     //window.d = true;

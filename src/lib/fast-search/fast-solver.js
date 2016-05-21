@@ -18,20 +18,18 @@ export default class FastSolver {
     this.record = [];
 
     this.mover_ = new CardMover();
-    this.hasher_ = new FastHash();
-    this.resolver_ = new CardResolver();
-    this.resolver_.setInitialState(initState);
     this.order_ = new CardOrder();
     this.order_.initState = initState;
+    this.hasher_ = new FastHash();
+    this.hasher_.order = this.order_;
+    this.resolver_ = new CardResolver();
+    this.resolver_.setInitialState(initState);
     this.search_ = new FastSearch();
     this.search_.order = this.order_;
+    this.search_.hasher = this.hasher_;
     this.search_.initState = initState;
 
     this.states = this.mover_.getStartingStates(initState);
-  }
-
-  totalIterations() {
-    return this.states.length * 300;
   }
 
   next() {
@@ -40,7 +38,9 @@ export default class FastSolver {
     if (index == 0) _.shuffleInPlace(this.states);
     this.order_.randomize();
     const state = this.states[index];
+    _.time('search');
     const result = this.search_.solve(state, this.depth_);
+    window.stats.search += _.time('search');
     this.averageResult_.add(result);
     if (this.count % (this.states.length * 5) == 0) {
       this.averageResult_.period += this.states.length;

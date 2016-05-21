@@ -5,6 +5,7 @@ import './simple-moving-average';
 
 let uid = 0;
 let seed = 0;
+const time = {};
 
 _.s = s;
 
@@ -315,6 +316,17 @@ _.mixin({
     const actual = obj[fnName].bind(obj);
     obj['actual' + _.s.capitalize(fnName)] = actual;
     obj[fnName] = fn;
+  },
+
+  time: (id) => {
+    const now = performance.now();
+    if (time[id]) {
+      const diff = now - time[id];
+      delete time[id];
+      return diff;
+    }
+    time[id] = now;
+    return 0;
   },
 });
 

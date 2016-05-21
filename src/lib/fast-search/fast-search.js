@@ -10,70 +10,53 @@ export default class FastSearch {
   constructor() {
     this.mover_ = new CardMover();
     this.resolver_ = new CardResolver();
-    this.hasher_ = new FastHash();
-    this.visited_ = {};
     this.bestMoves_ = {};
     this.worstMoves_ = {};
+  }
+
+  set hasher(hasher) {
+    this.hasher_ = hasher;
   }
 
   set order(order) {
     this.order_ = order;
     this.mover_.order = order;
-    this.hasher_.order = order;
   }
 
   set initState(initState) {
     this.resolver_.setInitialState(initState);
     const complexity = _.minZero(gs.cards(initState.player).length *
                                  gs.cards(initState.enemy).length - 50);
-    this.accuracy_ = 16 - Math.min(11, Math.sqrt(complexity) * 2) | 0;
-    console.log('Solving', complexity, this.accuracy_);
+    this.bestMoveAccuracy_ = 15 - Math.min(11, Math.sqrt(complexity) * 2) | 0;
+    this.worstMoveAccuracy_ = this.bestMoveAccuracy_;
+    console.log('Solving', complexity, this.bestMoveAccuracy_);
   }
 
   solve(state, depth = 0) {
     this.visited_ = {};
-    if (window.d) console.log('SOLVE!');
     return this.getResult_(state, depth);
   }
 
   getResult_(state, depth) {
-    // TODO: Don't clone last state, can just directly mutate it.
-    // TODO: Look ahead to see if any moves result in a 1 so we can prune early.
-    // TODO: Implement steal - need to keep track of enemy deck?
     const hash = this.hasher_.hash(state, depth);
+    if (this.visited_[hash]) return 0;
+    this.visited_[hash] = true;
     const enemyCard = this.order_.enemyDraws[depth];
     const bestMove = this.bestMoves_[hash];
     if (bestMove != undefined) {
       const moveHash = this.hasher_.hashMove(hash, bestMove);
-      if (window.d) {
-        console.log(p.depth(depth), depth, '->',
-                    p.card(bestMove), 'vs', p.card(enemyCard),
-                    p.cards(state.player.hand));
-      }
       const result = this.getResultForMove_(
           state, bestMove, enemyCard, hash, moveHash, depth);
       return result;
     }
 
-    const hand = _.uniq(state.player.hand, true);
+    const hand = _.uniq(state.player.hand);
+    _.shuffleInPlace(hand);
     const len = hand.length;
-    const indexes = _.range(len);
-    _.shuffleInPlace(indexes);
-
-    if (window.d) {
-      console.log(p.depth(depth), depth, '?', p.card(enemyCard),
-                  p.cards(state.player.hand));
-    }
-
     for (let i = 0; i < len; i++) {
-      const playerCard = hand[indexes[i]];
+      const playerCard = hand[i];
       const moveHash = this.hasher_.hashMove(hash, playerCard);
-      if (this.worstMoves_[moveHash] > this.accuracy_ * 4) continue;
-
-      if (window.d) {
-        console.log(p.depth(depth), depth, 'trying',
-                    p.card(playerCard), this.bestMoves_[moveHash]);
-      }
+      if (this.worstMoves_[moveHash] > this.worstMoveAccuracy_) continue;
       const result = this.getResultForMove_(
           state, playerCard, enemyCard, hash, moveHash, depth);
       if (result) {
@@ -92,11 +75,6 @@ export default class FastSearch {
     this.visited_[moveHash] = true;
     const result = this.searchForResult_(
         state, playerCard, enemyCard, hash, depth);
-    if (window.d) {
-      console.log(p.depth(depth), depth, 'R ', result, '=',
-                  p.card(playerCard), 'vs',
-                  p.card(enemyCard), p.cards(state.player.hand));
-    }
     return result;
   }
 
@@ -126,14 +104,10 @@ export default class FastSearch {
   updateBestMoves_(state, playerCard, enemyCard, hash, moveHash, depth) {
     this.worstMoves_[moveHash] = -1;
     if (this.bestMoves_[hash]) return;
-    if (state.debug == p.card(enemyCard)) {
-      console.log(p.card(playerCard), this.bestMoves_[moveHash]);
-    }
-
     const bestMove = this.bestMoves_[moveHash];
     if (bestMove == undefined) {
       this.bestMoves_[moveHash] = 1;
-    } else if (bestMove > this.accuracy_) {
+    } else if (bestMove > this.bestMoveAccuracy_) {
       this.bestMoves_[hash] = playerCard;
     } else {
       this.bestMoves_[moveHash]++;

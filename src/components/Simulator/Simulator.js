@@ -9,6 +9,8 @@ import Node from '../../lib/tree-search/node';
 import gameData from '../../lib/game-engine/game-data';
 import _ from '../../utils/common';
 
+import FastSolver from '../../lib/fast-search/fast-solver';
+
 //import GameStateEvaluator from '../../lib/evaluation/game-state-evaluator';
 
 export default class Simulator extends Component {
@@ -50,9 +52,8 @@ export default class Simulator extends Component {
     return {
       player: {
         name: 'Cartomancer',
-        //items: ['Scroll Of Souls', 'Fez', 'Ocean Staff', 'Bark Vest'],
-        items: [],
-        traits: ['Level 3'],
+        items: ['Conch', 'Shimmering Cloak', 'Mail Coif', 'Net'],
+        traits: [],
       },
       enemy: {name: 'Angry Bunny', traits: []},
     };
@@ -190,23 +191,40 @@ export default class Simulator extends Component {
   solve_() {
     window.stats = {
       total: 0,
-      updateParentResult: 0,
       hash: 0,
+      hand: 0,
+      hand2: 0,
       resolve: 0,
-      enumerate: 0,
+      move: 0,
+      next: 0,
+      search: 0,
+      result: 0,
+      worst: 0,
+      best: 0,
     };
-    this.solver_ = new SolverFactory().create(
-        this.state.player, this.state.enemy);
-    this.solver_.solve(2);
-    this.time_ = Date.now();
-    this.props.onSimulationStart({
-      player: this.state.player,
-      enemy: this.state.enemy,
-      solver: this.solver_,
-    });
-    this.setState({result: undefined, running: true});
 
-    setTimeout(this.solveLoop_.bind(this), 5);
+    _.time('total');
+    const fastSolver = new FastSolver();
+    fastSolver.init(this.state.player, this.state.enemy);
+    for (let i = 1; i <= 2000; i++) {
+      fastSolver.next();
+      if (i % 500 == 0) console.log(fastSolver.result);
+    }
+    window.stats.total = _.time('total');
+    console.log(window.stats);
+
+    //this.solver_ = new SolverFactory().create(
+    //  this.state.player, this.state.enemy);
+    //this.solver_.solve(2);
+    //this.time_ = Date.now();
+    //this.props.onSimulationStart({
+    //  player: this.state.player,
+    //  enemy: this.state.enemy,
+    //  solver: this.solver_,
+    //});
+    //this.setState({result: undefined, running: true});
+    //
+    //setTimeout(this.solveLoop_.bind(this), 5);
   }
 
   solveLoop_() {
@@ -327,5 +345,11 @@ export default class Simulator extends Component {
 
   openPlaythrough_() {
     this.props.openPlaythrough();
+  }
+
+  componentDidMount() {
+    window.onkeydown = (e) => {
+      if (e.code == 'Enter') this.solve_();
+    };
   }
 }
